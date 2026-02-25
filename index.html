@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web QQ 音乐播放器</title>
+    <style>
+        :root {
+            --theme-color: #ff5e62;
+            --text-main: #ffffff;
+            --text-sub: rgba(255, 255, 255, 0.6);
+            --bg-glass: rgba(0, 0, 0, 0.4);
+            --bg-glass-hover: rgba(255, 255, 255, 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            background-color: #2c3e50;
+        }
+        
+        /* 动态背景模糊 */
+        #bg-image {
+            position: fixed; top: -10%; left: -10%; width: 120%; height: 120%;
+            background-size: cover; background-position: center;
+            filter: blur(40px) brightness(0.6); z-index: -1; transition: background-image 0.5s ease;
+        }
+        
+        /* --- 1. 顶部导航 (常驻) --- */
+        .header {
+            display: flex; justify-content: space-around; padding: 15px 0; height: 60px;
+            background: rgba(0,0,0,0.2); backdrop-filter: blur(10px);
+            position: fixed; top: 0; width: 100%; z-index: 20;
+        }
+        .nav-item { font-size: 16px; color: var(--text-sub); cursor: pointer; transition: 0.3s; line-height: 30px; }
+        .nav-item.active { color: var(--text-main); font-weight: bold; border-bottom: 2px solid var(--theme-color); }
+
+        /* --- 2. 底部控制条 (全局常驻) --- */
+        .footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 90px; 
+            background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(20px); 
+            display: flex; align-items: center; padding: 0 20px; z-index: 30;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .footer-cover { 
+            width: 55px; height: 55px; border-radius: 50%; margin-right: 15px; 
+            object-fit: cover; border: 2px solid rgba(255,255,255,0.1);
+            animation: rotate 20s linear infinite; animation-play-state: paused;
+        }
+        .footer-cover.playing { animation-play-state: running; }
+        .footer-info { flex: 1; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+        .f-title-scroll { font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; }
+        .progress-container { display: flex; align-items: center; font-size: 12px; color: var(--text-sub); }
+        .progress-bar {
+            flex: 1; height: 4px; background: rgba(255,255,255,0.2); margin: 0 10px; border-radius: 2px; cursor: pointer; position: relative;
+        }
+        .progress-inner { height: 100%; background: var(--theme-color); width: 0%; border-radius: 2px; transition: width 0.1s; }
+        .controls { display: flex; align-items: center; gap: 15px; margin-left: 10px; }
+        .ctrl-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; transition: 0.2s; }
+        .ctrl-btn:active { transform: scale(0.9); }
+        .play-btn { width: 45px; height: 45px; background: var(--theme-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; }
+
+        /* --- 3. 主播放器视图 (位于头底之间) --- */
+        .main-player {
+            position: fixed; top: 60px; bottom: 90px; width: 100%;
+            display: flex; flex-direction: column; align-items: center; padding: 20px;
+            z-index: 5;
+        }
+        .record-container { margin: 20px auto; width: 220px; height: 220px; position: relative; flex-shrink: 0; }
+        .cover-img {
+            width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 0 30px rgba(0,0,0,0.6);
+            border: 8px solid rgba(255,255,255,0.1); object-fit: cover;
+            animation: rotate 20s linear infinite; animation-play-state: paused;
+        }
+        .cover-img.playing { animation-play-state: running; }
+        .song-info { margin-bottom: 10px; text-align: center; flex-shrink: 0; }
+        .song-title { font-size: 24px; font-weight: bold; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .song-singer { font-size: 15px; color: var(--text-sub); }
+        .lyric-box {
+            flex: 1; width: 100%; overflow-y: auto; text-align: center; margin-top: 10px;
+            mask-image: linear-gradient(transparent, #000 20%, #000 80%, transparent);
+            -webkit-mask-image: linear-gradient(transparent, #000 20%, #000 80%, transparent);
+        }
+        .lyric-line { font-size: 15px; color: var(--text-sub); padding: 10px 0; transition: 0.3s; }
+        .lyric-line.active { color: var(--theme-color); font-size: 18px; font-weight: bold; transform: scale(1.05); }
+
+        /* --- 4. 交互抽屉浮层 (盖在主播放器之上，但在顶部与底部之下) --- */
+        .action-panel {
+            position: fixed; top: 60px; bottom: 90px; width: 100%;
+            background: rgba(20, 25, 30, 0.95); backdrop-filter: blur(15px);
+            z-index: 10; transform: translateY(100%); opacity: 0; pointer-events: none;
+            transition: transform 0.35s cubic-bezier(0.1, 0.8, 0.2, 1), opacity 0.3s ease;
+            display: flex; flex-direction: column;
+        }
+        .action-panel.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+        
+        /* 抽屉内的内容区域 */
+        .panel-content { display: none; flex-direction: column; height: 100%; }
+        .panel-content.active { display: flex; }
+        
+        .action-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .input-group { display: flex; gap: 10px; }
+        .input-group input {
+            flex: 1; padding: 12px 15px; border-radius: 10px; border: none; outline: none;
+            background: rgba(255,255,255,0.1); color: #fff; font-size: 15px;
+        }
+        .input-group input::placeholder { color: rgba(255,255,255,0.4); }
+        .input-group button {
+            padding: 0 20px; border-radius: 10px; border: none; background: var(--theme-color);
+            color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .input-group button:active { transform: scale(0.95); }
+        
+        .action-body { flex: 1; overflow-y: auto; padding: 15px 20px; }
+
+        /* 统一列表样式 */
+        .song-list { list-style: none; padding-bottom: 20px; }
+        .song-item {
+            display: flex; align-items: center; padding: 12px; border-radius: 10px;
+            background: rgba(255,255,255,0.05); margin-bottom: 10px; cursor: pointer; transition: 0.2s;
+        }
+        .song-item:active { background: rgba(255,255,255,0.15); transform: scale(0.98); }
+        .song-item-index { width: 30px; color: var(--text-sub); }
+        .song-item-info { flex: 1; overflow: hidden; }
+        .song-item-title { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .song-item-singer { font-size: 12px; color: var(--text-sub); margin-top: 4px; }
+        
+        .playlist-card {
+            display: flex; align-items: center; background: rgba(255,255,255,0.05); 
+            padding: 10px; border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: 0.2s;
+        }
+        .playlist-card:active { background: rgba(255,255,255,0.15); transform: scale(0.98); }
+        .playlist-card img { width: 55px; height: 55px; border-radius: 8px; margin-right: 15px; }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body>
+
+    <div id="bg-image"></div>
+    <audio id="audio-player" preload="auto"></audio>
+
+    <div class="header">
+        <div class="nav-item active" onclick="switchTab('player')" id="nav-player">播放器</div>
+        <div class="nav-item" onclick="switchTab('playlist')" id="nav-playlist">我的歌单</div>
+        <div class="nav-item" onclick="switchTab('search')" id="nav-search">歌曲搜索</div>
+    </div>
+
+    <div class="main-player" id="main-player">
+        <div class="song-info">
+            <div class="song-title" id="p-title">Web QQ 音乐</div>
+            <div class="song-singer" id="p-singer">请搜索或导入歌单</div>
+        </div>
+        <div class="record-container">
+            <img src="https://y.qq.com/mediastyle/global/img/album_300.png" id="p-cover" class="cover-img" alt="cover">
+        </div>
+        <div class="lyric-box" id="lyric-container">
+            <div class="lyric-line active">暂无歌词</div>
+        </div>
+    </div>
+
+    <div class="action-panel" id="action-panel">
+        
+        <div class="panel-content" id="panel-playlist">
+            <div class="action-header">
+                <div class="input-group">
+                    <input type="number" id="uin-input" placeholder="输入QQ号提取歌单..." value="1569097443">
+                    <button onclick="fetchPlaylists()">提取</button>
+                </div>
+            </div>
+            <div class="action-body" id="playlist-results">
+                <div style="text-align:center;color:var(--text-sub);margin-top:40px;">点击提取获取该账号公开歌单</div>
+            </div>
+        </div>
+
+        <div class="panel-content" id="panel-search">
+            <div class="action-header">
+                <div class="input-group">
+                    <input type="text" id="search-input" placeholder="输入歌手、歌名或专辑...">
+                    <button onclick="searchMusic()">搜索</button>
+                </div>
+            </div>
+            <div class="action-body" id="search-results">
+                <div style="text-align:center;color:var(--text-sub);margin-top:40px;">请输入关键词开始搜歌</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer" id="global-footer">
+        <img src="https://y.qq.com/mediastyle/global/img/album_300.png" id="f-cover" class="footer-cover" alt="cover">
+        <div class="footer-info">
+            <div class="f-title-scroll" id="f-title">等待播放...</div>
+            <div class="progress-container">
+                <span id="time-current">00:00</span>
+                <div class="progress-bar" id="progress-bar" onclick="seekAudio(event)">
+                    <div class="progress-inner" id="progress-inner"></div>
+                </div>
+                <span id="time-total">00:00</span>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="ctrl-btn" onclick="prevSong()">&#9664;&#9664;</button>
+            <button class="ctrl-btn play-btn" id="play-pause-btn" onclick="togglePlay()">&#9654;</button>
+            <button class="ctrl-btn" onclick="nextSong()">&#9654;&#9654;</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.vkeys.cn/v2/music/tencent';
+        
+        let playQueue = [];
+        let currentIndex = -1;
+        let isPlaying = false;
+        let lyricsArray = [];
+        
+        const audio = document.getElementById('audio-player');
+        const playBtn = document.getElementById('play-pause-btn');
+        const coverImg = document.getElementById('p-cover');
+        const footerCover = document.getElementById('f-cover');
+        const bgImg = document.getElementById('bg-image');
+        const actionPanel = document.getElementById('action-panel');
+        
+        // --- 1. 面板切换逻辑 ---
+        function switchTab(tabId) {
+            // 更新导航高亮
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(`nav-${tabId}`).classList.add('active');
+
+            if (tabId === 'player') {
+                // 回到播放器：收起抽屉
+                actionPanel.classList.remove('show');
+            } else {
+                // 搜索/歌单：展示相应的面板内容，并弹出抽屉
+                document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
+                document.getElementById(`panel-${tabId}`).classList.add('active');
+                actionPanel.classList.add('show');
+            }
+        }
+
+        // --- 2. 渲染通用列表 ---
+        function renderSongsHTML(list) {
+            if (!list || list.length === 0) return '<div style="text-align:center;color:var(--text-sub);margin-top:20px;">暂无数据</div>';
+            return `<ul class="song-list">` + list.map((song, index) => `
+                <li class="song-item" onclick="playSong('${song.mid}', ${index})">
+                    <div class="song-item-index">${index + 1}</div>
+                    <div class="song-item-info">
+                        <div class="song-item-title">${song.song}</div>
+                        <div class="song-item-singer">${song.singer} - ${song.album}</div>
+                    </div>
+                </li>
+            `).join('') + `</ul>`;
+        }
+
+        // --- 3. 搜索歌曲 ---
+        async function searchMusic() {
+            const word = document.getElementById('search-input').value;
+            if (!word) return;
+            const container = document.getElementById('search-results');
+            container.innerHTML = '<div style="text-align:center;color:var(--text-sub);margin-top:40px;">检索中...</div>';
+            
+            try {
+                const res = await fetch(`${API_BASE}/search/song?word=${encodeURIComponent(word)}`);
+                const json = await res.json();
+                if (json.code === 200 && json.data) {
+                    playQueue = json.data; 
+                    container.innerHTML = renderSongsHTML(json.data);
+                } else {
+                    container.innerHTML = '<div style="text-align:center;color:var(--text-sub);margin-top:40px;">未找到相关歌曲</div>';
+                }
+            } catch (e) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-sub);margin-top:40px;">网络错误，请稍后重试</div>';
+            }
+        }
+
+        // --- 4. 提取歌单 ---
+        async function fetchPlaylists() {
+            const uin = document.getElementById('uin-input').value;
+            if(!uin) return;
+            const container = document.getElementById('playlist-results');
+            container.innerHTML = '<div style="text-align:center;color:var(--text-sub);margin-top:40px;">提取歌单中...</div>';
+            
+            try {
+                const res = await fetch(`${API_BASE}/info?uin=${uin}`);
+                const json = await res.json();
+                if (json.code === 200 && json.data) {
+                    const lists = [...(json.data.mydiss || []), ...(json.data.likediss || [])];
+                    const html = lists.map(p => `
+                        <div class="playlist-card" onclick="loadPlaylistDetail('${p.id}', '${p.title}')">
+                            <img src="${p.picurl || 'https://y.qq.com/mediastyle/global/img/album_300.png'}" alt="cover">
+                            <div>
+                                <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">${p.title}</div>
+                                <div style="font-size: 12px; color: var(--text-sub);">${p.song_num || p.listen_num + ' 播放'}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                    container.innerHTML = html || '<div style="text-align:center;color:var(--text-sub);margin-top:40px;">该账号无公开歌单</div>';
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadPlaylistDetail(id, title) {
+            const container = document.getElementById('playlist-results');
+            container.innerHTML = '<div style="text-align:center;color:var(--text-sub);margin-top:40px;">加载歌曲列表中...</div>';
+            try {
+                const res = await fetch(`${API_BASE}/dissinfo?id=${id}`);
+                const json = await res.json();
+                if (json.code === 200 && json.data.list) {
+                    playQueue = json.data.list;
+                    const backBtn = `
+                        <div style="display:flex; align-items:center; margin-bottom: 15px;">
+                            <button onclick="fetchPlaylists()" style="padding: 6px 15px; background: rgba(255,255,255,0.1); border: none; color: #fff; border-radius: 8px; cursor:pointer; margin-right: 10px;">&larr; 返回</button>
+                            <span style="font-weight: bold;">${title}</span>
+                        </div>`;
+                    container.innerHTML = backBtn + renderSongsHTML(json.data.list);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // --- 5. 播放控制核心 ---
+        async function playSong(mid, index = -1) {
+            if(index !== -1) currentIndex = index;
+            try {
+                const res = await fetch(`${API_BASE}?mid=${mid}`);
+                const json = await res.json();
+                
+                if (json.code === 200 && json.data && json.data.url) {
+                    const song = json.data;
+                    document.getElementById('p-title').innerText = song.song;
+                    document.getElementById('p-singer').innerText = song.singer;
+                    document.getElementById('f-title').innerText = `${song.song} - ${song.singer}`;
+                    
+                    coverImg.src = song.cover;
+                    footerCover.src = song.cover;
+                    bgImg.style.backgroundImage = `url(${song.cover})`;
+                    
+                    audio.src = song.url;
+                    audio.play();
+                    isPlaying = true;
+                    updatePlayState();
+                    fetchLyrics(mid);
+
+                    // 关键操作：点歌后自动回到播放器页，让面板收下去
+                    switchTab('player');
+                    
+                } else {
+                    alert('抱歉，获取播放链接失败，可能受版权保护。');
+                }
+            } catch (e) {
+                alert('网络请求失败');
+            }
+        }
+
+        function togglePlay() {
+            if (!audio.src) return;
+            if (isPlaying) audio.pause();
+            else audio.play();
+            isPlaying = !isPlaying;
+            updatePlayState();
+        }
+
+        function updatePlayState() {
+            // 底部控制按钮的文字状态
+            playBtn.innerHTML = isPlaying ? '&#10074;&#10074;' : '&#9654;';
+            // 大封面与小封面旋转状态
+            if (isPlaying) { 
+                coverImg.classList.add('playing'); 
+                footerCover.classList.add('playing');
+            } else { 
+                coverImg.classList.remove('playing'); 
+                footerCover.classList.remove('playing');
+            }
+        }
+
+        function prevSong() {
+            if(playQueue.length === 0) return;
+            currentIndex = (currentIndex - 1 + playQueue.length) % playQueue.length;
+            playSong(playQueue[currentIndex].mid, currentIndex);
+        }
+
+        function nextSong() {
+            if(playQueue.length === 0) return;
+            currentIndex = (currentIndex + 1) % playQueue.length;
+            playSong(playQueue[currentIndex].mid, currentIndex);
+        }
+
+        // 进度条与时间更新
+        audio.addEventListener('timeupdate', () => {
+            if (!audio.duration) return;
+            const current = audio.currentTime;
+            const total = audio.duration;
+            document.getElementById('progress-inner').style.width = `${(current / total) * 100}%`;
+            document.getElementById('time-current').innerText = formatTime(current);
+            document.getElementById('time-total').innerText = formatTime(total);
+            syncLyric(current);
+        });
+
+        audio.addEventListener('ended', nextSong);
+
+        function seekAudio(e) {
+            if (!audio.duration) return;
+            const bar = document.getElementById('progress-bar');
+            audio.currentTime = ((e.clientX - bar.getBoundingClientRect().left) / bar.getBoundingClientRect().width) * audio.duration;
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        // --- 6. 歌词处理 ---
+        async function fetchLyrics(mid) {
+            try {
+                const res = await fetch(`${API_BASE}/lyric?mid=${mid}`);
+                const json = await res.json();
+                const container = document.getElementById('lyric-container');
+                if (json.code === 200 && json.data && json.data.lrc) {
+                    const result = [];
+                    json.data.lrc.split('\n').forEach(line => {
+                        const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/);
+                        if (match) {
+                            const time = parseInt(match[1]) * 60 + parseInt(match[2]) + parseFloat("0." + match[3]);
+                            const text = match[4].trim();
+                            if(text) result.push({ time, text });
+                        }
+                    });
+                    lyricsArray = result;
+                    container.innerHTML = lyricsArray.map((l, i) => `<div class="lyric-line" id="lrc-${i}">${l.text}</div>`).join('');
+                } else {
+                    lyricsArray = []; container.innerHTML = '<div class="lyric-line active">纯音乐，请欣赏</div>';
+                }
+            } catch (e) {
+                lyricsArray = []; document.getElementById('lyric-container').innerHTML = '<div class="lyric-line active">歌词加载失败</div>';
+            }
+        }
+
+        function syncLyric(currentTime) {
+            if (lyricsArray.length === 0) return;
+            let activeIndex = 0;
+            for (let i = 0; i < lyricsArray.length; i++) {
+                if (currentTime >= lyricsArray[i].time) activeIndex = i; else break;
+            }
+            document.querySelectorAll('.lyric-line').forEach(el => el.classList.remove('active'));
+            const activeEl = document.getElementById(`lrc-${activeIndex}`);
+            if (activeEl) {
+                activeEl.classList.add('active');
+                activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    </script>
+</body>
+</html>
