@@ -36,6 +36,9 @@
         #particle-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;
         }
+
+        /* 桌面端左上角文字默认隐藏，仅在电脑端显示 */
+        .desktop-top-logo { display: none; }
         
         .header {
             display: flex; justify-content: center; gap: 40px; padding: 20px 0; height: 70px;
@@ -180,7 +183,6 @@
         .back-btn { padding: 8px 16px; background: rgba(255,255,255,0.1); border: none; color: #fff; border-radius: 20px; cursor:pointer; margin-right: 15px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
         .back-btn:hover { background: var(--primary); color: #000; }
 
-        /* ========= 控制栏样式优化 (移动端优先) ========= */
         .footer {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 115px; 
             background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
@@ -207,13 +209,11 @@
 
         .footer-bottom { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         
-        /* 移动端控制栏 - 左侧 */
         .footer-left { display: flex; align-items: center; flex: 1; overflow: hidden; min-width: 0; padding-right: 10px; }
         .footer-cover { width: 40px; height: 40px; border-radius: 6px; margin-right: 10px; object-fit: cover; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         .footer-info { flex: 1; overflow: hidden; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
         .f-title-scroll { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        /* 移动端控制栏 - 中间播放键 (采用自适应vw单位间距防拥挤) */
         .footer-center { display: flex; align-items: center; justify-content: center; gap: 6vw; flex-shrink: 0; }
         .ctrl-btn { background: none; border: none; color: rgba(255,255,255,0.7); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .ctrl-btn:hover { color: #fff; transform: scale(1.1); }
@@ -223,7 +223,6 @@
         .play-btn svg { width: 34px; height: 34px; color: #fff; } 
         .prev-next-svg { width: 22px; height: 22px; }
 
-        /* 移动端控制栏 - 右侧 (防拥挤自适应) */
         .footer-right { display: flex; align-items: center; justify-content: flex-end; flex: 1; gap: 5vw; min-width: 0; }
         .footer-right .ctrl-btn { flex-shrink: 0; }
 
@@ -271,11 +270,30 @@
         ::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
         /* ========================================================= */
-        /* PC 端宽屏响应式优化 (>= 850px)                            */
+        /* PC 端宽屏响应式优化 (分离透明圆角悬浮卡片设计)            */
         /* ========================================================= */
         @media (min-width: 850px) {
+            
+            /* 新增：桌面端左上角文字 */
+            .desktop-top-logo {
+                display: block;
+                position: fixed;
+                top: 10px;
+                left: 3vw;
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 13px;
+                font-weight: 600;
+                z-index: 50;
+                letter-spacing: 1px;
+                pointer-events: none; /* 避免遮挡点击 */
+            }
+
+            /* ====== 全局导航区 (嵌在左侧卡片顶部) ====== */
             .header {
-                justify-content: flex-start; gap: 15px; padding: 30px 40px 10px; width: 55%; background: none;
+                justify-content: flex-start; gap: 15px; padding: 25px 30px 15px; 
+                background: transparent; border-bottom: 1px solid rgba(255,255,255,0.05);
+                position: fixed; left: 3vw; width: 51vw; top: 30px; z-index: 20;
+                border-radius: 16px 16px 0 0;
             }
             .nav-item { 
                 font-size: 14px; padding: 0 20px; height: 36px; border-radius: 20px; 
@@ -286,94 +304,84 @@
             .nav-item.active { background: var(--primary); color: #000; font-weight: 600; }
             .nav-item.active::after { display: none; }
 
-            .main-player {
-                left: 55%; width: 45%; right: 0; padding-top: 6vh; bottom: 115px;
-            }
-            .record-container { width: 240px; height: 240px; max-width: none; max-height: none; }
-
+            /* ====== 左侧：列表与操作卡片 ====== */
             .action-panel {
-                left: 0; width: 55%; top: 80px; bottom: 115px; padding: 0 20px;
+                left: 3vw; width: 51vw; top: 30px; bottom: 130px; padding: 85px 20px 10px;
                 transform: translateY(0) !important; opacity: 1 !important; pointer-events: auto !important;
-                background: transparent; border: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+                background: rgba(30, 30, 30, 0.4) !important; 
+                border: 1px solid rgba(255,255,255,0.08) !important; 
+                border-radius: 16px;
+                backdrop-filter: blur(30px) !important; 
+                -webkit-backdrop-filter: blur(30px) !important;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             }
             .panel-content { max-width: 100%; }
 
-            /* PC控制栏还原固定比例防止按钮在宽屏上显得太散 */
-            .footer { padding: 12px 40px; }
+            /* ====== 右侧：播放与歌词卡片 ====== */
+            .main-player {
+                left: auto; right: 3vw; width: 41vw; top: 30px; bottom: 130px; padding-top: 6vh;
+                background: rgba(30, 30, 30, 0.4); 
+                border: 1px solid rgba(255,255,255,0.08); 
+                border-radius: 16px;
+                backdrop-filter: blur(30px); 
+                -webkit-backdrop-filter: blur(30px);
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                z-index: 5;
+            }
+            .record-container { width: 240px; height: 240px; max-width: none; max-height: none; }
+
+            /* ====== 底部：悬浮控制栏卡片 ====== */
+            .footer { 
+                left: 3vw; right: 3vw; width: auto; bottom: 20px; height: 95px;
+                background: rgba(30, 30, 30, 0.5); 
+                border: 1px solid rgba(255,255,255,0.08); 
+                border-radius: 16px;
+                backdrop-filter: blur(35px); 
+                -webkit-backdrop-filter: blur(35px);
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                padding: 10px 40px;
+            }
             .footer-left { flex: none; width: 30%; padding-right: 0; }
             .footer-center { flex: 1; gap: 40px; }
             .footer-right { flex: none; width: 30%; gap: 20px; }
 
-            .desktop-action-bar {
-                display: flex; align-items: center; margin-bottom: 20px; font-size: 14px; gap: 15px;
-            }
-            .da-tag {
-                background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 4px; color: var(--text-sub); font-size: 12px;
-            }
-            .da-title {
-                color: #ff66a3; 
-                font-weight: bold; font-size: 16px;
-            }
-            .da-play-all {
-                display: flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.1); border: none; 
-                color: #fff; padding: 6px 15px; border-radius: 20px; cursor: pointer; transition: 0.2s; font-size: 13px;
-            }
+            /* ====== 列表排版与样式 ====== */
+            .desktop-action-bar { display: flex; align-items: center; margin-bottom: 20px; font-size: 14px; gap: 15px; }
+            .da-tag { background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 4px; color: var(--text-sub); font-size: 12px; }
+            .da-title { color: #ff66a3; font-weight: bold; font-size: 16px; }
+            .da-play-all { display: flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.1); border: none; color: #fff; padding: 6px 15px; border-radius: 20px; cursor: pointer; transition: 0.2s; font-size: 13px; }
             .da-play-all:hover { background: var(--primary); color: #000; }
 
-            .desktop-list-header {
-                display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; padding: 12px 15px; 
-                color: rgba(255,255,255,0.4); font-size: 13px; font-weight: bold; margin-bottom: 5px;
-                align-items: center; 
-            }
-            
-            .song-item {
-                display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; align-items: center; 
-                padding: 12px 15px; border-radius: 8px; margin-bottom: 2px;
-            }
+            .desktop-list-header { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; padding: 12px 15px; color: rgba(255,255,255,0.4); font-size: 13px; font-weight: bold; margin-bottom: 5px; align-items: center; }
+            .song-item { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; align-items: center; padding: 12px 15px; border-radius: 8px; margin-bottom: 2px; }
             .song-item:hover { background: rgba(255,255,255,0.08); }
             
-            .song-item-cover { display: none; }
+            .song-item-cover { display: none; } 
             .song-item-info { display: block; overflow: hidden; padding-right: 15px; }
             .song-item-title { font-size: 14px; font-weight: normal; }
-            .desktop-singer, .desktop-album { 
-                font-size: 13px; color: rgba(255,255,255,0.6); 
-                white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px; 
-            }
+            .desktop-singer, .desktop-album { font-size: 13px; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px; }
             
+            /* 隐藏无关元素 */
             .mobile-only { display: none !important; }
             .queue-modal { display: none !important; }
-            
             #queue-toggle-btn { display: none !important; }
 
-            .desktop-search-overlay {
-                position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
-                z-index: 2000; display: none; align-items: center; justify-content: center;
-            }
-            .ds-modal-content {
-                background: rgba(35, 35, 35, 0.85); border: 1px solid rgba(255,255,255,0.1);
-                border-radius: 12px; width: 450px; padding: 30px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            }
-            .ds-close { 
-                position: absolute; top: 15px; right: 15px; background: none; border: none; 
-                color: var(--text-sub); font-size: 24px; cursor: pointer; transition: 0.2s; 
-            }
+            /* 居中搜索弹窗 */
+            .desktop-search-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; }
+            .ds-modal-content { background: rgba(35, 35, 35, 0.85); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; width: 450px; padding: 30px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+            .ds-close { position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--text-sub); font-size: 24px; cursor: pointer; transition: 0.2s; }
             .ds-close:hover { color: #fff; transform: scale(1.1); }
             .ds-title { font-size: 15px; color: var(--text-sub); margin-bottom: 20px; }
-            .ds-input-wrapper {
-                display: flex; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
-            }
-            .ds-input-wrapper input {
-                flex: 1; border: none; background: transparent; color: #fff; padding: 12px 15px; outline: none; font-size: 15px;
-            }
+            .ds-input-wrapper { display: flex; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+            .ds-input-wrapper input { flex: 1; border: none; background: transparent; color: #fff; padding: 12px 15px; outline: none; font-size: 15px; }
             .ds-input-wrapper input:focus { border-color: var(--primary); }
-            .ds-search-btn {
-                background: transparent; border: none; color: #FFD700; font-weight: bold; cursor: pointer; padding: 0 20px; font-size: 15px;
-            }
+            .ds-search-btn { background: transparent; border: none; color: #FFD700; font-weight: bold; cursor: pointer; padding: 0 20px; font-size: 15px; }
             .ds-search-btn:hover { color: #fff; }
         }
 
+        /* 移动端隐藏 PC 专有元素 */
         @media (max-width: 849px) {
-            .desktop-search-overlay, .desktop-only { display: none !important; }
+            .desktop-search-overlay, .desktop-only, .desktop-top-logo { display: none !important; }
             .desktop-list-header { display: none; }
             .desktop-singer, .desktop-album { display: none; }
             #panel-player { display: none !important; } 
@@ -384,6 +392,11 @@
 
     <div id="bg-image"></div>
     <canvas id="particle-canvas"></canvas>
+    
+    <div class="desktop-top-logo">
+        Music-免费在线音乐播放器 | <span id="hitokoto-text">加载中...</span>
+    </div>
+
     <audio id="audio-player" preload="auto"></audio>
 
     <div class="desktop-search-overlay" id="desktop-search-overlay">
@@ -553,6 +566,21 @@
     </div>
 
     <script>
+        // 获取一言 (Hitokoto) API 内容
+        async function fetchHitokoto() {
+            try {
+                const res = await fetch('https://60s.viki.moe/v2/hitokoto?encoding=text');
+                const text = await res.text();
+                if (text) {
+                    document.getElementById('hitokoto-text').innerText = text;
+                }
+            } catch (e) {
+                document.getElementById('hitokoto-text').innerText = '愿每一次聆听都能触动心弦';
+            }
+        }
+        // 页面加载时请求一言
+        fetchHitokoto();
+
         document.addEventListener('click', (e) => {
             const queueModal = document.getElementById('queue-modal');
             const toggleBtn = document.getElementById('queue-toggle-btn');
