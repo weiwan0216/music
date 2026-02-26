@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>企鹅 音乐 Web版</title>
+    <title>企鹅音乐 Web版</title>
     <style>
         :root {
             --primary: #1DD08A; 
@@ -15,19 +15,19 @@
             --shadow-light: 0 10px 40px rgba(0, 0, 0, 0.4); 
             --overlay-start: rgba(28, 28, 28, 0.85);
             --overlay-end: rgba(18, 18, 18, 0.95);
+            --hover-pink: #ff66a3; 
+            --light-pink: #ff99c2; 
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body { color: var(--text-main); height: 100vh; overflow: hidden; background-color: var(--bg-base); }
         
-        /* 增加一层极淡的全局暗色遮罩，保证白色文字在明亮壁纸上依然清晰 */
         body::before {
             content: ""; position: fixed; inset: 0; 
             background: rgba(0, 0, 0, 0.3); 
             z-index: -2; pointer-events: none;
         }
 
-        /* 锁死指定的背景图片，无模糊滤镜，原图展现 */
         #bg-image {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://z.wiki/u/exONQv2tn') !important;
@@ -148,7 +148,7 @@
             z-index: 100; display: none; max-height: 300px; overflow-y: auto; padding: 8px 0;
         }
         .smart-item { padding: 12px 20px; font-size: 13px; cursor: pointer; display: flex; align-items: flex-start; transition: 0.2s; line-height: 1.5; color: #fff; }
-        .smart-item:hover { background: rgba(255,255,255,0.08); padding-left: 25px; color: var(--primary); }
+        .smart-item:hover { background: rgba(255,255,255,0.08); padding-left: 25px; color: var(--hover-pink); }
         .smart-type { flex-shrink: 0; margin-top: 2px; font-size: 11px; color: var(--primary); margin-right: 12px; border: 1px solid var(--primary); padding: 2px 6px; border-radius: 4px; }
 
         .action-body { flex: 1; overflow-y: auto; padding: 15px 20px; }
@@ -165,8 +165,8 @@
         .song-item-title { font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; display: flex; align-items: center; }
         .song-item-singer { font-size: 12px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
         
-        .mv-badge { border: 1px solid var(--primary); color: var(--primary); font-size: 10px; padding: 1px 4px; border-radius: 3px; margin-left: 8px; cursor: pointer; }
-        .mv-badge:hover { background: var(--primary); color: #000; }
+        .mv-badge { border: 1px solid var(--primary); color: var(--primary); font-size: 10px; padding: 1px 4px; border-radius: 3px; margin-left: 8px; cursor: pointer; transition: 0.2s; }
+        .mv-badge:hover { background: var(--hover-pink); color: #fff; border-color: var(--hover-pink); }
 
         .playlist-card {
             display: flex; align-items: center; background: rgba(255,255,255,0.03); 
@@ -182,7 +182,7 @@
 
         .back-bar { display: flex; align-items: center; margin-bottom: 15px; position: sticky; top: 0; background: var(--glass-bg); z-index: 5; padding: 15px 0; backdrop-filter: blur(10px); margin-top: -10px; border-bottom: 1px solid var(--glass-border); }
         .back-btn { padding: 8px 16px; background: rgba(255,255,255,0.1); border: none; color: #fff; border-radius: 20px; cursor:pointer; margin-right: 15px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
-        .back-btn:hover { background: var(--primary); color: #000; }
+        .back-btn:hover { background: var(--hover-pink); color: #fff; }
 
         .footer {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 115px; 
@@ -252,7 +252,7 @@
             padding: 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
             transition: 0.2s; margin-left: 5px; font-size: 12px;
         }
-        .queue-remove-btn:hover { color: #ff4d4f; background: rgba(255, 77, 79, 0.1); transform: scale(1.1); }
+        .queue-remove-btn:hover { color: var(--hover-pink); background: rgba(255, 102, 163, 0.1); transform: scale(1.1); }
 
         .mv-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -262,7 +262,7 @@
         .mv-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); position: absolute; width: 100%; z-index: 10; }
         .mv-title { font-size: 17px; font-weight: bold; text-shadow: 0 2px 5px #000; color: #fff; }
         .mv-close { cursor: pointer; background: rgba(255,255,255,0.2); border: none; color: #fff; padding: 8px 15px; border-radius: 20px; backdrop-filter: blur(5px); transition: 0.2s; }
-        .mv-close:hover { background: var(--primary); color: #000; }
+        .mv-close:hover { background: var(--hover-pink); color: #fff; }
         .mv-player { width: 100%; height: 100%; object-fit: contain; outline: none; }
 
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -277,21 +277,20 @@
         /* ========================================================= */
         @media (min-width: 850px) {
             
-            /* 一言文字区域：留出充足空间，进一步降低透明度显得更高级 */
+            /* 增大宽度和行高，防止顶部被截取 */
             .desktop-top-logo {
-                display: block; position: fixed; top: 15px; left: 30px;
+                display: block; position: fixed; top: 16px; left: 3vw; width: 80vw;
                 color: rgba(255, 255, 255, 0.4); font-size: 12px; font-weight: 500;
                 z-index: 50; letter-spacing: 1px; pointer-events: none; 
+                line-height: 1.8;
             }
 
-            /* 左上角导航区：缩进内边距，坐标下移防止碰边 */
             .header {
                 justify-content: flex-start; gap: 8px; padding: 0; margin: 0;
                 background: transparent; border: none;
                 position: absolute; left: 40px; top: 40px; width: 51vw; z-index: 20;
             }
             
-            /* 导航按钮：还原图二的气泡圆角矩形样式，缩小字号与高度 */
             .nav-item { 
                 font-size: 12px; padding: 0 16px; height: 26px; border-radius: 6px; 
                 background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8);
@@ -300,25 +299,22 @@
             }
             .nav-item:hover { background: rgba(255,255,255,0.15); color: #fff; }
             .nav-item.active { background: var(--primary); color: #000; font-weight: 600; }
-            /* 底部小倒三角气泡尾巴 */
             .nav-item.active::after { 
                 content: ''; display: block; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); 
                 width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--primary); 
                 background: none; box-shadow: none; border-radius: 0; transition: none;
             }
 
-            /* 列表与操作区：彻底取消背景框，做到100%全透明穿透 */
             .action-panel {
                 left: 3vw; width: 51vw; top: 80px; bottom: 80px; padding: 0 20px 10px;
                 transform: translateY(0) !important; opacity: 1 !important; pointer-events: auto !important;
-                background: transparent !important; 
-                border: none !important; 
-                border-radius: 0; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-                box-shadow: none !important;
+                background: linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%) !important; 
+                border: none !important; border-top: 1px solid rgba(255, 255, 255, 0.1) !important; border-left: 1px solid rgba(255, 255, 255, 0.05) !important;
+                border-radius: 16px; backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             }
-            .panel-content { max-width: 100%; }
+            .panel-content { max-width: 100%; padding-top: 20px; }
 
-            /* 右侧播放器：全透明穿透，大幅上移组件留出极宽裕的歌词空间 */
             .main-player {
                 left: auto; right: 3vw; width: 41vw; top: 80px; bottom: 80px; padding-top: 0; 
                 background: transparent !important; 
@@ -326,13 +322,18 @@
                 border-radius: 0; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
                 box-shadow: none !important; z-index: 5;
             }
-            /* 唱片圆形封面：极致缩小到 140px，腾出空间 */
             .record-container { width: 140px; height: 140px; max-width: none; max-height: none; }
             .record-wrapper { margin: 0 auto 10px; }
             .song-title { font-size: 18px; margin-bottom: 4px; text-shadow: none; } 
             .song-singer { font-size: 12px; }
 
-            /* 底部控制栏：图三样式重构。取消框线和背景色，横向单行布局 */
+            .back-bar {
+                background: rgba(255, 255, 255, 0.05) !important;
+                border-radius: 8px !important; border: none !important;
+                backdrop-filter: blur(15px) !important; -webkit-backdrop-filter: blur(15px) !important;
+                padding: 10px 20px; margin-bottom: 15px; margin-top: 0;
+            }
+
             .footer { 
                 left: 0; right: 0; width: 100%; bottom: 0; height: 70px;
                 background: transparent !important; 
@@ -342,21 +343,17 @@
                 display: flex; flex-direction: row; align-items: center; padding: 0 40px; z-index: 30;
             }
             .footer-bottom { display: contents; } 
-            .footer-left { display: none; } /* 隐去左侧迷你封面，因为没位置了 */
+            .footer-left { display: none; } 
             
-            /* 控制按钮放在最左边，紧凑排列 */
             .footer-center { order: -1; flex: none; gap: 15px; display: flex; align-items: center; justify-content: center; }
             .footer-center .ctrl-btn { margin: 0; }
             .play-btn svg { width: 28px; height: 28px; }
             .prev-next-svg { width: 18px; height: 18px; }
             
-            /* 进度条居中，拉长 */
             .progress-container { order: 2; flex: 1; margin: 0 25px; font-size: 11px; }
             
-            /* 音量与下载放右侧 */
             .footer-right { order: 3; flex: none; width: auto; gap: 20px; display: flex; align-items: center; justify-content: flex-end;}
 
-            /* 桌面端音量条独有样式 */
             .volume-container { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.7); }
             .vol-icon { width: 16px; height: 16px; fill: currentColor; }
             .vol-bar { width: 70px; height: 16px; display: flex; align-items: center; cursor: pointer; position: relative; touch-action: none;}
@@ -365,38 +362,38 @@
             .vol-dot { position: absolute; right: -5px; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; background: #fff; border-radius: 50%; pointer-events: none; }
             .vol-bar:active .vol-dot { transform: translateY(-50%) scale(1.3); }
 
-            /* 列表顶部操作按钮：图二的精巧小标签圆角矩形 */
             .desktop-action-bar { display: flex; align-items: center; margin-bottom: 10px; gap: 8px; }
             .da-tag { background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 4px; color: rgba(255,255,255,0.8); font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: 0.2s; }
             .da-tag:hover { background: rgba(255,255,255,0.12); color: #fff; }
-            .da-title { background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 4px; color: #ff66a3; font-weight: normal; font-size: 11px; display: flex; align-items: center; }
+            .da-title { background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 4px; color: var(--light-pink); font-weight: normal; font-size: 11px; display: flex; align-items: center; }
             .da-play-all { background: rgba(255,255,255,0.06); border: none; padding: 4px 10px; border-radius: 4px; color: rgba(255,255,255,0.8); font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: 0.2s; }
-            .da-play-all:hover { background: var(--primary); color: #000; }
+            .da-play-all:hover { background: var(--hover-pink); color: #fff; }
 
-            /* 列表表头及网格：极限缩小间距，提升单屏显示数量 */
             .desktop-list-header { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; padding: 6px 10px; color: rgba(255,255,255,0.4); font-size: 11px; font-weight: bold; margin-bottom: 2px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);}
+            .desktop-list-header .col-album { text-align: center; } 
+            
             .song-item { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; align-items: center; padding: 6px 10px; border-radius: 6px; margin-bottom: 0px; background: transparent; border-bottom: none;}
             .song-item:hover { background: rgba(255,255,255,0.06); }
             
             .song-item-cover { display: none; } 
             .song-item-info { display: block; overflow: hidden; padding-right: 15px; }
             .song-item-title { font-size: 12px; font-weight: normal; }
-            .desktop-singer, .desktop-album { font-size: 11px; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px; }
+            .desktop-singer { font-size: 11px; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px; }
+            .desktop-album { display: flex; justify-content: center; align-items: center; } 
             
             .mobile-only { display: none !important; }
             .queue-modal { display: none !important; }
             #queue-toggle-btn { display: none !important; }
 
-            /* 居中搜索弹窗 */
             .desktop-search-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; }
-            .ds-modal-content { background: rgba(35, 35, 35, 0.85); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; width: 450px; padding: 30px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+            .ds-modal-content { background: rgba(255, 255, 255, 0.08); border: none; border-radius: 12px; width: 450px; padding: 30px; position: relative; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
             .ds-close { position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--text-sub); font-size: 24px; cursor: pointer; transition: 0.2s; }
             .ds-close:hover { color: #fff; transform: scale(1.1); }
             .ds-title { font-size: 14px; color: var(--text-sub); margin-bottom: 20px; }
             .ds-input-wrapper { display: flex; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
             .ds-input-wrapper input { flex: 1; border: none; background: transparent; color: #fff; padding: 12px 15px; outline: none; font-size: 14px; }
             .ds-input-wrapper input:focus { border-color: var(--primary); }
-            .ds-search-btn { background: transparent; border: none; color: #FFD700; font-weight: bold; cursor: pointer; padding: 0 20px; font-size: 14px; }
+            .ds-search-btn { background: transparent; border: none; color: var(--light-pink); font-weight: bold; cursor: pointer; padding: 0 20px; font-size: 14px; transition: 0.2s; }
             .ds-search-btn:hover { color: #fff; }
         }
 
@@ -414,7 +411,7 @@
     <canvas id="particle-canvas"></canvas>
     
     <div class="desktop-top-logo">
-        Music-免费在线音乐播放器 | <span id="hitokoto-text">加载中...</span>
+        Music - 免费在线音乐播放器 | <span id="hitokoto-text">加载中...</span>
     </div>
 
     <audio id="audio-player" preload="auto"></audio>
@@ -466,7 +463,7 @@
             <div class="action-body" style="padding-top: 0;">
                 <div class="desktop-action-bar desktop-only">
                     <div class="da-tag">当前歌单 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-                    <div class="da-title">播放队列</div>
+                    <div class="da-title" id="queue-list-title">暂无歌单</div>
                     <button class="da-play-all" onclick="if(playQueue.length>0) playSong(playQueue[0].mid, 0)">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 播放全部
                     </button>
@@ -605,6 +602,8 @@
     </div>
 
     <script>
+        window.currentListName = '暂无歌单';
+
         async function fetchHitokoto() {
             try {
                 const res = await fetch('https://60s.viki.moe/v2/hitokoto?encoding=text');
@@ -684,7 +683,6 @@
                 this.speedY = Math.random() * -0.8 - 0.2;
                 this.speedX = (Math.random() - 0.5) * 0.4;
                 
-                // 扩充多达 9 种颜色，提升视觉丰富度
                 const colors = [
                     'rgba(29, 208, 138, ', 'rgba(255, 255, 255, ', 'rgba(56, 189, 248, ', 
                     'rgba(167, 139, 250, ', 'rgba(252, 211, 77, ', 'rgba(244, 63, 94, ',
@@ -698,7 +696,6 @@
 
         function initParticles() {
             particles = [];
-            // 数量大幅增加到 150 个
             for (let i = 0; i < 150; i++) particles.push(new Particle());
         }
 
@@ -858,8 +855,8 @@
                         <div class="playlist-card" onclick="loadPlaylistDetail('${p.id}', '${p.title}')">
                             <img src="${p.picurl || 'https://y.qq.com/mediastyle/global/img/album_300.png'}" alt="cover" loading="lazy">
                             <div>
-                                <div style="font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text-main);">${p.title}</div>
-                                <div style="font-size: 12px; color: var(--text-sub);">${p.song_num || p.listen_num + ' 次播放'}</div>
+                                <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-main);">${p.title}</div>
+                                <div style="font-size: 13px; color: var(--text-sub);">${p.song_num || p.listen_num + ' 次播放'}</div>
                             </div>
                         </div>
                     `).join('');
@@ -908,6 +905,8 @@
 
                 if (allSongs.length > 0) {
                     playQueue = allSongs;
+                    window.currentListName = title || '歌单详情';
+                    
                     const backBtn = `
                         <div class="back-bar">
                             <button class="back-btn" onclick="fetchPlaylists()">
@@ -919,7 +918,7 @@
                     const listHeader = window.innerWidth >= 850 ? `
                         <div class="desktop-action-bar desktop-only">
                             <div class="da-tag">当前歌单 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-                            <div class="da-title">${title || '歌单详情'}</div>
+                            <div class="da-title">${window.currentListName}</div>
                             <button class="da-play-all" onclick="if(playQueue.length>0) playSong(playQueue[0].mid, 0)">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 播放全部
                             </button>
@@ -949,11 +948,12 @@
                 const json = await res.json();
                 if (json.code === 200 && json.data) {
                     playQueue = json.data; 
+                    window.currentListName = word;
                     
                     const listHeader = window.innerWidth >= 850 ? `
                         <div class="desktop-action-bar desktop-only">
                             <div class="da-tag">当前搜索 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-                            <div class="da-title">${word}</div>
+                            <div class="da-title">${window.currentListName}</div>
                             <button class="da-play-all" onclick="if(playQueue.length>0) playSong(playQueue[0].mid, 0)">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 播放全部
                             </button>
@@ -1084,9 +1084,13 @@
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/></svg>', 
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>' 
         ];
+        
         function toggleMode() {
             currentMode = (currentMode + 1) % 3;
-            document.getElementById('mode-btn').innerHTML = modeIcons[currentMode];
+            const modeBtnPc = document.getElementById('mode-btn-pc');
+            const modeBtnMb = document.getElementById('mode-btn'); 
+            if(modeBtnPc) modeBtnPc.innerHTML = modeIcons[currentMode];
+            if(modeBtnMb) modeBtnMb.innerHTML = modeIcons[currentMode];
         }
 
         function prevSong() {
@@ -1175,7 +1179,6 @@
             return `${m}:${s}`;
         }
 
-        // 桌面端音量条控制逻辑
         const volBar = document.getElementById('vol-bar');
         const volInner = document.getElementById('vol-inner');
         let isDraggingVol = false;
@@ -1397,9 +1400,11 @@
         function renderQueue() {
             const mContainer = document.getElementById('queue-list-container');
             const dContainer = document.getElementById('queue-list-desktop');
-            document.getElementById('queue-count').innerText = playQueue.length;
+            const queueTitleEl = document.getElementById('queue-list-title');
             
-            // 移动端渲染
+            document.getElementById('queue-count').innerText = playQueue.length;
+            if (queueTitleEl) queueTitleEl.innerText = window.currentListName;
+            
             if(mContainer) {
                 if(playQueue.length === 0) {
                     mContainer.innerHTML = '<div class="empty-state" style="margin-top:30px; font-size:13px;">队列为空</div>';
@@ -1420,7 +1425,6 @@
                 }
             }
 
-            // PC端渲染
             if(dContainer) {
                 if(playQueue.length === 0) {
                     dContainer.innerHTML = '<div class="empty-state" style="margin-top:10vh;">当前播放队列为空</div>';
@@ -1437,7 +1441,7 @@
                             </div>
                             <div class="desktop-singer" style="${colorStyle}">${song.singer}</div>
                             <div class="desktop-album">
-                                <button class="queue-remove-btn" style="font-size: 16px; line-height: 1; padding: 0 10px;" onclick="removeFromQueue(${i}, event)" title="移除">×</button>
+                                <button class="queue-remove-btn" style="font-size: 20px; line-height: 1; padding: 0 10px;" onclick="removeFromQueue(${i}, event)" title="移除">×</button>
                             </div>
                         </li>`;
                     }).join('');
