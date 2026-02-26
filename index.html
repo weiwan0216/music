@@ -20,19 +20,19 @@
         
         body { color: var(--text-main); height: 100vh; overflow: hidden; background-color: var(--bg-base); }
         
+        /* 增加一层极淡的全局暗色遮罩，保证白色文字在明亮壁纸上依然清晰 */
         body::before {
             content: ""; position: fixed; inset: 0; 
-            background: linear-gradient(135deg, var(--overlay-start) 0%, var(--overlay-end) 100%); 
-            z-index: -2;
-            transition: background 1.5s ease-in-out;
+            background: rgba(0, 0, 0, 0.3); 
+            z-index: -2; pointer-events: none;
         }
 
-        /* 修复1：完全锁死背景图片，不再受JS控制 */
+        /* 锁死指定的背景图片，无模糊滤镜，原图展现 */
         #bg-image {
-            position: fixed; top: -10%; left: -10%; width: 120%; height: 120%;
-            background-image: url('https://music.mcya.cn/images/bg/0.webp') !important;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://z.wiki/u/exONQv2tn') !important;
             background-size: cover; background-position: center;
-            filter: blur(60px) saturate(1.5) brightness(0.6); opacity: 0.8; z-index: -3; 
+            opacity: 1; z-index: -3; 
         }
         
         #particle-canvas {
@@ -46,7 +46,7 @@
             background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
             position: fixed; top: 0; width: 100%; z-index: 20;
         }
-        .nav-item { font-size: 14px; color: var(--text-sub); cursor: pointer; transition: 0.3s; font-weight: 500; letter-spacing: 1px; position: relative; }
+        .nav-item { font-size: 16px; color: var(--text-sub); cursor: pointer; transition: 0.3s; font-weight: 500; letter-spacing: 1px; position: relative; }
         .nav-item:hover { color: #fff; }
         .nav-item.active { color: var(--text-main); font-weight: 600; text-shadow: 0 0 15px rgba(255,255,255,0.4); }
         .nav-item.active::after { content: ''; display: block; width: 30%; height: 3px; background: var(--primary); margin: 6px auto 0; border-radius: 3px; box-shadow: 0 0 12px var(--primary); transition: width 0.3s ease; }
@@ -66,8 +66,8 @@
         .cover-img.playing { animation-play-state: running; }
         
         .song-info { text-align: center; width: 100%; max-width: 500px; }
-        .song-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 4px 15px rgba(0,0,0,0.8); }
-        .song-singer { font-size: 13px; color: var(--text-sub); display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500; }
+        .song-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 4px 15px rgba(0,0,0,0.8); }
+        .song-singer { font-size: 14px; color: var(--text-sub); display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500; }
         
         .quality-badge { 
             font-size: 10px; background: rgba(255,235,59,0.15); padding: 2px 6px; 
@@ -133,12 +133,12 @@
         .input-group { display: flex; gap: 12px; position: relative; }
         .input-group input {
             flex: 1; padding: 14px 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); outline: none;
-            background: rgba(0,0,0,0.3); color: #fff; font-size: 14px; transition: all 0.3s; box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.3); color: #fff; font-size: 15px; transition: all 0.3s; box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
         }
         .input-group input:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
         .input-group button {
             padding: 0 24px; border-radius: 14px; border: none; background: var(--primary);
-            color: #000; font-weight: 700; cursor: pointer; font-size: 14px; box-shadow: 0 4px 20px rgba(29, 208, 138, 0.3); transition: 0.2s; white-space: nowrap;
+            color: #000; font-weight: 700; cursor: pointer; font-size: 15px; box-shadow: 0 4px 20px rgba(29, 208, 138, 0.3); transition: 0.2s; white-space: nowrap;
         }
         .input-group button:active { transform: scale(0.95); }
 
@@ -277,110 +277,117 @@
         /* ========================================================= */
         @media (min-width: 850px) {
             
+            /* 一言文字区域：留出充足空间，进一步降低透明度显得更高级 */
             .desktop-top-logo {
-                display: block; position: fixed; top: 18px; left: 3vw;
-                color: rgba(255, 255, 255, 0.4); font-size: 12px; font-weight: 600;
+                display: block; position: fixed; top: 15px; left: 30px;
+                color: rgba(255, 255, 255, 0.4); font-size: 12px; font-weight: 500;
                 z-index: 50; letter-spacing: 1px; pointer-events: none; 
             }
 
-            /* 修复3：缩进并调整 padding 避免按钮压在边线上 */
+            /* 左上角导航区：缩进内边距，坐标下移防止碰边 */
             .header {
-                justify-content: flex-start; gap: 8px; padding: 18px 25px 0 25px; 
+                justify-content: flex-start; gap: 8px; padding: 0; margin: 0;
                 background: transparent; border: none;
-                position: absolute; left: 3vw; width: 51vw; top: 50px; z-index: 20;
+                position: absolute; left: 40px; top: 40px; width: 51vw; z-index: 20;
             }
             
-            /* 修复2：气泡圆角指示样式 (带小尾巴) */
+            /* 导航按钮：还原图二的气泡圆角矩形样式，缩小字号与高度 */
             .nav-item { 
-                font-size: 13px; padding: 6px 14px; height: 28px; border-radius: 6px; 
-                background: rgba(255,255,255,0.05); 
+                font-size: 12px; padding: 0 16px; height: 26px; border-radius: 6px; 
+                background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8);
                 display: flex; align-items: center; justify-content: center; line-height: 1; 
                 transition: 0.2s; position: relative;
             }
-            .nav-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+            .nav-item:hover { background: rgba(255,255,255,0.15); color: #fff; }
             .nav-item.active { background: var(--primary); color: #000; font-weight: 600; }
-            /* 激活状态下方的小倒三角气泡 */
+            /* 底部小倒三角气泡尾巴 */
             .nav-item.active::after { 
-                content: ''; display: block; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); 
-                width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid var(--primary); 
+                content: ''; display: block; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); 
+                width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--primary); 
                 background: none; box-shadow: none; border-radius: 0; transition: none;
             }
 
-            /* 修复4：降低全局卡片背景的透明度 */
+            /* 列表与操作区：彻底取消背景框，做到100%全透明穿透 */
             .action-panel {
-                left: 3vw; width: 51vw; top: 50px; bottom: 110px; padding: 65px 20px 10px;
+                left: 3vw; width: 51vw; top: 80px; bottom: 80px; padding: 0 20px 10px;
                 transform: translateY(0) !important; opacity: 1 !important; pointer-events: auto !important;
-                background: rgba(30, 30, 30, 0.15) !important; 
-                border: 1px solid rgba(255,255,255,0.05) !important; 
-                border-radius: 16px; backdrop-filter: blur(30px) !important; -webkit-backdrop-filter: blur(30px) !important;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                background: transparent !important; 
+                border: none !important; 
+                border-radius: 0; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+                box-shadow: none !important;
             }
             .panel-content { max-width: 100%; }
 
+            /* 右侧播放器：全透明穿透，大幅上移组件留出极宽裕的歌词空间 */
             .main-player {
-                left: auto; right: 3vw; width: 41vw; top: 50px; bottom: 110px; padding-top: 20px; 
-                background: rgba(30, 30, 30, 0.15) !important; 
-                border: 1px solid rgba(255,255,255,0.05) !important; 
-                border-radius: 16px; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-                box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 5;
+                left: auto; right: 3vw; width: 41vw; top: 80px; bottom: 80px; padding-top: 0; 
+                background: transparent !important; 
+                border: none !important; 
+                border-radius: 0; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+                box-shadow: none !important; z-index: 5;
             }
+            /* 唱片圆形封面：极致缩小到 140px，腾出空间 */
             .record-container { width: 140px; height: 140px; max-width: none; max-height: none; }
-            .record-wrapper { margin: 0 auto 15px; }
-            .song-title { font-size: 20px; margin-bottom: 4px; } 
+            .record-wrapper { margin: 0 auto 10px; }
+            .song-title { font-size: 18px; margin-bottom: 4px; text-shadow: none; } 
             .song-singer { font-size: 12px; }
 
-            /* 修复5：重构底部控制栏为单行横向布局（图三） */
+            /* 底部控制栏：图三样式重构。取消框线和背景色，横向单行布局 */
             .footer { 
-                left: 3vw; right: 3vw; width: auto; bottom: 15px; height: 70px;
-                background: rgba(30, 30, 30, 0.25) !important; 
-                border: 1px solid rgba(255,255,255,0.05) !important; 
-                border-radius: 16px; backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                display: flex; flex-direction: row; align-items: center; padding: 0 30px;
+                left: 0; right: 0; width: 100%; bottom: 0; height: 70px;
+                background: transparent !important; 
+                border: none !important; 
+                border-radius: 0; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+                box-shadow: none !important;
+                display: flex; flex-direction: row; align-items: center; padding: 0 40px; z-index: 30;
             }
-            .footer-bottom { display: contents; } /* 扁平化容器使子元素参与全局flex */
-            .footer-left { display: none; } /* 桌面端隐去左侧迷你封面 */
+            .footer-bottom { display: contents; } 
+            .footer-left { display: none; } /* 隐去左侧迷你封面，因为没位置了 */
             
-            /* 控制按钮放在最左边 */
-            .footer-center { order: -1; flex: none; gap: 20px; }
+            /* 控制按钮放在最左边，紧凑排列 */
+            .footer-center { order: -1; flex: none; gap: 15px; display: flex; align-items: center; justify-content: center; }
             .footer-center .ctrl-btn { margin: 0; }
+            .play-btn svg { width: 28px; height: 28px; }
+            .prev-next-svg { width: 18px; height: 18px; }
             
-            /* 进度条放中间 */
-            .progress-container { order: 2; flex: 1; margin: 0 25px; }
+            /* 进度条居中，拉长 */
+            .progress-container { order: 2; flex: 1; margin: 0 25px; font-size: 11px; }
             
-            /* 右侧放音量和下载 */
-            .footer-right { order: 3; flex: none; width: auto; gap: 20px; }
+            /* 音量与下载放右侧 */
+            .footer-right { order: 3; flex: none; width: auto; gap: 20px; display: flex; align-items: center; justify-content: flex-end;}
 
-            /* 桌面端音量控制栏样式 */
+            /* 桌面端音量条独有样式 */
             .volume-container { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.7); }
-            .vol-icon { width: 18px; height: 18px; fill: currentColor; }
-            .vol-bar { width: 80px; height: 16px; display: flex; align-items: center; cursor: pointer; position: relative; touch-action: none;}
+            .vol-icon { width: 16px; height: 16px; fill: currentColor; }
+            .vol-bar { width: 70px; height: 16px; display: flex; align-items: center; cursor: pointer; position: relative; touch-action: none;}
             .vol-track { width: 100%; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; pointer-events: none; position: relative;}
             .vol-inner { height: 100%; background: var(--primary); width: 100%; border-radius: 2px; position: relative; pointer-events: none; }
             .vol-dot { position: absolute; right: -5px; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; background: #fff; border-radius: 50%; pointer-events: none; }
             .vol-bar:active .vol-dot { transform: translateY(-50%) scale(1.3); }
 
-            /* 列表顶部操作按钮：带半透明背景的圆角矩形 */
-            .desktop-action-bar { display: flex; align-items: center; margin-bottom: 15px; gap: 8px; }
-            .da-tag { background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; color: rgba(255,255,255,0.8); font-size: 12px; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: 0.2s; }
-            .da-tag:hover { background: rgba(255,255,255,0.1); color: #fff; }
-            .da-title { background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; color: #ff66a3; font-weight: normal; font-size: 12px; display: flex; align-items: center; }
-            .da-play-all { background: rgba(255,255,255,0.05); border: none; padding: 6px 12px; border-radius: 6px; color: rgba(255,255,255,0.8); font-size: 12px; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: 0.2s; }
+            /* 列表顶部操作按钮：图二的精巧小标签圆角矩形 */
+            .desktop-action-bar { display: flex; align-items: center; margin-bottom: 10px; gap: 8px; }
+            .da-tag { background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 4px; color: rgba(255,255,255,0.8); font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: 0.2s; }
+            .da-tag:hover { background: rgba(255,255,255,0.12); color: #fff; }
+            .da-title { background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 4px; color: #ff66a3; font-weight: normal; font-size: 11px; display: flex; align-items: center; }
+            .da-play-all { background: rgba(255,255,255,0.06); border: none; padding: 4px 10px; border-radius: 4px; color: rgba(255,255,255,0.8); font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: 0.2s; }
             .da-play-all:hover { background: var(--primary); color: #000; }
 
-            .desktop-list-header { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; padding: 8px 15px; color: rgba(255,255,255,0.4); font-size: 12px; font-weight: bold; margin-bottom: 4px; align-items: center; }
-            .song-item { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; align-items: center; padding: 8px 15px; border-radius: 8px; margin-bottom: 0px; }
-            .song-item:hover { background: rgba(255,255,255,0.08); }
+            /* 列表表头及网格：极限缩小间距，提升单屏显示数量 */
+            .desktop-list-header { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; padding: 6px 10px; color: rgba(255,255,255,0.4); font-size: 11px; font-weight: bold; margin-bottom: 2px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);}
+            .song-item { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; align-items: center; padding: 6px 10px; border-radius: 6px; margin-bottom: 0px; background: transparent; border-bottom: none;}
+            .song-item:hover { background: rgba(255,255,255,0.06); }
             
             .song-item-cover { display: none; } 
             .song-item-info { display: block; overflow: hidden; padding-right: 15px; }
-            .song-item-title { font-size: 13px; font-weight: normal; }
-            .desktop-singer, .desktop-album { font-size: 12px; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px; }
+            .song-item-title { font-size: 12px; font-weight: normal; }
+            .desktop-singer, .desktop-album { font-size: 11px; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px; }
             
             .mobile-only { display: none !important; }
             .queue-modal { display: none !important; }
             #queue-toggle-btn { display: none !important; }
 
+            /* 居中搜索弹窗 */
             .desktop-search-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; }
             .ds-modal-content { background: rgba(35, 35, 35, 0.85); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; width: 450px; padding: 30px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
             .ds-close { position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--text-sub); font-size: 24px; cursor: pointer; transition: 0.2s; }
@@ -461,7 +468,7 @@
                     <div class="da-tag">当前歌单 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
                     <div class="da-title">播放队列</div>
                     <button class="da-play-all" onclick="if(playQueue.length>0) playSong(playQueue[0].mid, 0)">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 播放全部
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 播放全部
                     </button>
                 </div>
                 <div class="desktop-list-header">
@@ -524,6 +531,21 @@
     </div>
 
     <div class="footer" id="global-footer">
+        <div class="footer-center desktop-only">
+            <button class="ctrl-btn" onclick="prevSong()">
+                <svg class="prev-next-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+            </button>
+            <button class="ctrl-btn play-btn" id="play-pause-btn-pc" onclick="togglePlay()">
+                <svg id="play-icon-pc" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="ctrl-btn" onclick="nextSong()">
+                <svg class="prev-next-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+            </button>
+            <button class="ctrl-btn" id="mode-btn-pc" onclick="toggleMode()" title="切换播放模式">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+            </button>
+        </div>
+
         <div class="progress-container">
             <span id="time-current">00:00</span>
             <div class="progress-bar" id="progress-bar">
@@ -536,7 +558,7 @@
             <span id="time-total">00:00</span>
         </div>
         
-        <div class="footer-bottom">
+        <div class="footer-bottom mobile-only">
             <div class="footer-left">
                 <img src="https://y.qq.com/mediastyle/global/img/album_300.png" id="f-cover" class="footer-cover" alt="cover">
                 <div class="footer-info">
@@ -545,38 +567,32 @@
             </div>
             
             <div class="footer-center">
-                <button class="ctrl-btn" onclick="prevSong()">
-                    <svg class="prev-next-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-                </button>
-                <button class="ctrl-btn play-btn" id="play-pause-btn" onclick="togglePlay()">
-                    <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <button class="ctrl-btn play-btn" id="play-pause-btn-mb" onclick="togglePlay()">
+                    <svg id="play-icon-mb" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
                 <button class="ctrl-btn" onclick="nextSong()">
                     <svg class="prev-next-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
                 </button>
-                <button class="ctrl-btn" id="mode-btn" onclick="toggleMode()" title="切换播放模式">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
-                </button>
             </div>
+        </div>
 
-            <div class="footer-right">
-                <div class="volume-container desktop-only">
-                    <svg class="vol-icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                    <div class="vol-bar" id="vol-bar">
-                        <div class="vol-track">
-                            <div class="vol-inner" id="vol-inner">
-                                <div class="vol-dot"></div>
-                            </div>
+        <div class="footer-right">
+            <div class="volume-container desktop-only">
+                <svg class="vol-icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                <div class="vol-bar" id="vol-bar">
+                    <div class="vol-track">
+                        <div class="vol-inner" id="vol-inner">
+                            <div class="vol-dot"></div>
                         </div>
                     </div>
                 </div>
-                <button class="ctrl-btn" onclick="downloadCurrentSong()" title="下载高清音源">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                </button>
-                <button class="ctrl-btn mobile-only" id="queue-toggle-btn" onclick="toggleQueue()" title="播放队列">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/></svg>
-                </button>
             </div>
+            <button class="ctrl-btn" onclick="downloadCurrentSong()" title="下载高清音源">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            </button>
+            <button class="ctrl-btn mobile-only" id="queue-toggle-btn" onclick="toggleQueue()" title="播放队列">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/></svg>
+            </button>
         </div>
     </div>
 
@@ -667,7 +683,13 @@
                 this.size = Math.random() * 2.5 + 1;
                 this.speedY = Math.random() * -0.8 - 0.2;
                 this.speedX = (Math.random() - 0.5) * 0.4;
-                const colors = ['rgba(29, 208, 138, ', 'rgba(255, 255, 255, ', 'rgba(56, 189, 248, ', 'rgba(167, 139, 250, ', 'rgba(252, 211, 77, '];
+                
+                // 扩充多达 9 种颜色，提升视觉丰富度
+                const colors = [
+                    'rgba(29, 208, 138, ', 'rgba(255, 255, 255, ', 'rgba(56, 189, 248, ', 
+                    'rgba(167, 139, 250, ', 'rgba(252, 211, 77, ', 'rgba(244, 63, 94, ',
+                    'rgba(16, 185, 129, ', 'rgba(249, 115, 22, ', 'rgba(139, 92, 246, '
+                ];
                 this.colorStr = colors[Math.floor(Math.random() * colors.length)];
                 this.life = Math.random() * 0.6 + 0.2;
                 this.opacity = 0; this.fadeState = 1; 
@@ -676,7 +698,8 @@
 
         function initParticles() {
             particles = [];
-            for (let i = 0; i < 50; i++) particles.push(new Particle());
+            // 数量大幅增加到 150 个
+            for (let i = 0; i < 150; i++) particles.push(new Particle());
         }
 
         function animateParticles() {
@@ -699,7 +722,8 @@
         let currentQualityId = 14; 
 
         const audio = document.getElementById('audio-player');
-        const playBtn = document.getElementById('play-pause-btn');
+        const playBtnPc = document.getElementById('play-pause-btn-pc');
+        const playBtnMb = document.getElementById('play-pause-btn-mb');
         const coverImg = document.getElementById('p-cover');
         const footerCover = document.getElementById('f-cover');
         const actionPanel = document.getElementById('action-panel');
@@ -834,8 +858,8 @@
                         <div class="playlist-card" onclick="loadPlaylistDetail('${p.id}', '${p.title}')">
                             <img src="${p.picurl || 'https://y.qq.com/mediastyle/global/img/album_300.png'}" alt="cover" loading="lazy">
                             <div>
-                                <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-main);">${p.title}</div>
-                                <div style="font-size: 13px; color: var(--text-sub);">${p.song_num || p.listen_num + ' 次播放'}</div>
+                                <div style="font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text-main);">${p.title}</div>
+                                <div style="font-size: 12px; color: var(--text-sub);">${p.song_num || p.listen_num + ' 次播放'}</div>
                             </div>
                         </div>
                     `).join('');
@@ -887,9 +911,9 @@
                     const backBtn = `
                         <div class="back-bar">
                             <button class="back-btn" onclick="fetchPlaylists()">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> 返回歌单
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> 返回歌单
                             </button>
-                            <span style="font-weight: 600; font-size: 15px;">当前歌单详情</span>
+                            <span style="font-weight: 600; font-size: 14px;">当前歌单详情</span>
                         </div>`;
                         
                     const listHeader = window.innerWidth >= 850 ? `
@@ -897,7 +921,7 @@
                             <div class="da-tag">当前歌单 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
                             <div class="da-title">${title || '歌单详情'}</div>
                             <button class="da-play-all" onclick="if(playQueue.length>0) playSong(playQueue[0].mid, 0)">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 播放全部
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 播放全部
                             </button>
                         </div>
                         <div class="desktop-list-header">
@@ -931,7 +955,7 @@
                             <div class="da-tag">当前搜索 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
                             <div class="da-title">${word}</div>
                             <button class="da-play-all" onclick="if(playQueue.length>0) playSong(playQueue[0].mid, 0)">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 播放全部
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 播放全部
                             </button>
                         </div>
                         <div class="desktop-list-header">
@@ -1045,18 +1069,20 @@
         }
 
         function updatePlayState() {
-            document.getElementById('play-pause-btn').innerHTML = isPlaying 
-                ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' 
-                : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+            const svgPlay = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+            const svgPause = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+            
+            if (playBtnPc) playBtnPc.innerHTML = isPlaying ? svgPause : svgPlay;
+            if (playBtnMb) playBtnMb.innerHTML = isPlaying ? svgPause : svgPlay;
             
             if (isPlaying) { coverImg.classList.add('playing'); footerCover.classList.add('playing'); } 
             else { coverImg.classList.remove('playing'); footerCover.classList.remove('playing'); }
         }
 
         const modeIcons = [
-            '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>', 
-            '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/></svg>', 
-            '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>' 
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>', 
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/></svg>', 
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>' 
         ];
         function toggleMode() {
             currentMode = (currentMode + 1) % 3;
@@ -1149,7 +1175,7 @@
             return `${m}:${s}`;
         }
 
-        // 音量调节逻辑
+        // 桌面端音量条控制逻辑
         const volBar = document.getElementById('vol-bar');
         const volInner = document.getElementById('vol-inner');
         let isDraggingVol = false;
@@ -1411,7 +1437,7 @@
                             </div>
                             <div class="desktop-singer" style="${colorStyle}">${song.singer}</div>
                             <div class="desktop-album">
-                                <button class="queue-remove-btn" style="font-size: 20px; line-height: 1; padding: 0 10px;" onclick="removeFromQueue(${i}, event)" title="移除">×</button>
+                                <button class="queue-remove-btn" style="font-size: 16px; line-height: 1; padding: 0 10px;" onclick="removeFromQueue(${i}, event)" title="移除">×</button>
                             </div>
                         </li>`;
                     }).join('');
