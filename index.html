@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>企鹅 音乐 Web版</title>
+    <title>企鹅音乐 Web版</title>
     <style>
         :root {
             --primary: #1DD08A; 
@@ -22,15 +22,15 @@
         
         body::before {
             content: ""; position: fixed; inset: 0; 
-            background: linear-gradient(135deg, var(--overlay-start) 0%, var(--overlay-end) 100%); 
-            z-index: -2;
-            transition: background 1.5s ease-in-out;
+            background: rgba(0, 0, 0, 0.3); 
+            z-index: -2; pointer-events: none;
         }
 
         #bg-image {
-            position: fixed; top: -10%; left: -10%; width: 120%; height: 120%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://z.wiki/u/exONQv2tn') !important;
             background-size: cover; background-position: center;
-            filter: blur(60px) saturate(1.5) brightness(0.6); opacity: 0.8; z-index: -3; transition: background-image 1s ease-in-out;
+            opacity: 1; z-index: -3; 
         }
         
         #particle-canvas {
@@ -180,7 +180,7 @@
 
         .back-bar { display: flex; align-items: center; margin-bottom: 15px; position: sticky; top: 0; background: transparent; z-index: 5; padding: 15px 0; margin-top: -10px; border-bottom: none; }
         .back-btn { padding: 8px 16px; background: rgba(255,255,255,0.1); border: none; color: #fff; border-radius: 20px; cursor:pointer; margin-right: 15px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
-        .back-btn:hover { background: var(--primary); color: #000; }
+        .back-btn:hover { background: #FF66A3; color: #fff; }
 
         .queue-modal {
             position: fixed; bottom: 125px; right: 20px; width: 320px; max-height: 50vh;
@@ -226,12 +226,11 @@
         ::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
         /* ========================================================= */
-        /* 核心重构：移动端专属底部控制栏 (严格贴合图二)             */
+        /* 移动端专属底部控制栏：背景全透明设置                         */
         /* ========================================================= */
         .footer-mb {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 105px;
-            background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
-            border-top: 1px solid rgba(255,255,255,0.08); box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
+            background: transparent;
             display: flex; flex-direction: column; justify-content: center; padding: 10px 15px; z-index: 30; gap: 8px;
         }
         .mb-progress-row { display: flex; align-items: center; width: 100%; gap: 10px; }
@@ -255,7 +254,7 @@
         .mb-ctrl-buttons .play-btn svg { width: 30px; height: 30px; color: #fff; }
 
         /* ========================================================= */
-        /* 核心重构：电脑端专属底部控制栏 (严格贴合图一，无播放列表键)*/
+        /* 电脑端专属 控制栏 */
         /* ========================================================= */
         .footer-pc {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
@@ -337,7 +336,7 @@
 
             .desktop-list-header { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; padding: 6px 10px; color: rgba(255,255,255,0.4); font-size: 11px; font-weight: bold; margin-bottom: 2px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);}
             .col-album { text-align: center; }
-            .desktop-album { text-align: center; display: flex; justify-content: center; align-items: center; }
+            .desktop-album { text-align: center; font-size: 11px; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
             
             .song-item { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; align-items: center; padding: 6px 10px; border-radius: 6px; margin-bottom: 0px; background: transparent; border-bottom: none;}
             .song-item:hover { background: rgba(255,255,255,0.06); }
@@ -350,16 +349,19 @@
             .mobile-only { display: none !important; }
             .queue-modal { display: none !important; }
 
+            /* 重新设计的桌面端搜索弹窗，贴合参考图 */
             .desktop-search-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; }
-            .ds-modal-content { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; width: 450px; padding: 30px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
-            .ds-close { position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--text-sub); font-size: 24px; cursor: pointer; transition: 0.2s; }
+            .ds-modal-content { background: rgba(45, 55, 72, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; width: 480px; padding: 20px 24px 30px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+            .ds-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+            .ds-title { font-size: 15px; color: #fff; font-weight: bold; letter-spacing: 1px; }
+            .ds-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 20px; cursor: pointer; transition: 0.2s; line-height: 1; padding: 0; }
             .ds-close:hover { color: #fff; transform: scale(1.1); }
-            .ds-title { font-size: 14px; color: var(--text-sub); margin-bottom: 20px; }
-            .ds-input-wrapper { display: flex; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
-            .ds-input-wrapper input { flex: 1; border: none; background: transparent; color: #fff; padding: 12px 15px; outline: none; font-size: 14px; }
-            .ds-input-wrapper input:focus { border-color: var(--primary); }
-            .ds-search-btn { background: transparent; border: none; color: #FF66A3; font-weight: bold; cursor: pointer; padding: 0 20px; font-size: 14px; }
-            .ds-search-btn:hover { color: #fff; }
+            .ds-input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.15); border-radius: 12px; transition: 0.3s; padding: 4px 6px 4px 20px; }
+            .ds-input-wrapper:focus-within { background: rgba(255, 255, 255, 0.22); }
+            .ds-input-wrapper input { flex: 1; border: none; background: transparent; color: #fff; padding: 12px 0; outline: none; font-size: 15px; text-align: center; }
+            .ds-input-wrapper input::placeholder { color: rgba(255,255,255,0.5); font-weight: normal; }
+            .ds-search-btn { background: transparent; border: none; color: #FFD700; font-weight: bold; cursor: pointer; padding: 10px 16px; font-size: 15px; letter-spacing: 1px; transition: 0.2s; }
+            .ds-search-btn:hover { text-shadow: 0 0 10px rgba(255, 215, 0, 0.6); transform: scale(1.05); }
         }
 
         @media (max-width: 849px) {
@@ -378,15 +380,17 @@
     <canvas id="particle-canvas"></canvas>
     
     <div class="desktop-top-logo">
-        Music - 免费在线音乐播放器 <span>|</span> <span id="hitokoto-text">加载中...</span>
+        Music-免费在线音乐播放器 | <span id="hitokoto-text">加载中...</span>
     </div>
 
     <audio id="audio-player" preload="auto"></audio>
 
-    <div class="desktop-search-overlay" id="desktop-search-overlay">
+    <div class="desktop-search-overlay" id="desktop-search-overlay" onclick="if(event.target === this) closeDesktopSearch()">
         <div class="ds-modal-content">
-            <button class="ds-close" onclick="closeDesktopSearch()">×</button>
-            <div class="ds-title">支持搜索：歌手、歌名、专辑</div>
+            <div class="ds-header">
+                <div class="ds-title">支持搜索：歌手、歌名、专辑</div>
+                <button class="ds-close" onclick="closeDesktopSearch()">×</button>
+            </div>
             <div class="ds-input-wrapper">
                 <input type="text" id="ds-search-input" placeholder="输入你想听的内容..." onkeydown="if(event.key==='Enter') executeDesktopSearch()">
                 <button class="ds-search-btn" onclick="executeDesktopSearch()">搜索</button>
@@ -562,8 +566,11 @@
 
         document.addEventListener('click', (e) => {
             const queueModal = document.getElementById('queue-modal');
+            const toggleBtn = document.getElementById('queue-toggle-btn');
             
-            if (window.innerWidth < 850 && queueModal.classList.contains('show') && !queueModal.contains(e.target) && !e.target.closest('[onclick="toggleQueue()"]')) {
+            if (window.innerWidth < 850 && queueModal.classList.contains('show') && 
+                !queueModal.contains(e.target) && 
+                toggleBtn && !toggleBtn.contains(e.target)) {
                 queueModal.classList.remove('show');
             }
         });
@@ -622,12 +629,7 @@
                 this.size = Math.random() * 2.5 + 1;
                 this.speedY = Math.random() * -0.8 - 0.2;
                 this.speedX = (Math.random() - 0.5) * 0.4;
-                
-                const colors = [
-                    'rgba(29, 208, 138, ', 'rgba(255, 255, 255, ', 'rgba(56, 189, 248, ', 
-                    'rgba(167, 139, 250, ', 'rgba(252, 211, 77, ', 'rgba(244, 63, 94, ',
-                    'rgba(16, 185, 129, ', 'rgba(249, 115, 22, ', 'rgba(139, 92, 246, '
-                ];
+                const colors = ['rgba(29, 208, 138, ', 'rgba(255, 255, 255, ', 'rgba(56, 189, 248, ', 'rgba(167, 139, 250, ', 'rgba(252, 211, 77, ', 'rgba(244, 63, 94, ', 'rgba(16, 185, 129, ', 'rgba(249, 115, 22, ', 'rgba(139, 92, 246, '];
                 this.colorStr = colors[Math.floor(Math.random() * colors.length)];
                 this.life = Math.random() * 0.6 + 0.2;
                 this.opacity = 0; this.fadeState = 1; 
@@ -659,6 +661,8 @@
         let currentQualityId = 14; 
 
         const audio = document.getElementById('audio-player');
+        const playBtnPc = document.getElementById('play-pause-btn-pc');
+        const playBtnMb = document.getElementById('play-pause-btn-mb');
         const coverImg = document.getElementById('p-cover');
         const actionPanel = document.getElementById('action-panel');
         const smartBox = document.getElementById('smart-box');
@@ -684,8 +688,11 @@
                             audio.src = currentSongUrl;
                             audio.currentTime = currentTime;
                             if(isPlaying) audio.play();
+                            
+                            currentQualityId = 7;
+                            
                             const qBadge = document.getElementById('p-quality');
-                            if(qBadge) qBadge.innerText = '标准音质 (降级)';
+                            if(qBadge) qBadge.innerText = json.data.quality || '标准音质';
                         }
                     } catch(err) {}
                 }
@@ -789,7 +796,7 @@
                         <div class="song-item-singer mobile-only">${song.singer} ${song.album ? `· ${song.album}` : ''}</div>
                     </div>
                     <div class="desktop-singer">${song.singer}</div>
-                    <div class="desktop-album">${song.album || '未知'}</div>
+                    <div class="desktop-album" title="${song.album || '未知'}">${song.album || '未知'}</div>
                 </li>`
             }).join('') + `</ul>`;
         }
@@ -882,7 +889,6 @@
                             <div class="col-album">专辑</div>
                         </div>` : '';
                     container.innerHTML = backBtn + listHeader + renderSongsHTML(allSongs);
-                    if(document.getElementById('player-da-title')) document.getElementById('player-da-title').innerText = title || '歌单详情';
                 } else {
                     container.innerHTML = `<div class="back-bar"><button class="back-btn" onclick="fetchPlaylists()">← 返回</button></div><div class="empty-state">未能获取到歌曲，可能歌单已被设为私密</div>`;
                 }
@@ -914,7 +920,6 @@
                             <div class="col-album">专辑</div>
                         </div>` : '';
                     container.innerHTML = listHeader + renderSongsHTML(json.data);
-                    if(document.getElementById('player-da-title')) document.getElementById('player-da-title').innerText = word;
                 } else {
                     container.innerHTML = '<div class="empty-state">未找到相关歌曲</div>';
                 }
@@ -1383,6 +1388,7 @@
             const dContainer = document.getElementById('queue-list-desktop');
             document.getElementById('queue-count').innerText = playQueue.length;
             
+            // 移动端渲染
             if(mContainer) {
                 if(playQueue.length === 0) {
                     mContainer.innerHTML = '<div class="empty-state" style="margin-top:30px; font-size:13px;">队列为空</div>';
@@ -1403,6 +1409,7 @@
                 }
             }
 
+            // PC端渲染
             if(dContainer) {
                 if(playQueue.length === 0) {
                     dContainer.innerHTML = '<div class="empty-state" style="margin-top:10vh;">当前播放队列为空</div>';
@@ -1419,7 +1426,7 @@
                             </div>
                             <div class="desktop-singer" style="${colorStyle}">${song.singer}</div>
                             <div class="desktop-album">
-                                <button class="queue-remove-btn" style="font-size: 16px; line-height: 1; padding: 0 10px;" onclick="removeFromQueue(${i}, event)" title="移除">×</button>
+                                <button class="queue-remove-btn" style="font-size: 20px; line-height: 1; padding: 0 10px;" onclick="removeFromQueue(${i}, event)" title="移除">×</button>
                             </div>
                         </li>`;
                     }).join('');
