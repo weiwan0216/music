@@ -274,10 +274,16 @@
             .header {
                 justify-content: flex-start; gap: 15px; padding: 30px 40px 10px; width: 60%; background: none;
             }
-            .nav-item { font-size: 14px; padding: 8px 20px; border-radius: 20px; background: rgba(255,255,255,0.05); }
+            
+            /* 修正1：确保按钮内部文字完美居中，激活颜色统一为主题绿(--primary) */
+            .nav-item { 
+                font-size: 14px; padding: 0 20px; height: 36px; border-radius: 20px; 
+                background: rgba(255,255,255,0.05); 
+                display: flex; align-items: center; justify-content: center; line-height: 1; 
+            }
             .nav-item:hover { background: rgba(255,255,255,0.15); }
-            .nav-item.active { background: rgba(255, 60, 80, 0.85); color: #fff; font-weight: normal; }
-            .nav-item.active::after { display: none; } /* 移除下划线 */
+            .nav-item.active { background: var(--primary); color: #000; font-weight: 600; }
+            .nav-item.active::after { display: none; }
 
             /* 右侧：播放封面与歌词区 */
             .main-player {
@@ -297,7 +303,10 @@
             .desktop-list-header {
                 display: grid; grid-template-columns: 50px 2fr 1.5fr 1.5fr; padding: 12px 15px; 
                 color: rgba(255,255,255,0.4); font-size: 13px; font-weight: bold; margin-bottom: 5px;
+                align-items: center; /* 修正2：使表头内所有文字垂直对齐 */
             }
+            .col-idx { padding-left: 5px; } /* 修正2：使#号向右缩进，与下方数字垂直对齐 */
+            
             .song-item {
                 display: grid; grid-template-columns: 50px 2fr 1.5fr 1.5fr; align-items: center; 
                 padding: 12px 15px; border-radius: 8px; margin-bottom: 2px;
@@ -316,6 +325,9 @@
             .mobile-only { display: none !important; }
             /* 隐藏右下角的队列弹窗，重定向到左侧面板 */
             .queue-modal { display: none !important; }
+            
+            /* 修正3：桌面端隐藏下方控制栏最右侧的【播放列表(队列)】按钮 */
+            #queue-toggle-btn { display: none !important; }
 
             /* PC 独立搜索悬浮窗 */
             .desktop-search-overlay {
