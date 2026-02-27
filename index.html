@@ -226,12 +226,11 @@
         ::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
         /* ========================================================= */
-        /* 移动端专属底部控制栏 */
+        /* 移动端专属底部控制栏：背景全透明设置                         */
         /* ========================================================= */
         .footer-mb {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 105px;
-            background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
-            border-top: 1px solid rgba(255,255,255,0.08); box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
+            background: transparent;
             display: flex; flex-direction: column; justify-content: center; padding: 10px 15px; z-index: 30; gap: 8px;
         }
         .mb-progress-row { display: flex; align-items: center; width: 100%; gap: 10px; }
@@ -350,7 +349,7 @@
             .mobile-only { display: none !important; }
             .queue-modal { display: none !important; }
 
-            /* 桌面端弹窗重构为带标题栏与分割线的居中样式 */
+            /* 重新设计的桌面端搜索弹窗，贴合参考图 */
             .desktop-search-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; }
             .ds-modal-content { background: rgba(45, 55, 72, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; width: 480px; padding: 20px 24px 30px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
             .ds-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
@@ -359,7 +358,6 @@
             .ds-close:hover { color: #fff; transform: scale(1.1); }
             .ds-input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.15); border-radius: 12px; transition: 0.3s; padding: 4px 6px 4px 20px; }
             .ds-input-wrapper:focus-within { background: rgba(255, 255, 255, 0.22); }
-            /* 输入文本居中显示 */
             .ds-input-wrapper input { flex: 1; border: none; background: transparent; color: #fff; padding: 12px 0; outline: none; font-size: 15px; text-align: center; }
             .ds-input-wrapper input::placeholder { color: rgba(255,255,255,0.5); font-weight: normal; }
             .ds-search-btn { background: transparent; border: none; color: #FFD700; font-weight: bold; cursor: pointer; padding: 10px 16px; font-size: 15px; letter-spacing: 1px; transition: 0.2s; }
@@ -568,8 +566,11 @@
 
         document.addEventListener('click', (e) => {
             const queueModal = document.getElementById('queue-modal');
+            const toggleBtn = document.getElementById('queue-toggle-btn');
             
-            if (window.innerWidth < 850 && queueModal.classList.contains('show') && !queueModal.contains(e.target) && !e.target.closest('[onclick="toggleQueue()"]')) {
+            if (window.innerWidth < 850 && queueModal.classList.contains('show') && 
+                !queueModal.contains(e.target) && 
+                toggleBtn && !toggleBtn.contains(e.target)) {
                 queueModal.classList.remove('show');
             }
         });
@@ -628,7 +629,7 @@
                 this.size = Math.random() * 2.5 + 1;
                 this.speedY = Math.random() * -0.8 - 0.2;
                 this.speedX = (Math.random() - 0.5) * 0.4;
-                const colors = ['rgba(29, 208, 138, ', 'rgba(255, 255, 255, ', 'rgba(56, 189, 248, ', 'rgba(167, 139, 250, ', 'rgba(252, 211, 77, '];
+                const colors = ['rgba(29, 208, 138, ', 'rgba(255, 255, 255, ', 'rgba(56, 189, 248, ', 'rgba(167, 139, 250, ', 'rgba(252, 211, 77, ', 'rgba(244, 63, 94, ', 'rgba(16, 185, 129, ', 'rgba(249, 115, 22, ', 'rgba(139, 92, 246, '];
                 this.colorStr = colors[Math.floor(Math.random() * colors.length)];
                 this.life = Math.random() * 0.6 + 0.2;
                 this.opacity = 0; this.fadeState = 1; 
@@ -637,7 +638,7 @@
 
         function initParticles() {
             particles = [];
-            for (let i = 0; i < 50; i++) particles.push(new Particle());
+            for (let i = 0; i < 150; i++) particles.push(new Particle());
         }
 
         function animateParticles() {
@@ -660,6 +661,8 @@
         let currentQualityId = 14; 
 
         const audio = document.getElementById('audio-player');
+        const playBtnPc = document.getElementById('play-pause-btn-pc');
+        const playBtnMb = document.getElementById('play-pause-btn-mb');
         const coverImg = document.getElementById('p-cover');
         const actionPanel = document.getElementById('action-panel');
         const smartBox = document.getElementById('smart-box');
