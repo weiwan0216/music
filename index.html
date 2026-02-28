@@ -345,7 +345,6 @@
             .da-play-all { background: rgba(255,255,255,0.06); border: none; padding: 4px 10px; border-radius: 4px; color: rgba(255,255,255,0.8); font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: 0.2s; }
             .da-play-all:hover { background: #FE6F5E; color: #fff; }
 
-            /* 调整为居左对齐 */
             .desktop-list-header { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; padding: 6px 10px; color: rgba(255,255,255,0.4); font-size: 11px; font-weight: bold; margin-bottom: 2px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);}
             .col-album { text-align: left; }
             
@@ -356,19 +355,37 @@
             .song-item-info { display: block; overflow: hidden; padding-right: 15px; }
             .song-item-title { font-size: 12px; font-weight: normal; }
             .desktop-singer { font-size: 11px; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px; }
-            /* 专辑名和歌手名保持一致样式：同字号、同透明度、居左、单行截断 */
             .desktop-album { font-size: 11px; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px; }
             
             .mobile-only { display: none !important; }
             .queue-modal { display: none !important; }
 
-            .desktop-search-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; }
-            .ds-modal-content { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; width: 480px; padding: 20px 24px 30px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-            .ds-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+            /* 重新设计桌面端搜索弹窗，背景彻底透明、弹窗调小且绝对定位 */
+            .desktop-search-overlay { 
+                position: fixed; inset: 0; 
+                background: transparent; /* 背景透明，透出UI */
+                z-index: 2000; display: none; 
+            }
+            .ds-modal-content { 
+                background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+                border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; 
+                width: 360px; /* 宽度调小 */
+                padding: 15px 20px 20px; /* 内边距调小 */
+                position: absolute; 
+                left: calc(50vw - 180px); /* 居中 */
+                top: 15vh; 
+                box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            }
+            .ds-header { 
+                display: flex; justify-content: space-between; align-items: center; 
+                padding-bottom: 12px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.08); 
+                cursor: move; /* 增加移动光标提示 */
+                user-select: none;
+            }
             .ds-title { font-size: 15px; color: #fff; font-weight: bold; letter-spacing: 1px; }
             .ds-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 20px; cursor: pointer; transition: 0.2s; line-height: 1; padding: 0; }
             .ds-close:hover { color: #fff; transform: scale(1.1); }
-            .ds-input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.2); border-radius: 12px; transition: 0.3s; padding: 4px 6px 4px 20px; }
+            .ds-input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.2); border-radius: 12px; transition: 0.3s; padding: 4px 6px 4px 20px; cursor: auto; }
             .ds-input-wrapper:focus-within { background: rgba(255, 255, 255, 0.25); }
             .ds-input-wrapper input { flex: 1; border: none; background: transparent; color: #fff; padding: 12px 0; outline: none; font-size: 15px; text-align: center; }
             .ds-input-wrapper input::placeholder { color: rgba(255,255,255,0.5); font-weight: normal; }
@@ -732,7 +749,7 @@
         function switchTab(tabId) {
             if (window.innerWidth >= 850) {
                 if (tabId === 'search') {
-                    document.getElementById('desktop-search-overlay').style.display = 'flex';
+                    document.getElementById('desktop-search-overlay').style.display = 'block'; /* 调整为 block 以支持自定位 */
                     setTimeout(() => document.getElementById('ds-search-input').focus(), 100);
                     return; 
                 }
@@ -1489,6 +1506,52 @@
             }
             renderQueue(); 
         }
+
+        // --- 桌面端搜索弹窗自由拖动逻辑 ---
+        const dsModalOverlay = document.getElementById('desktop-search-overlay');
+        const dsModal = document.querySelector('.ds-modal-content');
+        const dsHeader = document.querySelector('.ds-header');
+        
+        let isDraggingDs = false;
+        let startX, startY, initialLeft, initialTop;
+
+        dsHeader.addEventListener('mousedown', (e) => {
+            // 点击关闭按钮时不触发拖拽
+            if (e.target.closest('.ds-close')) return;
+            
+            isDraggingDs = true;
+            const rect = dsModal.getBoundingClientRect();
+            startX = e.clientX;
+            startY = e.clientY;
+            initialLeft = rect.left;
+            initialTop = rect.top;
+            
+            // 锁定当前绝对位置并清除基于calc的相对布局，防止冲突
+            dsModal.style.left = initialLeft + 'px';
+            dsModal.style.top = initialTop + 'px';
+            dsModal.style.transform = 'none'; 
+            dsModal.style.margin = '0';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDraggingDs) {
+                let dx = e.clientX - startX;
+                let dy = e.clientY - startY;
+                let newLeft = initialLeft + dx;
+                let newTop = initialTop + dy;
+                
+                // 限制在屏幕内，防止拖丢
+                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - dsModal.offsetWidth));
+                newTop = Math.max(0, Math.min(newTop, window.innerHeight - dsModal.offsetHeight));
+
+                dsModal.style.left = newLeft + 'px';
+                dsModal.style.top = newTop + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDraggingDs = false;
+        });
     </script>
 </body>
 </html>
