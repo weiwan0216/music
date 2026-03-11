@@ -567,6 +567,7 @@
             .scrollable-section { padding: 0 15px 20px 15px !important; }
         }
 
+        /* ======= 新增拖拽幽灵层与原位占位符优化 ======= */
         .batch-item.dragging-active { 
             opacity: 0.2; 
             background: rgba(254, 111, 94, 0.1); 
@@ -586,16 +587,6 @@
             margin: 0 !important;
             transition: none; 
         }
-
-        /* ======= WebDAV 样式 ======= */
-        .wd-input { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: #fff; outline: none; }
-        .wd-input:focus { border-color: var(--primary); }
-        .wd-btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; transition: 0.2s; font-weight: bold; }
-        .wd-btn-primary { background: var(--primary); color: #000; flex: 1; }
-        .wd-btn-secondary { background: rgba(255,255,255,0.1); color: #fff; flex: 1; }
-        .wd-btn-text { background: transparent; color: var(--text-sub); }
-        .wd-btn:active { transform: scale(0.95); }
-        .wd-btn-text:hover { color: #fff; }
     </style>
 </head>
 <body>
@@ -692,25 +683,6 @@
                 <button class="add-pl-close" onclick="closeAddModal()">×</button>
             </div>
             <div class="add-pl-list" id="add-pl-list-container">
-            </div>
-        </div>
-    </div>
-
-    <div class="ap-modal" id="webdav-modal" onclick="if(event.target===this) closeWebdavModal()">
-        <div class="webdav-content" style="background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 16px; padding: 20px; width: 90vw; max-width: 360px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-            <div style="font-size:16px; font-weight:bold; margin-bottom:15px; color:#fff; display:flex; justify-content:space-between;">
-                <span>WebDAV 同步配置</span>
-            </div>
-            <input type="text" id="wd-url" class="wd-input" placeholder="服务器地址 (如 https://dav.jianguoyun.com/dav/)">
-            <input type="text" id="wd-user" class="wd-input" placeholder="账号">
-            <input type="password" id="wd-pass" class="wd-input" placeholder="密码 / 应用授权码">
-            
-            <div style="display:flex; justify-content:space-between; margin-top:15px; gap: 10px;">
-                <button class="wd-btn wd-btn-secondary" onclick="webdavPull()">拉取云端</button>
-                <button class="wd-btn wd-btn-primary" onclick="webdavPush()">推送到云端</button>
-            </div>
-            <div style="display:flex; justify-content:flex-end; margin-top:15px;">
-                <button class="wd-btn wd-btn-text" onclick="closeWebdavModal()">关闭并保存</button>
             </div>
         </div>
     </div>
@@ -868,10 +840,11 @@
     </div>
 
     <script>
-        // 全局云端歌单缓存池
-        window.qqPlaylistCache = {}; 
-        const CACHE_TTL = 5 * 60 * 1000; 
+        // ======= 新增：内存缓存与后台刷新 TTL =======
+        window.qqPlaylistCache = {}; // { [id]: { data: allSongs, timestamp: Date.now() } }
+        const CACHE_TTL = 5 * 60 * 1000; // 缓存过期时间：5分钟
 
+        // 挂载全局最后渲染列表，供加入歌单时抓取数据
         window.lastRenderedList = [];
         let songToAdd = null;
         let selectedBatchIds = [];
@@ -1028,7 +1001,7 @@
             }
         }
 
-        // --- 导入/导出/WebDAV 菜单 ---
+        // --- 导入/导出菜单 ---
         window.toggleIoMenu = function(e) {
             e.stopPropagation();
             const menu = document.getElementById('io-action-menu');
@@ -1074,97 +1047,6 @@
             reader.readAsText(file);
             event.target.value = ''; 
         };
-
-        // ======= WebDAV 逻辑 =======
-        window.openWebdavModal = function() {
-            document.getElementById('io-action-menu').classList.remove('show');
-            const config = JSON.parse(localStorage.getItem('yoo_webdav') || '{"url":"", "user":"", "pass":""}');
-            document.getElementById('wd-url').value = config.url;
-            document.getElementById('wd-user').value = config.user;
-            document.getElementById('wd-pass').value = config.pass;
-            document.getElementById('webdav-modal').classList.add('show');
-        };
-
-        window.closeWebdavModal = function() {
-            saveWebdavConfig(); // 关闭时自动保存
-            document.getElementById('webdav-modal').classList.remove('show');
-        };
-
-        function saveWebdavConfig() {
-            const url = document.getElementById('wd-url').value.trim();
-            const user = document.getElementById('wd-user').value.trim();
-            const pass = document.getElementById('wd-pass').value.trim();
-            const config = {url, user, pass};
-            localStorage.setItem('yoo_webdav', JSON.stringify(config));
-            return config;
-        }
-
-        async function webdavPush() {
-            const config = saveWebdavConfig();
-            if(!config.url || !config.user || !config.pass) return showToast('请填写完整的 WebDAV 配置');
-            
-            const pls = getLocalPlaylists();
-            const data = JSON.stringify(pls, null, 2);
-            const fileUrl = config.url + (config.url.endsWith('/') ? '' : '/') + 'yoo_playlists_backup.json';
-            
-            showToast('正在向云端推送同步...');
-            try {
-                const res = await fetch(fileUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': 'Basic ' + btoa(config.user + ':' + config.pass),
-                        'Content-Type': 'application/json'
-                    },
-                    body: data
-                });
-                
-                if(res.ok || res.status === 201 || res.status === 204) {
-                    showToast('🎉 推送云端成功！');
-                } else {
-                    showToast(`推送失败: ${res.status} (可能遇到跨域或配置错误)`);
-                }
-            } catch (e) {
-                console.error(e);
-                showToast('❌ 推送失败：请检查网络或是否受到跨域(CORS)限制');
-            }
-        }
-
-        async function webdavPull() {
-            const config = saveWebdavConfig();
-            if(!config.url || !config.user || !config.pass) return showToast('请填写完整的 WebDAV 配置');
-            
-            const fileUrl = config.url + (config.url.endsWith('/') ? '' : '/') + 'yoo_playlists_backup.json';
-            showToast('正在从云端拉取数据...');
-            
-            try {
-                const res = await fetch(fileUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Basic ' + btoa(config.user + ':' + config.pass),
-                        'Cache-Control': 'no-cache'
-                    }
-                });
-                
-                if(res.ok) {
-                    const data = await res.json();
-                    if (Array.isArray(data)) {
-                        saveLocalPlaylists(data);
-                        renderPlaylistHome(false);
-                        showToast('🎉 拉取云端成功并已覆盖本地！');
-                    } else {
-                        showToast('云端数据格式异常');
-                    }
-                } else if (res.status === 404) {
-                    showToast('未在云端找到备份文件，请先推送。');
-                } else {
-                    showToast(`拉取失败: ${res.status}`);
-                }
-            } catch (e) {
-                console.error(e);
-                showToast('❌ 拉取失败：请检查网络或是否受到跨域(CORS)限制');
-            }
-        }
-        // ============================
 
         // --- 批量操作弹窗逻辑 ---
         window.openBatchModal = function() {
@@ -1274,7 +1156,7 @@
             initBatchDrag();
         }
 
-        // 拖拽排序核心逻辑
+        // ======= 丝滑拖拽排序逻辑 =======
         let draggedElement = null;
         function initBatchDrag() {
             const list = document.getElementById('batch-list-container');
@@ -1461,7 +1343,7 @@
         document.addEventListener('click', (e) => {
             closeSongMenu();
             const ioMenu = document.getElementById('io-action-menu');
-            if(ioMenu && !e.target.closest('#io-action-menu') && !e.target.closest('button[onclick="toggleIoMenu(event)"]') && !e.target.closest('#webdav-modal')) {
+            if(ioMenu && !e.target.closest('#io-action-menu') && !e.target.closest('button[onclick="toggleIoMenu(event)"]')) {
                 ioMenu.classList.remove('show');
             }
             closeQueueOnOutsideClick(e);
@@ -1863,7 +1745,6 @@
                         <div id="io-action-menu" class="pl-menu">
                             <div class="sam-item" onclick="exportLocalPlaylists()">导出数据</div>
                             <div class="sam-item" onclick="document.getElementById('import-file').click()">导入数据</div>
-                            <div class="sam-item" onclick="openWebdavModal()">WebDAV 同步</div>
                         </div>
 
                         <button onclick="openBatchModal(); event.stopPropagation();" style="background:none; border:none; color:var(--text-sub); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; transition:0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-sub)'">
