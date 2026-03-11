@@ -249,7 +249,7 @@
         .queue-remove-btn { 
             background: none; border: none; color: var(--text-sub); cursor: pointer; 
             padding: 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            transition: 0.2s; margin-left: 5px; font-size: 12px;
+            transition: 0.2s; margin-left: 5px; font-size: 12px; flex-shrink: 0;
         }
         .queue-remove-btn:hover { color: #ff4d4f; background: rgba(255, 77, 79, 0.1); transform: scale(1.1); }
 
@@ -263,6 +263,31 @@
         .mv-close { cursor: pointer; background: rgba(255,255,255,0.2); border: none; color: #fff; padding: 8px 15px; border-radius: 20px; backdrop-filter: blur(5px); transition: 0.2s; }
         .mv-close:hover { background: var(--primary); color: #000; }
         .mv-player { width: 100%; height: 100%; object-fit: contain; outline: none; }
+
+        /* 添加自建歌单弹窗样式 */
+        .ap-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 10000; display: none; align-items: center; justify-content: center;
+        }
+        .ap-modal.show { display: flex; animation: fadeIn 0.2s; }
+        .ap-content {
+            background: rgba(25, 25, 25, 0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; width: 90vw; max-width: 360px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); padding: 20px; display: flex; flex-direction: column; max-height: 70vh;
+        }
+        .ap-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; font-size: 16px; color: #fff; }
+        .ap-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 24px; line-height: 1; cursor: pointer; transition: 0.2s; padding:0; }
+        .ap-close:hover { color: #fff; transform: scale(1.1); }
+        .ap-list { flex: 1; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .ap-item { padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 12px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; }
+        .ap-item:hover { background: rgba(255,255,255,0.08); border-color: var(--glass-border); color: var(--primary); transform: translateY(-1px); }
+        .ap-item span:first-child { font-size: 15px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; padding-right: 10px; }
+        .ap-item:hover span:first-child { color: var(--primary); }
+        .ap-item span:last-child { font-size: 12px; color: rgba(255,255,255,0.4); flex-shrink: 0; }
+        .ap-create { display: flex; gap: 10px; }
+        .ap-create input { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 12px 15px; border-radius: 12px; outline: none; font-size: 14px; transition: 0.3s; }
+        .ap-create input:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
+        .ap-create button { background: var(--primary); color: #000; font-weight: bold; border: none; border-radius: 12px; padding: 0 16px; cursor: pointer; font-size: 14px; transition: 0.2s; white-space: nowrap; }
+        .ap-create button:active { transform: scale(0.95); }
 
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -389,14 +414,15 @@
             .da-play-all { background: rgba(255,255,255,0.06); border: none; padding: 4px 10px; border-radius: 4px; color: rgba(255,255,255,0.8); font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: 0.2s; }
             .da-play-all:hover { background: #FE6F5E; color: #fff; }
 
+            /* 列表头部，增加 操作 列 */
             .desktop-list-header { 
-                display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; padding: 6px 10px; 
+                display: grid; grid-template-columns: 2.2fr 1.2fr 1fr 0.6fr; padding: 6px 10px; 
                 color: #FFFFFF; font-size: 11px; font-weight: bold; margin-bottom: 2px; 
                 align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);
             }
             .col-album { text-align: left; }
             
-            .song-item { display: grid; grid-template-columns: 2.5fr 1.5fr 0.8fr; align-items: center; padding: 6px 10px; border-radius: 6px; margin-bottom: 0px; background: transparent; border-bottom: none;}
+            .song-item { display: grid; grid-template-columns: 2.2fr 1.2fr 1fr 0.6fr; align-items: center; padding: 6px 10px; border-radius: 6px; margin-bottom: 0px; background: transparent; border-bottom: none;}
             .song-item:hover { background: rgba(255,255,255,0.06); }
             
             .song-item-cover { display: none; } 
@@ -546,6 +572,21 @@
         </button>
     </div>
 
+    <div class="ap-modal" id="ap-modal" onclick="if(event.target===this) closeApModal()">
+        <div class="ap-content">
+            <div class="ap-header">
+                <span>添加到歌单</span>
+                <button class="ap-close" onclick="closeApModal()">×</button>
+            </div>
+            <div class="ap-list" id="ap-list-container">
+                </div>
+            <div class="ap-create">
+                <input type="text" id="ap-new-name" placeholder="输入新歌单名称..." onkeydown="if(event.key==='Enter') createNewPlaylist()">
+                <button onclick="createNewPlaylist()">创建</button>
+            </div>
+        </div>
+    </div>
+
     <div class="action-panel" id="action-panel">
         
         <div class="panel-content active" id="panel-player">
@@ -553,12 +594,13 @@
                 <div class="fixed-header-section desktop-only">
                     <div class="desktop-action-bar">
                         <div class="da-tag">当前歌单 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-                        <div class="da-title" id="player-da-title">当前歌单/搜索名</div>
+                        <div class="da-title" id="player-da-title">Yoo</div>
                     </div>
                     <div class="desktop-list-header">
                         <div class="col-song">歌曲</div>
                         <div class="col-singer">歌手</div>
-                        <div class="col-album" style="display: flex; justify-content: center; align-items: center; text-align: center; padding-right: 0;">操作</div>
+                        <div class="col-album">专辑</div>
+                        <div class="col-action" style="text-align:center;">操作</div>
                     </div>
                 </div>
                 <div class="scrollable-section">
@@ -573,22 +615,14 @@
             <div class="action-header mobile-only">
                 <div class="input-group">
                     <input type="number" id="uin-input" placeholder="输入您的 QQ 账号..." value="3377682726">
-                    <button onclick="fetchPlaylists()">提取</button>
+                    <button onclick="renderPlaylistHome(true)">提取</button>
                 </div>
             </div>
             <div class="action-body">
                 <div class="fixed-header-section" id="playlist-fixed-header">
-                    <div class="input-group desktop-only" style="margin-bottom: 15px;" id="pc-playlist-input">
-                        <input type="number" id="uin-input-pc" placeholder="输入您的 QQ 账号提取歌单..." value="3377682726">
-                        <button onclick="document.getElementById('uin-input').value = document.getElementById('uin-input-pc').value; fetchPlaylists()">提取歌单</button>
                     </div>
-                </div>
                 <div class="scrollable-section" id="playlist-results">
-                    <div class="empty-state" id="playlist-empty-msg">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:15px; color:var(--primary); opacity:0.6;"><path d="M9 18V5l12-2v13M9 9l12-2M5 21a3 3 0 100-6 3 3 0 000 6zM17 19a3 3 0 100-6 3 3 0 000 6z"/></svg>
-                        一键同步您的所有收藏与自建歌单
                     </div>
-                </div>
             </div>
         </div>
 
@@ -682,6 +716,10 @@
     </div>
 
     <script>
+        // 挂载全局最后渲染列表，供加入歌单时抓取数据
+        window.lastRenderedList = [];
+        let songToAdd = null;
+
         window.addEventListener('DOMContentLoaded', () => {
             const popup = document.getElementById('greeting-popup');
             if(popup) {
@@ -694,6 +732,7 @@
                     popup.style.transform = 'translate(-50%, -50%) scale(0.8)';
                 }, 4000);
             }
+            renderPlaylistHome(false); // 初始化时不再默认请求 QQ 歌单
         });
 
         function showToast(msg, duration = 2500) {
@@ -715,6 +754,136 @@
                 toast.style.transform = 'translateX(-50%) translateY(0)';
             }, duration);
         }
+
+        // ================= 本地歌单存储与管理 =================
+        function getLocalPlaylists() {
+            return JSON.parse(localStorage.getItem('yoo_playlists') || '[]');
+        }
+        function saveLocalPlaylists(pls) {
+            localStorage.setItem('yoo_playlists', JSON.stringify(pls));
+        }
+
+        function openApModal(source, index, event) {
+            event.stopPropagation();
+            if (source === 'list') {
+                songToAdd = window.lastRenderedList[index];
+            } else if (source === 'queue') {
+                songToAdd = playQueue[index];
+            }
+            document.getElementById('ap-modal').classList.add('show');
+            renderApList();
+        }
+
+        function closeApModal() {
+            document.getElementById('ap-modal').classList.remove('show');
+            songToAdd = null;
+        }
+
+        function renderApList() {
+            let pls = getLocalPlaylists();
+            let container = document.getElementById('ap-list-container');
+            if (pls.length === 0) {
+                container.innerHTML = '<div style="font-size:13px; color:rgba(255,255,255,0.5); text-align:center; padding: 20px 0;">暂无自建歌单，请在下方创建</div>';
+            } else {
+                container.innerHTML = pls.map(p => `
+                    <div class="ap-item" onclick="addSongToLocalPlaylist('${p.id}')">
+                        <span>${p.name}</span>
+                        <span>${p.songs.length} 首</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function createNewPlaylist() {
+            let name = document.getElementById('ap-new-name').value.trim();
+            if (!name) return showToast('歌单名称不能为空');
+            let pls = getLocalPlaylists();
+            let newPl = { id: 'pl_' + Date.now(), name: name, songs: [] };
+            pls.push(newPl);
+            saveLocalPlaylists(pls);
+            document.getElementById('ap-new-name').value = '';
+            renderApList();
+            if (document.getElementById('qq-playlists-container')) renderPlaylistHome(false); 
+        }
+
+        function addSongToLocalPlaylist(playlistId) {
+            if (!songToAdd) return;
+            let pls = getLocalPlaylists();
+            let pl = pls.find(p => p.id === playlistId);
+            if (pl) {
+                if (pl.songs.some(s => s.mid === songToAdd.mid)) {
+                    showToast('歌曲已存在于该歌单中');
+                } else {
+                    pl.songs.push(songToAdd);
+                    saveLocalPlaylists(pls);
+                    showToast('已成功加入自建歌单');
+                    if (document.getElementById('qq-playlists-container')) renderPlaylistHome(false); 
+                }
+            }
+            closeApModal();
+        }
+
+        function deleteLocalPlaylist(playlistId, event) {
+            event.stopPropagation();
+            if (confirm('确定要永久删除这个自建歌单吗？')) {
+                let pls = getLocalPlaylists();
+                pls = pls.filter(p => p.id !== playlistId);
+                saveLocalPlaylists(pls);
+                renderPlaylistHome(false);
+                showToast('歌单已删除');
+            }
+        }
+
+        function removeSongFromLocal(playlistId, index, event) {
+            event.stopPropagation();
+            let pls = getLocalPlaylists();
+            let pl = pls.find(p => p.id === playlistId);
+            if (pl) {
+                pl.songs.splice(index, 1);
+                saveLocalPlaylists(pls);
+                showToast('已将歌曲移出歌单');
+                loadLocalPlaylistDetail(playlistId); 
+            }
+        }
+
+        window.exportLocalPlaylists = function() {
+            const pls = getLocalPlaylists();
+            if (pls.length === 0) {
+                showToast('暂无数据可导出');
+                return;
+            }
+            const blob = new Blob([JSON.stringify(pls, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'yoo_playlists_backup.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('导出成功');
+        };
+
+        window.importLocalPlaylists = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (Array.isArray(data)) {
+                        saveLocalPlaylists(data);
+                        renderPlaylistHome(false);
+                        showToast('导入成功');
+                    } else {
+                        showToast('数据格式错误，导入失败');
+                    }
+                } catch (err) {
+                    showToast('解析文件失败，请确保文件格式正确');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; 
+        };
+        // ====================================================
 
         window.searchSinger = function(event, singerName) {
             event.stopPropagation();
@@ -1024,7 +1193,9 @@
             executeDesktopSearch();
         }
 
-        function renderSongsHTML(list) {
+        // 修改 renderSongsHTML 加入操作列功能，并接收 localPlaylistId 用于自建歌单删除
+        function renderSongsHTML(list, localPlaylistId = null) {
+            window.lastRenderedList = list;
             if (!list || list.length === 0) return '<div class="empty-state">未能找到相关歌曲</div>';
             return `<ul class="song-list">` + list.map((song, index) => {
                 const cover = song.cover || 'https://y.qq.com/mediastyle/global/img/album_300.png';
@@ -1032,6 +1203,9 @@
                 const mvTag = song.vid ? `<span class="mv-badge" onclick="event.stopPropagation(); playMV('${song.vid}', '${safeSongName}')">▶ MV</span>` : '';
                 const safeSinger = song.singer.replace(/'/g, "\\'");
                 
+                let addBtn = `<button class="queue-remove-btn" onclick="openApModal('list', ${index}, event)" title="加入自建歌单"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>`;
+                let removeBtn = localPlaylistId ? `<button class="queue-remove-btn" onclick="removeSongFromLocal('${localPlaylistId}', ${index}, event)" title="移出歌单" style="margin-left:8px; color:#ff4d4f; font-size:20px; line-height:1; padding:0;">×</button>` : '';
+
                 return `
                 <li class="song-item" onclick="playSong('${song.mid}', ${index})">
                     <img src="${cover}" class="song-item-cover" alt="cover" loading="lazy">
@@ -1046,39 +1220,90 @@
                         <span class="desktop-singer-text">${song.singer}</span>
                     </div>
                     <div class="desktop-album" title="${song.album || '未知'}">${song.album || '未知'}</div>
+                    
+                    <div class="song-action-col" style="display:flex; justify-content:flex-end; align-items:center; flex-shrink:0;">
+                        ${addBtn}
+                        ${removeBtn}
+                    </div>
                 </li>`
             }).join('') + `</ul>`;
         }
 
-        async function fetchPlaylists() {
+        async function renderPlaylistHome(fetchQQ = false) {
             const uinInput = document.getElementById('uin-input');
             const uinInputPc = document.getElementById('uin-input-pc');
-            let uin = '';
-            if (uinInputPc && uinInputPc.value) uin = uinInputPc.value;
-            else if (uinInput && uinInput.value) uin = uinInput.value;
-            else uin = '3377682726';
-            
+            let uin = (uinInputPc && uinInputPc.value) || (uinInput && uinInput.value) || '3377682726';
             if (uinInput) uinInput.value = uin;
-            
+
             const fixedHeader = document.getElementById('playlist-fixed-header');
             if (fixedHeader) {
                 fixedHeader.innerHTML = `
                     <div class="input-group desktop-only" style="margin-bottom: 15px;" id="pc-playlist-input">
                         <input type="number" id="uin-input-pc" placeholder="输入您的 QQ 账号提取歌单..." value="${uin}">
-                        <button onclick="document.getElementById('uin-input').value = document.getElementById('uin-input-pc').value; fetchPlaylists()">提取歌单</button>
+                        <button onclick="document.getElementById('uin-input').value = document.getElementById('uin-input-pc').value; renderPlaylistHome(true)">提取歌单</button>
                     </div>
                 `;
             }
-            
+
             const container = document.getElementById('playlist-results');
-            container.innerHTML = '<div class="empty-state"><div class="spinner"></div>正在连接云端服务器拉取您的歌单...</div>';
             
+            // 渲染本地歌单
+            let localPls = getLocalPlaylists();
+            let html = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div style="font-size:13px; font-weight:bold; color:var(--primary);">「我的自建歌单」</div>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="exportLocalPlaylists()" style="background:rgba(255,255,255,0.1); border:none; color:#fff; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:12px; transition:0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">导出</button>
+                        <button onclick="document.getElementById('import-file').click()" style="background:rgba(255,255,255,0.1); border:none; color:#fff; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:12px; transition:0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">导入</button>
+                        <input type="file" id="import-file" style="display:none;" accept=".json" onchange="importLocalPlaylists(event)">
+                    </div>
+                </div>`;
+                
+            if(localPls.length === 0) {
+                html += '<div class="empty-state" style="margin-top:10px; margin-bottom:20px; font-size:13px;">暂无自建歌单，点击歌曲右侧的 ➕ 号可以创建</div>';
+            } else {
+                html += localPls.map(p => {
+                    let coverHtml = '';
+                    if (p.songs && p.songs.length > 0 && p.songs[0].cover) {
+                        coverHtml = `<img src="${p.songs[0].cover}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin-right: 15px; border: 1px solid rgba(255,255,255,0.05);" alt="cover">`;
+                    } else {
+                        coverHtml = `<div style="width: 50px; height: 50px; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.05); margin-right: 15px; display:flex; align-items:center; justify-content:center; color: var(--primary);">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                        </div>`;
+                    }
+                    return `
+                    <div class="playlist-card" onclick="loadLocalPlaylistDetail('${p.id}')">
+                        ${coverHtml}
+                        <div style="flex:1;">
+                            <div style="font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text-main);">${p.name}</div>
+                            <div style="font-size: 12px; color: var(--text-sub);">${p.songs.length} 首歌曲</div>
+                        </div>
+                        <button class="queue-remove-btn" onclick="deleteLocalPlaylist('${p.id}', event)" title="删除歌单" style="font-size:20px;">×</button>
+                    </div>
+                `}).join('');
+            }
+
+            // 渲染云端歌单占位
+            html += `<div style="font-size:13px; font-weight:bold; color:var(--primary); margin:20px 0 10px;">「QQ账号提取同步」</div>
+                     <div id="qq-playlists-container">`;
+
+            if (!fetchQQ) {
+                html += `<div class="empty-state" style="margin-top:10px;">点击上方提取按钮获取同步歌单</div></div>`;
+                container.innerHTML = html;
+                return;
+            }
+
+            html += `<div class="empty-state"><div class="spinner"></div>正在连接云端服务器...</div></div>`;
+            container.innerHTML = html;
+
+            // 请求云端歌单
             try {
                 const res = await fetch(`${API_BASE}/info?uin=${uin}`);
                 const json = await res.json();
-                if (json.code === 200 && json.data) {
+                const qqContainer = document.getElementById('qq-playlists-container');
+                if (json.code === 200 && json.data && qqContainer) {
                     const lists = [...(json.data.mydiss || []), ...(json.data.likediss || [])];
-                    const html = lists.map(p => `
+                    const qqHtml = lists.map(p => `
                         <div class="playlist-card" onclick="loadPlaylistDetail('${p.id}', '${p.title}')">
                             <img src="${p.picurl || 'https://y.qq.com/mediastyle/global/img/album_300.png'}" alt="cover" loading="lazy">
                             <div>
@@ -1087,9 +1312,52 @@
                             </div>
                         </div>
                     `).join('');
-                    container.innerHTML = html || '<div class="empty-state">该账号未公开任何歌单，或歌单已被隐藏</div>';
+                    qqContainer.innerHTML = qqHtml || '<div class="empty-state">该账号未公开任何歌单</div>';
                 }
-            } catch (e) { container.innerHTML = '<div class="empty-state">网络异常，请重试</div>'; }
+            } catch (e) { 
+                const qqContainer = document.getElementById('qq-playlists-container');
+                if(qqContainer) qqContainer.innerHTML = '<div class="empty-state">网络异常，请重试</div>'; 
+            }
+        }
+
+        // 加载自建歌单详情
+        function loadLocalPlaylistDetail(id) {
+            const fixedHeader = document.getElementById('playlist-fixed-header');
+            const container = document.getElementById('playlist-results');
+            
+            let pls = getLocalPlaylists();
+            let pl = pls.find(p => p.id === id);
+            if(!pl) return;
+
+            currentListName = pl.name;
+            const daTitle = document.getElementById('player-da-title');
+            if (daTitle) daTitle.innerText = currentListName;
+            
+            const backBtn = `
+                <div class="back-bar">
+                    <button class="back-btn" onclick="renderPlaylistHome()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> 返回歌单
+                    </button>
+                    <span style="font-weight: 600; font-size: 14px;">自建歌单：${pl.name}</span>
+                </div>`;
+                
+            const listHeader = window.innerWidth >= 850 ? `
+                <div class="desktop-action-bar desktop-only" style="margin-bottom: 10px;">
+                    <div class="da-tag">自建歌单 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+                    <div class="da-title">${pl.name}</div>
+                </div>
+                <div class="desktop-list-header">
+                    <div class="col-song">歌曲</div>
+                    <div class="col-singer">歌手</div>
+                    <div class="col-album">专辑</div>
+                    <div class="col-action" style="text-align:center;">操作</div>
+                </div>` : '';
+                
+            fixedHeader.innerHTML = backBtn + listHeader;
+            
+            playQueue = pl.songs;
+            renderQueue();
+            container.innerHTML = renderSongsHTML(pl.songs, pl.id);
         }
 
         async function loadPlaylistDetail(id, title) {
@@ -1108,7 +1376,7 @@
             
             const backBtn = `
                 <div class="back-bar">
-                    <button class="back-btn" onclick="fetchPlaylists()">
+                    <button class="back-btn" onclick="renderPlaylistHome()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> 返回歌单
                     </button>
                     <span style="font-weight: 600; font-size: 14px;">当前歌单详情</span>
@@ -1123,6 +1391,7 @@
                     <div class="col-song">歌曲</div>
                     <div class="col-singer">歌手</div>
                     <div class="col-album">专辑</div>
+                    <div class="col-action" style="text-align:center;">操作</div>
                 </div>` : '';
                 
             fixedHeader.innerHTML = backBtn + listHeader;
@@ -1202,6 +1471,7 @@
                             <div class="col-song">歌曲</div>
                             <div class="col-singer">歌手</div>
                             <div class="col-album">专辑</div>
+                            <div class="col-action" style="text-align:center;">操作</div>
                         </div>` : '';
                     
                     if(fixedHeader) fixedHeader.innerHTML = listHeader;
@@ -1345,7 +1615,7 @@
 
         const modeIcons = [
             '<svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>', 
-            '<svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path><path d="M11 10h1v4"></path></svg>', 
+            '<svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"><path d="M11 10h1v4"></path></svg>', 
             '<svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>' 
         ];
         const modeNames = ['列表循环', '单曲循环', '随机播放'];
@@ -1694,6 +1964,9 @@
                         <li class="queue-item ${i === currentIndex ? 'active' : ''}" onclick="playSong('${song.mid}', ${i})">
                             <div class="q-info"><span class="q-title">${song.song}</span><span class="q-singer">${song.singer}</span></div>
                             ${i === currentIndex ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="var(--primary)" style="margin-right:8px;"><path d="M8 5v14l11-7z"/></svg>' : ''}
+                            <button class="queue-remove-btn" onclick="openApModal('queue', ${i}, event)" title="加入自建歌单">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                            </button>
                             <button class="queue-remove-btn" onclick="removeFromQueue(${i}, event)" title="移除">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
                             </button>
@@ -1731,8 +2004,12 @@
                                 </svg>
                                 <span class="desktop-singer-text">${song.singer}</span>
                             </div>
-                            <div class="desktop-album" style="display:flex; justify-content:center; align-items:center; padding-right: 0;">
-                                <button class="queue-remove-btn" style="font-size: 20px; line-height: 1; padding: 0; margin: 0;" onclick="removeFromQueue(${i}, event)" title="移除">×</button>
+                            <div class="desktop-album" title="${song.album || '未知'}">${song.album || '未知'}</div>
+                            <div class="song-action-col" style="display:flex; justify-content:center; align-items:center; flex-shrink:0;">
+                                <button class="queue-remove-btn" onclick="openApModal('queue', ${i}, event)" title="加入自建歌单">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                                </button>
+                                <button class="queue-remove-btn" style="font-size: 20px; line-height: 1; padding: 0; margin-left: 8px; color: #ff4d4f;" onclick="removeFromQueue(${i}, event)" title="移除">×</button>
                             </div>
                         </li>`;
                     }).join('');
@@ -1762,7 +2039,7 @@
                     lyricsArray = []; lyricContainer.innerHTML = '<div class="lyric-line-group active"><div class="lyric-line-main">歌词将在此震撼显示</div></div>';
                     
                     const daTitle = document.getElementById('player-da-title');
-                    if(daTitle) daTitle.innerText = "当前歌单/搜索名";
+                    if(daTitle) daTitle.innerText = "当前播放队列";
                 }
             }
             renderQueue(); 
