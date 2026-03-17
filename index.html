@@ -46,25 +46,25 @@
         .desktop-top-logo { display: none; }
         
         .header {
-            display: flex; justify-content: center; gap: 40px; padding: 20px 0; height: 70px;
+            display: flex; justify-content: center; align-items: center; gap: 6vw; padding: 12px 0 8px; height: 60px;
             background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
             position: fixed; top: 0; width: 100%; z-index: 20;
         }
-        .nav-item { font-size: 16px; color: var(--text-sub); cursor: pointer; transition: 0.3s; font-weight: 500; letter-spacing: 1px; position: relative; }
+        .nav-item { font-size: 15px; color: var(--text-sub); cursor: pointer; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); font-weight: 500; letter-spacing: 0.5px; position: relative; padding: 4px 6px; }
         .nav-item:hover { color: #fff; }
-        .nav-item.active { color: #FE6F5E; font-weight: 600; text-shadow: 0 0 15px rgba(254,111,94,0.4); }
-        .nav-item.active::after { content: ''; display: block; width: 30%; height: 3px; background: #FE6F5E; margin: 6px auto 0; border-radius: 3px; box-shadow: 0 0 12px #FE6F5E; transition: width 0.3s ease; }
+        .nav-item.active { color: #FE6F5E; font-weight: 700; font-size: 17px; text-shadow: 0 2px 10px rgba(254,111,94,0.3); }
+        .nav-item.active::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 14px; height: 3px; background: #FE6F5E; border-radius: 2px; box-shadow: 0 1px 6px rgba(254,111,94,0.6); transition: all 0.3s ease; }
 
         .main-player {
             position: fixed; top: 70px; bottom: 115px; width: 100%;
             display: flex; flex-direction: column; align-items: center; padding: 0 20px 1vh; z-index: 5;
-            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: opacity 0.4s ease, pointer-events 0.4s ease;
         }
         
         .record-wrapper { position: relative; margin: 0 auto 1vh; transition: all 0.5s ease; }
         .record-container { 
             width: 32vw; height: 32vw; max-width: 170px; max-height: 170px; 
-            position: relative; border-radius: 50%; box-shadow: 0 20px 60px rgba(0,0,0,0.6); 
+            position: relative; border-radius: 50%; 
             background: #050505; padding: 8px; border: 2px solid rgba(255,255,255,0.05); transition: all 0.5s ease;
         }
         .cover-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); animation: rotate 24s linear infinite; animation-play-state: paused; }
@@ -164,8 +164,11 @@
 
         .smart-box {
             position: absolute; top: 60px; left: 0; right: 100px; 
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.15) !important; 
+            backdrop-filter: blur(30px) !important; 
+            -webkit-backdrop-filter: blur(30px) !important;
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.1) !important; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
             z-index: 100; display: none; max-height: 300px; overflow-y: auto; padding: 8px 0;
         }
         
@@ -280,11 +283,12 @@
             z-index: 10000; display: none; align-items: center; justify-content: center;
         }
         .ap-modal.show { display: flex; animation: fadeIn 0.2s; }
-        
+
         .create-pl-content { 
-            background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
             border-radius: 16px; padding: 20px; display: flex; gap: 12px; align-items: center; width: 90vw; max-width: 360px; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); 
+            position: absolute; top: 15vh; cursor: move;
         }
         .create-pl-content input { 
             flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; 
@@ -298,7 +302,7 @@
         .create-pl-content button:active { transform: scale(0.95); }
 
         .add-pl-content { 
-            background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
             border-radius: 16px; width: 90vw; max-width: 360px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
             padding: 20px; display: flex; flex-direction: column; max-height: 70vh; border: 1px solid rgba(255,255,255,0.08); 
         }
@@ -325,11 +329,15 @@
         /* Batch Operation Modal (Centered overlay) */
         .batch-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 11000; display: none; align-items: center; justify-content: center; }
         .batch-modal.show { display: flex; animation: fadeIn 0.2s; }
-        .batch-content { background: rgba(30, 30, 30, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 16px; width: 90vw; max-width: 420px; height: 75vh; max-height: 600px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .batch-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); }
+        .batch-content { 
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+            border-radius: 16px; width: 90vw; max-width: 420px; height: 75vh; max-height: 600px; display: flex; flex-direction: column; overflow: hidden; 
+            border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+        }
+        .batch-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: transparent; cursor: move; }
         .bh-btn { color: var(--text-sub); font-size: 14px; cursor: pointer; padding: 5px; transition: 0.2s; }
         .bh-btn:hover { color: #fff; }
-        .bh-title { font-size: 16px; font-weight: bold; color: #fff; }
+        .bh-title { font-size: 16px; font-weight: bold; color: #fff; pointer-events: none; }
         .batch-list { flex: 1; overflow-y: auto; padding: 10px 20px; }
         
         .batch-item { 
@@ -351,7 +359,7 @@
         .batch-info-sub { font-size: 12px; color: var(--text-sub); }
         .batch-handle { width: 40px; display: flex; justify-content: flex-end; align-items: center; color: var(--text-sub); cursor: grab; touch-action: none; transition: 0.2s; }
         .batch-handle:hover { color: #fff; }
-        .batch-footer { height: 70px; display: flex; align-items: center; justify-content: center; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); padding-bottom: 15px; flex-shrink: 0; }
+        .batch-footer { height: 70px; display: flex; align-items: center; justify-content: center; border-top: 1px solid rgba(255,255,255,0.05); background: transparent; padding-bottom: 15px; flex-shrink: 0; }
         .batch-delete-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-sub); cursor: pointer; transition: 0.2s; }
         .batch-delete-btn.active { color: #ff4d4f; }
         .batch-delete-btn span { font-size: 11px; }
@@ -376,9 +384,13 @@
         .mb-progress-wrapper:active .progress-dot, .pc-progress-wrapper:active .progress-dot { transform: translateY(-50%) scale(1.3); }
 
         .mb-controls-row { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 45px; }
+        
+        /* 双行显示的CSS */
         .mb-song-info { display: flex; align-items: center; flex: 1; overflow: hidden; min-width: 0; padding-right: 10px; }
         .mb-song-info img { width: 36px; height: 36px; border-radius: 6px; margin-right: 10px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
-        .mb-title-scroll { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .mb-text-wrapper { display: flex; flex-direction: column; overflow: hidden; flex: 1; justify-content: center; }
+        .mb-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; line-height: 1.2; margin-bottom: 3px; }
+        .mb-singer { font-size: 11px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
         
         .mb-ctrl-buttons { display: flex; align-items: center; justify-content: flex-end; gap: 4vw; flex-shrink: 0; }
         .ctrl-btn { background: none; border: none; color: rgba(255,255,255,0.8); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; padding: 0; }
@@ -389,15 +401,15 @@
         .footer-pc {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
             background: transparent; padding: 0 40px;
-            display: none; align-items: center; justify-content: center; z-index: 30; gap: 20px;
+            display: none; align-items: center; justify-content: flex-start; z-index: 30; gap: 20px;
         }
-        .pc-controls { display: flex; align-items: center; gap: 18px; }
+        .pc-controls { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
         .pc-controls .play-btn svg { width: 26px; height: 26px; color: #fff; }
         
         .pc-time { font-size: 14px; color: var(--text-sub); font-family: -apple-system, monospace; font-weight: 600; width: 46px; text-align: center; }
         .pc-progress-wrapper { flex: 1; height: 16px; display: flex; align-items: center; cursor: pointer; position: relative; margin: 0 10px; }
         
-        .pc-volume-section { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.7); }
+        .pc-volume-section { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.7); flex-shrink: 0; justify-content: flex-end; }
         .vol-icon { width: 26px; height: 26px; fill: currentColor; }
         .vol-bar { width: 80px; height: 16px; display: flex; align-items: center; cursor: pointer; position: relative; touch-action: none; }
         .vol-track { width: 100%; height: 5px; background: rgba(255,255,255,0.15); border-radius: 2px; pointer-events: none; position: relative; }
@@ -410,6 +422,7 @@
             opacity: 0 !important;
             pointer-events: none !important;
         }
+
         @media (min-width: 850px) {
             body.lyric-fs-active .main-player {
                 width: 60vw !important;
@@ -419,9 +432,7 @@
                 mask-image: linear-gradient(transparent, #000 2%, #000 98%, transparent);
                 -webkit-mask-image: linear-gradient(transparent, #000 2%, #000 98%, transparent);
             }
-        }
 
-        @media (min-width: 850px) {
             .footer-mb { display: none !important; }
             .footer-pc { display: flex !important; }
             
@@ -445,7 +456,7 @@
                 transition: 0.2s; position: relative;
             }
             .nav-item:hover { background: rgba(255,255,255,0.15); color: #fff; }
-            .nav-item.active { background: #FE6F5E; color: #fff; font-weight: 600; text-shadow: none; }
+            .nav-item.active { background: #FE6F5E; color: #fff; font-weight: 600; text-shadow: none; font-size: 12px; }
             .nav-item.active::after { 
                 content: ''; display: block; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); 
                 width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #FE6F5E; 
@@ -515,47 +526,52 @@
             
             .mobile-only { display: none !important; }
             .queue-modal { display: none !important; }
-
-            .desktop-search-overlay { 
-                position: fixed; inset: 0; 
-                background: transparent; 
-                z-index: 2000; display: none; 
-            }
-            .ds-modal-content { 
-                background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
-                border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; 
-                width: 360px; 
-                padding: 15px 20px 20px; 
-                position: absolute; 
-                left: calc(50vw - 180px); 
-                top: 15vh; 
-                box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-            }
-            .ds-header { 
-                display: flex; justify-content: space-between; align-items: center; 
-                padding-bottom: 12px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.08); 
-                cursor: move; 
-                user-select: none;
-            }
-            .ds-title { font-size: 15px; color: #fff; font-weight: bold; letter-spacing: 1px; }
-            .ds-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 20px; cursor: pointer; transition: 0.2s; line-height: 1; padding: 0; }
-            .ds-close:hover { color: #fff; transform: scale(1.1); }
-            .ds-input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.2); border-radius: 12px; transition: 0.3s; padding: 4px 6px 4px 20px; cursor: auto; position: relative; }
-            .ds-input-wrapper:focus-within { background: rgba(255, 255, 255, 0.25); }
-            .ds-input-wrapper input { flex: 1; border: none; background: transparent; color: #fff; padding: 12px 0; outline: none; font-size: 15px; text-align: center; }
-            .ds-input-wrapper input::placeholder { color: rgba(255,255,255,0.5); font-weight: normal; }
-            .ds-search-btn { background: transparent; border: none; color: #FFD700; font-weight: bold; cursor: pointer; padding: 10px 16px; font-size: 15px; letter-spacing: 1px; transition: 0.2s; }
-            .ds-search-btn:hover { text-shadow: 0 0 10px rgba(255, 215, 0, 0.6); transform: scale(1.05); }
         }
+
+        .desktop-search-overlay { 
+            position: fixed; inset: 0; 
+            background: transparent; 
+            z-index: 2000; display: none; 
+        }
+        .ds-modal-content { 
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; 
+            width: 360px; 
+            padding: 15px 20px 20px; 
+            position: absolute; 
+            left: calc(50vw - 180px); 
+            top: 15vh; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+        }
+        .ds-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding-bottom: 12px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.08); 
+            cursor: move; 
+            user-select: none;
+        }
+        .ds-title { font-size: 15px; color: #fff; font-weight: bold; letter-spacing: 1px; pointer-events: none; }
+        .ds-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 20px; cursor: pointer; transition: 0.2s; line-height: 1; padding: 0; }
+        .ds-close:hover { color: #fff; transform: scale(1.1); }
+        .ds-input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.2); border-radius: 12px; transition: 0.3s; padding: 4px 6px 4px 20px; cursor: auto; position: relative; }
+        .ds-input-wrapper:focus-within { background: rgba(255, 255, 255, 0.25); }
+        .ds-input-wrapper input { flex: 1; border: none; background: transparent; color: #fff; padding: 12px 0; outline: none; font-size: 15px; text-align: center; }
+        .ds-input-wrapper input::placeholder { color: rgba(255,255,255,0.5); font-weight: normal; }
+        .ds-search-btn { background: transparent; border: none; color: #FFD700; font-weight: bold; cursor: pointer; padding: 10px 16px; font-size: 15px; letter-spacing: 1px; transition: 0.2s; }
+        .ds-search-btn:hover { text-shadow: 0 0 10px rgba(255, 215, 0, 0.6); transform: scale(1.05); }
 
         @media (max-width: 849px) {
             .footer-mb { display: flex !important; }
             .footer-pc { display: none !important; }
-            .desktop-search-overlay, .desktop-only, .desktop-top-logo { display: none !important; }
+            .desktop-only, .desktop-top-logo { display: none !important; }
             .desktop-list-header { display: none; }
             .desktop-singer { display: none; }
             .desktop-album { display: none; }
             #panel-player { display: none !important; } 
+
+            .ds-modal-content {
+                width: 90vw;
+                left: 5vw !important;
+            }
 
             .lyric-wrapper::before, .lyric-wrapper::after {
                 content: ''; position: absolute; top: 0; bottom: 0; width: 17%; z-index: 20; touch-action: none;
@@ -563,8 +579,24 @@
             .lyric-wrapper::before { left: 0; }
             .lyric-wrapper::after { right: 0; }
             
-            .action-body { padding-top: 15px !important; }
+            /* 调整上移 */
+            .action-body { padding-top: 5px !important; }
             .scrollable-section { padding: 0 15px 20px 15px !important; }
+            .action-header { padding: 10px 15px 5px !important; border-bottom: none !important; }
+            .fixed-header-section { padding: 5px 15px 0 15px !important; }
+
+            /* 移动端全局沉浸透明化 */
+            .action-panel {
+                background: transparent !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            body.mobile-panel-open .main-player {
+                opacity: 0 !important;
+                pointer-events: none !important;
+            }
         }
 
         /* ======= 新增拖拽幽灵层与原位占位符优化 ======= */
@@ -605,8 +637,8 @@
     <audio id="audio-player" preload="auto"></audio>
 
     <div class="desktop-search-overlay" id="desktop-search-overlay" onclick="if(event.target === this) closeDesktopSearch()">
-        <div class="ds-modal-content">
-            <div class="ds-header">
+        <div class="ds-modal-content" id="ds-modal-content">
+            <div class="ds-header" id="ds-header">
                 <div class="ds-title">支持搜索：歌手、歌名、专辑</div>
                 <button class="ds-close" onclick="closeDesktopSearch()">×</button>
             </div>
@@ -621,6 +653,7 @@
     <div class="header">
         <div class="nav-item active" onclick="switchTab('player')" id="nav-player">播放列表</div>
         <div class="nav-item" onclick="switchTab('playlist')" id="nav-playlist">我的歌单</div>
+        <div class="nav-item" onclick="switchTab('toplist')" id="nav-toplist">音乐排行</div>
         <div class="nav-item" onclick="switchTab('search')" id="nav-search">歌曲搜索</div>
     </div>
 
@@ -663,14 +696,14 @@
     </div>
 
     <div class="ap-modal" id="create-playlist-modal" onclick="if(event.target===this) closeCreateModal()">
-        <div class="create-pl-content">
+        <div class="create-pl-content" id="create-pl-content">
             <input type="text" id="new-pl-name" placeholder="输入新歌单名称..." onkeydown="if(event.key==='Enter') submitCreatePlaylist()">
             <button onclick="submitCreatePlaylist()">创建</button>
         </div>
     </div>
 
     <div class="ap-modal" id="rename-playlist-modal" onclick="if(event.target===this) closeRenameModal()">
-        <div class="create-pl-content">
+        <div class="create-pl-content" id="rename-pl-content">
             <input type="text" id="rename-pl-name" placeholder="输入新名称..." onkeydown="if(event.key==='Enter') submitRenamePlaylist()">
             <button onclick="submitRenamePlaylist()">保存</button>
         </div>
@@ -694,10 +727,10 @@
     </div>
 
     <div class="batch-modal" id="batch-modal">
-        <div class="batch-content">
-            <div class="batch-header">
+        <div class="batch-content" id="batch-modal-content">
+            <div class="batch-header" id="batch-modal-header" style="cursor: move;">
                 <div class="bh-btn" id="batch-select-all" onclick="toggleSelectAll()">全选</div>
-                <div class="bh-title">批量操作</div>
+                <div class="bh-title" style="pointer-events: none;">批量操作</div>
                 <div class="bh-btn" onclick="closeBatchModal()">关闭</div>
             </div>
             <div class="batch-list" id="batch-list-container">
@@ -750,11 +783,19 @@
             </div>
         </div>
 
+        <div class="panel-content" id="panel-toplist">
+            <div class="action-body">
+                <div class="fixed-header-section" id="toplist-fixed-header"></div>
+                <div class="scrollable-section" id="toplist-results">
+                </div>
+            </div>
+        </div>
+
         <div class="panel-content" id="panel-search">
             <div class="action-header mobile-only">
                 <div class="input-group">
                     <input type="text" id="search-input" placeholder="输入你想听的歌曲、歌手、专辑..." oninput="debounceSmartbox()">
-                    <button onclick="searchMusic()">搜索</button>
+                    <button onclick="hasSearched = true; searchMusic()">搜索</button>
                     <div class="smart-box" id="smart-box"></div>
                 </div>
             </div>
@@ -793,7 +834,10 @@
         <div class="mb-controls-row">
             <div class="mb-song-info">
                 <img src="https://y.qq.com/mediastyle/global/img/album_300.png" id="f-cover-mb" alt="cover">
-                <div class="mb-title-scroll" id="f-title-mb">等待播放...</div>
+                <div class="mb-text-wrapper">
+                    <div class="mb-name" id="f-name-mb">等待播放...</div>
+                    <div class="mb-singer" id="f-singer-mb"></div>
+                </div>
             </div>
             <div class="mb-ctrl-buttons">
                 <button class="ctrl-btn" onclick="prevSong()"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
@@ -807,6 +851,13 @@
     </div>
 
     <div class="footer-pc desktop-only">
+        <div class="pc-song-info" style="display: flex; align-items: center; width: 220px; overflow: hidden; flex-shrink: 0;">
+            <img src="https://y.qq.com/mediastyle/global/img/album_300.png" id="f-cover-pc" alt="cover" style="width: 46px; height: 46px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.4);">
+            <div style="display: flex; flex-direction: column; overflow: hidden; flex: 1; justify-content: center;">
+                <div id="f-name-pc" style="font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; line-height: 1.2; margin-bottom: 4px;">等待播放...</div>
+                <div id="f-singer-pc" style="font-size: 12px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;"></div>
+            </div>
+        </div>
         <div class="pc-controls">
             <button class="ctrl-btn" onclick="prevSong()"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
             <button class="ctrl-btn play-btn" id="play-pause-btn-pc" onclick="togglePlay()"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
@@ -840,19 +891,19 @@
     </div>
 
     <script>
-        // ======= 新增：内存缓存与后台刷新 TTL =======
-        window.qqPlaylistCache = {}; // { [id]: { data: allSongs, timestamp: Date.now() } }
-        const CACHE_TTL = 5 * 60 * 1000; // 缓存过期时间：5分钟
+        window.qqPlaylistCache = {}; 
+        const CACHE_TTL = 5 * 60 * 1000; 
 
-        // 挂载全局最后渲染列表，供加入歌单时抓取数据
         window.lastRenderedList = [];
         let songToAdd = null;
         let selectedBatchIds = [];
         
-        // 缓存 QQ 歌单数据
         let qqPlaylistsFetched = false;
         let qqPlaylistsHtml = '';
         let qqPlaylistsCount = 0;
+
+        let hasSearched = false;
+        let lastActiveTab = 'player';
 
         window.addEventListener('DOMContentLoaded', () => {
             const popup = document.getElementById('greeting-popup');
@@ -867,7 +918,77 @@
                 }, 4000);
             }
             renderPlaylistHome(false); 
+            renderToplistHome(); 
+            
+            // 初始化桌面端全局弹窗拖拽
+            if (window.innerWidth >= 850) {
+                makeDraggable('ds-modal-content', 'ds-header');
+                makeDraggable('create-pl-content', 'create-pl-content');
+                makeDraggable('rename-pl-content', 'rename-pl-content');
+                makeDraggable('batch-modal-content', 'batch-modal-header');
+            }
         });
+
+        // 统一弹窗拖拽实现
+        function makeDraggable(modalId, headerId) {
+            const modal = document.getElementById(modalId);
+            const header = document.getElementById(headerId);
+            if(!modal || !header) return;
+            
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+
+            const startDrag = (e) => {
+                const tag = e.target.tagName.toLowerCase();
+                if (tag === 'input' || tag === 'button' || e.target.closest('button') || e.target.classList.contains('bh-btn')) return;
+                
+                isDragging = true;
+                const rect = modal.getBoundingClientRect();
+                startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+                
+                if (!modal.style.left || modal.style.left === '') {
+                    modal.style.left = rect.left + 'px';
+                }
+                if (!modal.style.top || modal.style.top === '') {
+                    modal.style.top = rect.top + 'px';
+                }
+                initialLeft = parseFloat(modal.style.left);
+                initialTop = parseFloat(modal.style.top);
+                
+                modal.style.transform = 'none'; 
+                modal.style.margin = '0';
+            };
+
+            const moveDrag = (e) => {
+                if (isDragging) {
+                    e.preventDefault();
+                    let clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                    let clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+                    
+                    let dx = clientX - startX;
+                    let dy = clientY - startY;
+                    let newLeft = initialLeft + dx;
+                    let newTop = initialTop + dy;
+                    
+                    newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - modal.offsetWidth));
+                    newTop = Math.max(0, Math.min(newTop, window.innerHeight - modal.offsetHeight));
+
+                    modal.style.left = newLeft + 'px';
+                    modal.style.top = newTop + 'px';
+                }
+            };
+
+            const endDrag = () => { isDragging = false; };
+
+            header.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', moveDrag, {passive: false});
+            document.addEventListener('mouseup', endDrag);
+            
+            header.addEventListener('touchstart', startDrag, {passive: true});
+            document.addEventListener('touchmove', moveDrag, {passive: false});
+            document.addEventListener('touchend', endDrag);
+        }
 
         function showToast(msg, duration = 2500) {
             let toast = document.getElementById('music-toast');
@@ -889,7 +1010,6 @@
             }, duration);
         }
 
-        // ================= 本地歌单存储与管理 =================
         function getLocalPlaylists() {
             return JSON.parse(localStorage.getItem('yoo_playlists') || '[]');
         }
@@ -897,7 +1017,6 @@
             localStorage.setItem('yoo_playlists', JSON.stringify(pls));
         }
 
-        // --- 创建歌单 Modal ---
         window.openCreateModal = function() {
             document.getElementById('create-playlist-modal').classList.add('show');
             document.getElementById('new-pl-name').focus();
@@ -917,7 +1036,6 @@
             if (document.getElementById('qq-playlists-container')) renderPlaylistHome(false); 
         };
 
-        // --- 重命名歌单 Modal ---
         let renamePlId = null;
         window.openRenameModal = function(id, oldName) {
             renamePlId = id;
@@ -943,7 +1061,6 @@
             closeRenameModal();
         };
 
-        // --- 添加到歌单 Modal ---
         function openApModal(source, index, event) {
             if(event && event.stopPropagation) event.stopPropagation();
             if (source === 'list') {
@@ -1001,7 +1118,6 @@
             }
         }
 
-        // --- 导入/导出菜单 ---
         window.toggleIoMenu = function(e) {
             e.stopPropagation();
             const menu = document.getElementById('io-action-menu');
@@ -1048,7 +1164,6 @@
             event.target.value = ''; 
         };
 
-        // --- 批量操作弹窗逻辑 ---
         window.openBatchModal = function() {
             selectedBatchIds = [];
             document.getElementById('batch-modal').classList.add('show');
@@ -1144,7 +1259,7 @@
                     ${cover}
                     <div class="batch-info">
                         <div class="batch-info-title">${p.name}</div>
-                        <div class="batch-info-sub">${p.songs.length} 首来自 自建</div>
+                        <div class="batch-info-sub">${p.songs.length}首 来自自建</div>
                     </div>
                     <div class="batch-handle">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
@@ -1156,7 +1271,6 @@
             initBatchDrag();
         }
 
-        // ======= 丝滑拖拽排序逻辑 =======
         let draggedElement = null;
         function initBatchDrag() {
             const list = document.getElementById('batch-list-container');
@@ -1253,9 +1367,7 @@
                 renderPlaylistHome(false);
             }
         }
-        // ====================================================
 
-        // ================= 歌曲三个点菜单管理 =================
         let currentMenuContext = null; 
 
         window.openSongMenu = function(event, type, index, localId) {
@@ -1355,18 +1467,14 @@
             closeQueueOnOutsideClick(e);
         }, {passive: true});
 
-        // ====================================================
-
         window.searchSinger = function(event, singerName) {
             event.stopPropagation();
-            if (window.innerWidth >= 850) {
-                document.getElementById('ds-search-input').value = singerName;
-                executeDesktopSearch();
-            } else {
-                document.getElementById('search-input').value = singerName;
-                switchTab('search');
-                searchMusic();
-            }
+            document.getElementById('ds-search-input').value = singerName;
+            document.getElementById('search-input').value = singerName;
+            closeDesktopSearch();
+            hasSearched = true;
+            switchTab('search');
+            searchMusic();
         };
 
         async function fetchHitokoto() {
@@ -1397,7 +1505,8 @@
             if (window.innerWidth >= 850) {
                 document.getElementById('action-panel').classList.add('show');
                 document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
-                document.getElementById(`panel-${activeNav}`).classList.add('active');
+                const ap = document.getElementById(`panel-${activeNav}`);
+                if(ap) ap.classList.add('active');
             } else {
                 if (activeNav === 'player') {
                     document.getElementById('action-panel').classList.remove('show');
@@ -1473,7 +1582,9 @@
         let currentMode = 0; 
         let currentSongUrl = '';
         let currentSongName = '';
-        let currentListName = '默认推荐';
+        
+        let currentBrowsingListName = '默认推荐';
+        let activePlayingListName = 'Yoo';
 
         let currentQualityId = 14; 
 
@@ -1491,6 +1602,190 @@
         let lyricScrollTimeout;
         let seekTargetTime = 0;
         let currentLyricIndex = -1; 
+
+        window.fetchQQMusicJsonp = function(url, callbackPrefix) {
+            return new Promise((resolve, reject) => {
+                const callbackName = callbackPrefix + '_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+                window[callbackName] = function(data) {
+                    resolve(data);
+                    delete window[callbackName];
+                    document.getElementById(callbackName)?.remove();
+                };
+                
+                const script = document.createElement('script');
+                script.id = callbackName;
+                script.src = url + (url.includes('?') ? '&' : '?') + 'jsonpCallback=' + callbackName;
+                
+                script.onerror = () => {
+                    reject(new Error('JSONP 网络请求失败'));
+                    delete window[callbackName];
+                    script.remove();
+                };
+                document.body.appendChild(script);
+            });
+        };
+
+        window.playSongFromList = function(index) {
+            if (window.lastRenderedList && window.lastRenderedList.length > 0) {
+                playQueue = [...window.lastRenderedList];
+                activePlayingListName = currentBrowsingListName;
+                const daTitle = document.getElementById('player-da-title');
+                if (daTitle) daTitle.innerText = activePlayingListName;
+                renderQueue(); 
+                playSong(playQueue[index].mid, index);
+            }
+        };
+
+        // 优化榜单顺序：将热门榜单放在最前
+        const qqToplists = [
+            { id: 62, name: '飙升榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000041HqHk2uB9YF.jpg' },
+            { id: 26, name: '热歌榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M000000dzV0s1MvB2d.jpg' },
+            { id: 27, name: '新歌榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M000004f2TfH3U2TIf.jpg' },
+            { id: 4, name: '流行指数榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M000000Lz7Gq1XpCqJ.jpg' },
+            { id: 52, name: '腾讯原创榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M000004W83zX28lZ75.jpg' },
+            { id: 67, name: '听歌识曲榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 5, name: '内地榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 6, name: '港台榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 3, name: '欧美榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 16, name: '韩国榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 17, name: '日本榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 28, name: '网络歌曲榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 65, name: '国风热歌榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 58, name: '说唱榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 57, name: '电音榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 63, name: 'DJ舞曲榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 72, name: '动漫音乐榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' },
+            { id: 73, name: '游戏音乐榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' }
+        ];
+
+        window.renderToplistHome = function() {
+            const container = document.getElementById('toplist-results');
+            const fixedHeader = document.getElementById('toplist-fixed-header');
+            
+            fixedHeader.innerHTML = ``;
+
+            container.innerHTML = '<div style="font-size:16px; font-weight:bold; color:var(--text-main); margin-bottom: 15px;">QQ音乐排行榜</div><div style="padding-top:0px;">' + qqToplists.map(list => `
+                <div class="playlist-card" style="align-items: center; justify-content: space-between;" onclick="loadToplistDetail(${list.id}, '${list.name}')">
+                    <div style="flex:1; overflow: hidden; padding-right: 15px; display: flex; flex-direction: column; justify-content: center;">
+                        <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px; color: var(--text-main);">${list.name}</div>
+                        <div id="toplist-songs-${list.id}" style="display: flex; flex-direction: column; gap: 6px;">
+                            <div style="font-size: 13px; color: var(--text-sub);">加载中...</div>
+                        </div>
+                    </div>
+                    <div style="position: relative; width: 100px; height: 100px; flex-shrink: 0;">
+                        <img id="toplist-cover-${list.id}" src="${list.cover}" alt="${list.name}" style="width: 100px !important; height: 100px !important; object-fit: cover; border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.05); margin-right: 0 !important;" onerror="this.src='https://y.qq.com/mediastyle/global/img/album_300.png'">
+                        <div style="position: absolute; bottom: 6px; right: 6px; font-size: 10px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 10px; color: #fff; backdrop-filter: blur(4px); display: none;" id="toplist-count-badge-${list.id}"></div>
+                    </div>
+                </div>
+            `).join('') + '</div>';
+
+            qqToplists.forEach(async (list) => {
+                try {
+                    const targetUrl = `https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg?g_tk=5381&uin=0&format=jsonp&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&tpl=3&page=detail&type=top&topid=${list.id}&_=${Date.now()}`;
+                    const json = await fetchQQMusicJsonp(targetUrl, 'ToplistCoverCallback_' + list.id);
+                    if (json && json.code === 0) {
+                        const count = json.cur_song_num || json.total_song_num || (json.songlist ? json.songlist.length : 0);
+                        const badgeEl = document.getElementById(`toplist-count-badge-${list.id}`);
+                        if(badgeEl && count) {
+                            badgeEl.innerText = count + '首';
+                            badgeEl.style.display = 'block';
+                        }
+                        
+                        if(json.songlist && json.songlist.length > 0) {
+                            const s = json.songlist[0].data || json.songlist[0];
+                            const albumMid = s.albummid || (s.album ? s.album.mid : '');
+                            let coverUrl = '';
+                            if (albumMid) {
+                                coverUrl = `https://y.qq.com/music/photo_new/T002R300x300M000${albumMid}.jpg`;
+                            } else if (s.singer && s.singer.length > 0 && s.singer[0].mid) {
+                                coverUrl = `https://y.qq.com/music/photo_new/T001R300x300M000${s.singer[0].mid}.jpg`;
+                            }
+                            if (coverUrl) {
+                                const img = document.getElementById(`toplist-cover-${list.id}`);
+                                if(img) img.src = coverUrl;
+                            }
+
+                            const songsContainer = document.getElementById(`toplist-songs-${list.id}`);
+                            if (songsContainer) {
+                                let songsHtml = '';
+                                const topSongs = json.songlist.slice(0, 3);
+                                topSongs.forEach((item, idx) => {
+                                    const songData = item.data || item;
+                                    const songName = songData.songname || songData.name || songData.title;
+                                    const singerName = songData.singer ? songData.singer.map(art => art.name).join(' / ') : '未知歌手';
+                                    songsHtml += `<div style="font-size: 13px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><span style="color: #fff; font-weight:500;">${idx + 1}. ${songName}</span> - ${singerName}</div>`;
+                                });
+                                songsContainer.innerHTML = songsHtml;
+                            }
+                        }
+                    }
+                } catch(e) { } 
+            });
+        }
+
+        window.loadToplistDetail = async function(id, title) {
+            const fixedHeader = document.getElementById('toplist-fixed-header');
+            const container = document.getElementById('toplist-results');
+            
+            currentBrowsingListName = title;
+            
+            const backBtn = `
+                <div class="back-bar">
+                    <button class="back-btn" onclick="renderToplistHome()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> 返回榜单
+                    </button>
+                    <span style="font-weight: 600; font-size: 14px; display:flex; align-items:center; gap:6px;">
+                        ${title} <span id="toplist-head-count" style="font-size:12px; color:var(--text-sub); font-weight:normal;"></span>
+                    </span>
+                </div>`;
+                
+            const listHeader = window.innerWidth >= 850 ? `
+                <div class="desktop-list-header">
+                    <div class="col-song">歌曲</div>
+                    <div class="col-singer">歌手</div>
+                    <div class="col-album">专辑</div>
+                    <div class="col-action">操作</div>
+                </div>` : '';
+                
+            fixedHeader.innerHTML = backBtn + listHeader;
+            container.innerHTML = '<div class="empty-state"><div class="spinner"></div>正在直连 QQ 音乐官方接口拉取数据...</div>';
+
+            try {
+                const targetUrl = `https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg?g_tk=5381&uin=0&format=jsonp&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&tpl=3&page=detail&type=top&topid=${id}&_=${Date.now()}`;
+                const json = await fetchQQMusicJsonp(targetUrl, 'MusicJsonCallback');
+                
+                if (json && json.code === 0 && json.songlist) {
+                    const songList = json.songlist.map(item => {
+                        const s = item.data || item;
+                        const albumMid = s.albummid || (s.album ? s.album.mid : '');
+                        const coverUrl = albumMid 
+                            ? `https://y.qq.com/music/photo_new/T002R300x300M000${albumMid}.jpg` 
+                            : 'https://y.qq.com/mediastyle/global/img/album_300.png';
+
+                        return {
+                            mid: s.songmid || s.mid,
+                            song: s.songname || s.name || s.title,
+                            singer: s.singer ? s.singer.map(art => art.name).join(' / ') : '未知歌手',
+                            album: s.albumname || (s.album ? s.album.name : ''),
+                            cover: coverUrl,
+                            vid: s.vid || ''
+                        };
+                    });
+                    
+                    if (songList.length > 0) {
+                        const headCount = document.getElementById('toplist-head-count');
+                        if (headCount) headCount.innerText = `(${songList.length}首)`;
+                        container.innerHTML = renderSongsHTML(songList);
+                    } else {
+                        container.innerHTML = '<div class="empty-state">榜单为空</div>';
+                    }
+                } else {
+                    throw new Error("解析官方数据失败");
+                }
+            } catch (e) {
+                container.innerHTML = `<div class="empty-state" style="color:#ff4d4f; padding: 0 20px;">获取榜单失败</div>`;
+            }
+        }
 
         audio.addEventListener('error', async (e) => {
             if (audio.src && audio.error && audio.error.code === 4) { 
@@ -1556,27 +1851,32 @@
         }
 
         function switchTab(tabId) {
-            if (window.innerWidth >= 850) {
-                if (tabId === 'search') {
-                    document.getElementById('desktop-search-overlay').style.display = 'block'; 
-                    setTimeout(() => document.getElementById('ds-search-input').focus(), 100);
-                    return; 
-                }
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                document.getElementById(`nav-${tabId}`).classList.add('active');
-                
-                document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
-                document.getElementById(`panel-${tabId}`).classList.add('active');
-            } else {
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                document.getElementById(`nav-${tabId}`).classList.add('active');
-                smartBox.style.display = 'none';
+            if (window.innerWidth >= 850 && tabId === 'search') {
+                document.getElementById('desktop-search-overlay').style.display = 'block'; 
+                setTimeout(() => document.getElementById('ds-search-input').focus(), 100);
+                return; 
+            }
+            
+            lastActiveTab = tabId; 
 
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const activeNavElem = document.getElementById(`nav-${tabId}`);
+            if(activeNavElem) activeNavElem.classList.add('active');
+
+            if (window.innerWidth >= 850) {
+                document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
+                const activePanel = document.getElementById(`panel-${tabId}`);
+                if(activePanel) activePanel.classList.add('active');
+            } else {
+                smartBox.style.display = 'none';
                 if (tabId === 'player') {
+                    document.body.classList.remove('mobile-panel-open');
                     actionPanel.classList.remove('show');
                 } else {
+                    document.body.classList.add('mobile-panel-open');
                     document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
-                    document.getElementById(`panel-${tabId}`).classList.add('active');
+                    const activePanel = document.getElementById(`panel-${tabId}`);
+                    if(activePanel) activePanel.classList.add('active');
                     actionPanel.classList.add('show');
                 }
             }
@@ -1587,12 +1887,8 @@
             if(!word) return;
             document.getElementById('search-input').value = word; 
             closeDesktopSearch();
-            
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('nav-search').classList.add('active');
-            document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-search').classList.add('active');
-            
+            hasSearched = true;
+            switchTab('search');
             searchMusic();
         }
 
@@ -1608,15 +1904,23 @@
             
             smartTimeout = setTimeout(async () => {
                 try {
-                    const res = await fetch(`${API_BASE}/search/smartbox?word=${encodeURIComponent(word)}`);
-                    const json = await res.json();
-                    if(json.code === 200 && json.data) {
+                    const targetUrl = `https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg?is_xml=0&format=jsonp&key=${encodeURIComponent(word)}&g_tk=5381&loginUin=0&hostUin=0&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0`;
+                    const json = await fetchQQMusicJsonp(targetUrl, 'SmartboxJsonCallback');
+                    
+                    if(json && json.code === 0 && json.data) {
                         let html = '';
                         if(json.data.song && json.data.song.itemlist) {
-                            json.data.song.itemlist.forEach(i => html += `<div class="smart-item" onclick="quickSearch('${i.name} ${i.singer}')"><span class="smart-type">单曲</span><div>${i.name} - ${i.singer}</div></div>`);
+                            json.data.song.itemlist.forEach(i => {
+                                const songName = i.name || i.songname;
+                                const singerName = i.singer || '';
+                                html += `<div class="smart-item" onclick="quickSearch('${songName} ${singerName}')"><span class="smart-type">单曲</span><div>${songName} - ${singerName}</div></div>`;
+                            });
                         }
                         if(json.data.singer && json.data.singer.itemlist) {
-                            json.data.singer.itemlist.forEach(i => html += `<div class="smart-item" onclick="quickSearch('${i.singer}')"><span class="smart-type">歌手</span><div>${i.singer}</div></div>`);
+                            json.data.singer.itemlist.forEach(i => {
+                                const singerName = i.name || i.singer;
+                                html += `<div class="smart-item" onclick="quickSearch('${singerName}')"><span class="smart-type">歌手</span><div>${singerName}</div></div>`;
+                            });
                         }
                         smartBox.innerHTML = html;
                         smartBox.style.display = html ? 'block' : 'none';
@@ -1627,7 +1931,10 @@
 
         function quickSearch(keyword) {
             document.getElementById('search-input').value = keyword;
+            document.getElementById('ds-search-input').value = keyword;
             smartBox.style.display = 'none';
+            hasSearched = true;
+            switchTab('search');
             searchMusic();
         }
 
@@ -1640,15 +1947,23 @@
             
             dsSmartTimeout = setTimeout(async () => {
                 try {
-                    const res = await fetch(`${API_BASE}/search/smartbox?word=${encodeURIComponent(word)}`);
-                    const json = await res.json();
-                    if(json.code === 200 && json.data) {
+                    const targetUrl = `https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg?is_xml=0&format=jsonp&key=${encodeURIComponent(word)}&g_tk=5381&loginUin=0&hostUin=0&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0`;
+                    const json = await fetchQQMusicJsonp(targetUrl, 'SmartboxJsonCallback');
+                    
+                    if(json && json.code === 0 && json.data) {
                         let html = '';
                         if(json.data.song && json.data.song.itemlist) {
-                            json.data.song.itemlist.forEach(i => html += `<div class="smart-item" onclick="quickDsSearch('${i.name} ${i.singer}')"><span class="smart-type">单曲</span><div>${i.name} - ${i.singer}</div></div>`);
+                            json.data.song.itemlist.forEach(i => {
+                                const songName = i.name || i.songname;
+                                const singerName = i.singer || '';
+                                html += `<div class="smart-item" onclick="quickDsSearch('${songName} ${singerName}')"><span class="smart-type">单曲</span><div>${songName} - ${singerName}</div></div>`;
+                            });
                         }
                         if(json.data.singer && json.data.singer.itemlist) {
-                            json.data.singer.itemlist.forEach(i => html += `<div class="smart-item" onclick="quickDsSearch('${i.singer}')"><span class="smart-type">歌手</span><div>${i.singer}</div></div>`);
+                            json.data.singer.itemlist.forEach(i => {
+                                const singerName = i.name || i.singer;
+                                html += `<div class="smart-item" onclick="quickDsSearch('${singerName}')"><span class="smart-type">歌手</span><div>${singerName}</div></div>`;
+                            });
                         }
                         dsSmartBox.innerHTML = html;
                         dsSmartBox.style.display = html ? 'block' : 'none';
@@ -1664,7 +1979,7 @@
         }
 
         function renderSongsHTML(list, localPlaylistId = null) {
-            window.lastRenderedList = list;
+            window.lastRenderedList = list; 
             if (!list || list.length === 0) return '<div class="empty-state">未能找到相关歌曲</div>';
             return `<ul class="song-list">` + list.map((song, index) => {
                 const cover = song.cover || 'https://y.qq.com/mediastyle/global/img/album_300.png';
@@ -1679,7 +1994,7 @@
                 </button>`;
 
                 return `
-                <li class="song-item" onclick="playSong('${song.mid}', ${index})">
+                <li class="song-item" onclick="playSongFromList(${index})">
                     <img src="${cover}" class="song-item-cover" alt="cover" loading="lazy">
                     <div class="song-item-info">
                         <div class="song-item-title">${song.song} ${mvTag}</div>
@@ -1779,7 +2094,7 @@
                         ${coverHtml}
                         <div style="flex:1;">
                             <div style="font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text-main);">${p.name}</div>
-                            <div style="font-size: 12px; color: var(--text-sub);">共${p.songs.length}首歌</div>
+                            <div style="font-size: 12px; color: var(--text-sub);">${p.songs.length}首</div>
                         </div>
                     </div>
                 `}).join('');
@@ -1807,7 +2122,7 @@
                                 <img src="${p.picurl || 'https://y.qq.com/mediastyle/global/img/album_300.png'}" alt="cover" loading="lazy">
                                 <div style="flex:1;">
                                     <div style="font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text-main);">${p.title}</div>
-                                    <div style="font-size: 12px; color: var(--text-sub);">${p.song_num || p.listen_num + ' 次播放'}</div>
+                                    <div style="font-size: 12px; color: var(--text-sub);">${p.song_num ? String(p.song_num).replace(/首/g, '') + '首' : (p.listen_num + ' 次播放')}</div>
                                 </div>
                             </div>
                         `).join('');
@@ -1830,7 +2145,6 @@
             }
         }
 
-        // 加载自建歌单详情
         function loadLocalPlaylistDetail(id) {
             const fixedHeader = document.getElementById('playlist-fixed-header');
             const container = document.getElementById('playlist-results');
@@ -1839,9 +2153,7 @@
             let pl = pls.find(p => p.id === id);
             if(!pl) return;
 
-            currentListName = pl.name;
-            const daTitle = document.getElementById('player-da-title');
-            if (daTitle) daTitle.innerText = currentListName;
+            currentBrowsingListName = pl.name;
             
             const backBtn = `
                 <div class="back-bar">
@@ -1849,19 +2161,14 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> 返回歌单
                     </button>
                     <span style="font-weight: 600; font-size: 14px; display:flex; align-items:center; gap:6px;">
-                        自建歌单：${pl.name}
-                        <svg onclick="openRenameModal('${pl.id}', '${pl.name}')" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        ${pl.name} <span style="font-size:12px; color:var(--text-sub); font-weight:normal;">(${pl.songs.length}首)</span>
+                        <span title="歌单重命名" onclick="openRenameModal('${pl.id}', '${pl.name}')" style="cursor:pointer; display:flex; align-items:center;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.8; transition:0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </span>
                     </span>
                 </div>`;
                 
             const listHeader = window.innerWidth >= 850 ? `
-                <div class="desktop-action-bar desktop-only" style="margin-bottom: 10px;">
-                    <div class="da-tag">自建歌单 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-                    <div class="da-title" style="display:flex; align-items:center; gap:6px;">
-                        ${pl.name}
-                        <svg onclick="openRenameModal('${pl.id}', '${pl.name}')" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                    </div>
-                </div>
                 <div class="desktop-list-header">
                     <div class="col-song">歌曲</div>
                     <div class="col-singer">歌手</div>
@@ -1870,13 +2177,9 @@
                 </div>` : '';
                 
             fixedHeader.innerHTML = backBtn + listHeader;
-            
-            playQueue = pl.songs;
-            renderQueue();
             container.innerHTML = renderSongsHTML(pl.songs, pl.id);
         }
 
-        // ======= 带有缓存和后台刷新逻辑的云端歌单详情加载 =======
         async function loadPlaylistDetail(id, title) {
             const uinInput = document.getElementById('uin-input');
             const uinInputPc = document.getElementById('uin-input-pc');
@@ -1891,23 +2194,19 @@
             const fixedHeader = document.getElementById('playlist-fixed-header');
             const container = document.getElementById('playlist-results');
             
-            currentListName = title || '歌单详情';
-            const daTitle = document.getElementById('player-da-title');
-            if (daTitle) daTitle.innerText = currentListName;
+            currentBrowsingListName = title || '歌单详情';
             
             const backBtn = `
                 <div class="back-bar">
                     <button class="back-btn" onclick="renderPlaylistHome(false)">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> 返回歌单
                     </button>
-                    <span style="font-weight: 600; font-size: 14px;">当前歌单详情</span>
+                    <span style="font-weight: 600; font-size: 14px; display:flex; align-items:center; gap:6px;">
+                        ${currentBrowsingListName} <span id="detail-head-count" style="font-size:12px; color:var(--text-sub); font-weight:normal;"></span>
+                    </span>
                 </div>`;
                 
             const listHeader = window.innerWidth >= 850 ? `
-                <div class="desktop-action-bar desktop-only" style="margin-bottom: 10px;">
-                    <div class="da-tag">当前歌单 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-                    <div class="da-title">${currentListName}</div>
-                </div>
                 <div class="desktop-list-header">
                     <div class="col-song">歌曲</div>
                     <div class="col-singer">歌手</div>
@@ -1917,14 +2216,11 @@
                 
             fixedHeader.innerHTML = backBtn + listHeader;
 
-            // 检查缓存
             const cached = window.qqPlaylistCache[id];
             if (cached) {
-                playQueue = cached.data;
-                container.innerHTML = renderSongsHTML(playQueue);
-                renderQueue();
-                
-                // 检查缓存是否过期，过期则触发后台默默更新
+                const countSpan = document.getElementById('detail-head-count');
+                if (countSpan) countSpan.innerText = `(${cached.data.length}首)`;
+                container.innerHTML = renderSongsHTML(cached.data);
                 if (Date.now() - cached.timestamp > CACHE_TTL) {
                     fetchPlaylistBackground(id, uin);
                 }
@@ -1967,12 +2263,10 @@
                 }
 
                 if (allSongs.length > 0) {
-                    // 写入缓存
                     window.qqPlaylistCache[id] = { data: allSongs, timestamp: Date.now() };
-
-                    playQueue = allSongs;
+                    const countSpan = document.getElementById('detail-head-count');
+                    if (countSpan) countSpan.innerText = `(${allSongs.length}首)`;
                     container.innerHTML = renderSongsHTML(allSongs);
-                    renderQueue();
                 } else {
                     container.innerHTML = `<div class="empty-state">未能获取到歌曲，可能歌单已被设密</div>`;
                 }
@@ -1981,7 +2275,6 @@
             }
         }
 
-        // ======= 新增：后台静默拉取更新歌单函数 =======
         async function fetchPlaylistBackground(id, uin) {
             try {
                 let allSongs = [];
@@ -2016,11 +2309,9 @@
                 }
                 
                 if (allSongs.length > 0) {
-                    // 后台更新完成，静默写入内存
                     window.qqPlaylistCache[id] = { data: allSongs, timestamp: Date.now() };
                 }
             } catch (e) {
-                // 如果后台更新失败，则静默忽略，保留旧的缓存
                 console.warn('后台更新歌单失败，将继续使用旧缓存', e);
             }
         }
@@ -2028,14 +2319,13 @@
         async function searchMusic() {
             const word = document.getElementById('search-input').value;
             if (!word) return;
+            hasSearched = true;
             smartBox.style.display = 'none';
             
             const fixedHeader = document.getElementById('search-fixed-header');
             const container = document.getElementById('search-results');
             
-            currentListName = word;
-            const daTitle = document.getElementById('player-da-title');
-            if (daTitle) daTitle.innerText = currentListName;
+            currentBrowsingListName = word;
             
             if(fixedHeader) fixedHeader.innerHTML = '';
             container.innerHTML = '<div class="empty-state"><div class="spinner"></div>云端全网深度检索中...</div>';
@@ -2044,12 +2334,10 @@
                 const res = await fetch(`${API_BASE}/search/song?word=${encodeURIComponent(word)}&num=60`);
                 const json = await res.json();
                 if (json.code === 200 && json.data) {
-                    playQueue = json.data; 
                     
                     const listHeader = window.innerWidth >= 850 && fixedHeader ? `
-                        <div class="desktop-action-bar" style="margin-bottom: 10px;">
-                            <div class="da-tag">当前搜索 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-                            <div class="da-title">${currentListName}</div>
+                        <div class="back-bar desktop-only" style="margin-bottom: 10px;">
+                            <span style="font-weight: 600; font-size: 14px;">${currentBrowsingListName}</span>
                         </div>
                         <div class="desktop-list-header">
                             <div class="col-song">歌曲</div>
@@ -2060,7 +2348,6 @@
                     
                     if(fixedHeader) fixedHeader.innerHTML = listHeader;
                     container.innerHTML = renderSongsHTML(json.data);
-                    renderQueue();
                 } else {
                     container.innerHTML = '<div class="empty-state">未找到相关歌曲</div>';
                 }
@@ -2134,8 +2421,16 @@
                     currentSongName = `${song.singer} - ${song.song}`;
                     
                     document.getElementById('p-title').innerText = song.song;
-                    const fTitleMb = document.getElementById('f-title-mb');
-                    if(fTitleMb) fTitleMb.innerText = `${song.song} - ${song.singer}`;
+                    
+                    const fNameMb = document.getElementById('f-name-mb');
+                    const fSingerMb = document.getElementById('f-singer-mb');
+                    if(fNameMb) fNameMb.innerText = song.song;
+                    if(fSingerMb) fSingerMb.innerText = song.singer;
+
+                    const fNamePc = document.getElementById('f-name-pc');
+                    const fSingerPc = document.getElementById('f-singer-pc');
+                    if(fNamePc) fNamePc.innerText = song.song;
+                    if(fSingerPc) fSingerPc.innerText = song.singer;
                     
                     const qualitySpan = document.getElementById('p-quality');
                     qualitySpan.style.display = 'inline-block';
@@ -2149,6 +2444,8 @@
                     coverImg.src = song.cover;
                     const fCoverMb = document.getElementById('f-cover-mb');
                     if(fCoverMb) fCoverMb.src = song.cover;
+                    const fCoverPc = document.getElementById('f-cover-pc');
+                    if(fCoverPc) fCoverPc.src = song.cover;
                     
                     audio.src = song.url;
                     audio.play();
@@ -2188,12 +2485,15 @@
             if(btnPc) btnPc.innerHTML = isPlaying ? svgPause : svgPlay;
             
             const fCoverMb = document.getElementById('f-cover-mb');
+            const fCoverPc = document.getElementById('f-cover-pc');
             if (isPlaying) { 
                 coverImg.classList.add('playing'); 
                 if(fCoverMb) fCoverMb.classList.add('playing'); 
+                if(fCoverPc) fCoverPc.classList.add('playing');
             } else { 
                 coverImg.classList.remove('playing'); 
                 if(fCoverMb) fCoverMb.classList.remove('playing'); 
+                if(fCoverPc) fCoverPc.classList.remove('playing');
             }
         }
 
@@ -2615,13 +2915,24 @@
                 } else {
                     audio.pause(); audio.src = ''; isPlaying = false; updatePlayState(); currentIndex = -1;
                     document.getElementById('p-title').innerText = "QQmusic Player";
-                    const fTitleMb = document.getElementById('f-title-mb');
-                    if(fTitleMb) fTitleMb.innerText = "等待播放...";
+                    
+                    const fNameMb = document.getElementById('f-name-mb');
+                    const fSingerMb = document.getElementById('f-singer-mb');
+                    if(fNameMb) fNameMb.innerText = "等待播放...";
+                    if(fSingerMb) fSingerMb.innerText = "";
+
+                    const fNamePc = document.getElementById('f-name-pc');
+                    const fSingerPc = document.getElementById('f-singer-pc');
+                    if(fNamePc) fNamePc.innerText = "等待播放...";
+                    if(fSingerPc) fSingerPc.innerText = "";
+                    
                     document.getElementById('p-singer').innerHTML = '等待播放... <span class="quality-badge" style="display:none;" id="p-quality"></span>';
                     const defaultCover = 'https://y.qq.com/mediastyle/global/img/album_300.png';
                     coverImg.src = defaultCover; 
                     const fCoverMb = document.getElementById('f-cover-mb');
                     if(fCoverMb) fCoverMb.src = defaultCover; 
+                    const fCoverPc = document.getElementById('f-cover-pc');
+                    if(fCoverPc) fCoverPc.src = defaultCover;
                     lyricsArray = []; lyricContainer.innerHTML = '<div class="lyric-line-group active"><div class="lyric-line-main">歌词将在此震撼显示</div></div>';
                     
                     const daTitle = document.getElementById('player-da-title');
@@ -2631,50 +2942,6 @@
             renderQueue(); 
         }
 
-        // --- 桌面端搜索弹窗自由拖动逻辑 ---
-        const dsModalOverlay = document.getElementById('desktop-search-overlay');
-        const dsModal = document.querySelector('.ds-modal-content');
-        const dsHeader = document.querySelector('.ds-header');
-        
-        let isDraggingDs = false;
-        let startX, startY, initialLeft, initialTop;
-
-        dsHeader.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.ds-close')) return;
-            
-            isDraggingDs = true;
-            const rect = dsModal.getBoundingClientRect();
-            startX = e.clientX;
-            startY = e.clientY;
-            initialLeft = rect.left;
-            initialTop = rect.top;
-            
-            dsModal.style.left = initialLeft + 'px';
-            dsModal.style.top = initialTop + 'px';
-            dsModal.style.transform = 'none'; 
-            dsModal.style.margin = '0';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDraggingDs) {
-                let dx = e.clientX - startX;
-                let dy = e.clientY - startY;
-                let newLeft = initialLeft + dx;
-                let newTop = initialTop + dy;
-                
-                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - dsModal.offsetWidth));
-                newTop = Math.max(0, Math.min(newTop, window.innerHeight - dsModal.offsetHeight));
-
-                dsModal.style.left = newLeft + 'px';
-                dsModal.style.top = newTop + 'px';
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDraggingDs = false;
-        });
-
-        // 默认加载队列 (无播放)
         async function initDefaultSong() {
             try {
                 const res2 = await fetch(`${API_BASE}/search/song?word=${encodeURIComponent('空悲切')}&num=1`);
@@ -2692,6 +2959,9 @@
                 
                 if (queue.length > 0) {
                     playQueue = queue;
+                    activePlayingListName = '默认推荐';
+                    const daTitle = document.getElementById('player-da-title');
+                    if (daTitle) daTitle.innerText = activePlayingListName;
                     renderQueue();
                 }
             } catch(e) {}
