@@ -151,11 +151,14 @@
         
         .action-header { padding: 20px 20px 10px; border-bottom: 1px solid var(--glass-border); position: relative; }
         .input-group { display: flex; gap: 12px; position: relative; }
+        
+        /* 搜索框透明化 */
         .input-group input {
             flex: 1; padding: 14px 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); outline: none;
-            background: rgba(0,0,0,0.3); color: #fff; font-size: 15px; transition: all 0.3s; box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+            background: transparent; color: #fff; font-size: 15px; transition: all 0.3s; box-shadow: none;
         }
-        .input-group input:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
+        .input-group input:focus { border-color: var(--primary); background: transparent; }
+        
         .input-group button {
             padding: 0 24px; border-radius: 14px; border: none; background: var(--primary);
             color: #000; font-weight: 700; cursor: pointer; font-size: 15px; box-shadow: 0 4px 20px rgba(254, 111, 94, 0.3); transition: 0.2s; white-space: nowrap;
@@ -552,12 +555,6 @@
         .ds-title { font-size: 15px; color: #fff; font-weight: bold; letter-spacing: 1px; pointer-events: none; }
         .ds-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 20px; cursor: pointer; transition: 0.2s; line-height: 1; padding: 0; }
         .ds-close:hover { color: #fff; transform: scale(1.1); }
-        .ds-input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.2); border-radius: 12px; transition: 0.3s; padding: 4px 6px 4px 20px; cursor: auto; position: relative; }
-        .ds-input-wrapper:focus-within { background: rgba(255, 255, 255, 0.25); }
-        .ds-input-wrapper input { flex: 1; border: none; background: transparent; color: #fff; padding: 12px 0; outline: none; font-size: 15px; text-align: center; }
-        .ds-input-wrapper input::placeholder { color: rgba(255,255,255,0.5); font-weight: normal; }
-        .ds-search-btn { background: transparent; border: none; color: #FFD700; font-weight: bold; cursor: pointer; padding: 10px 16px; font-size: 15px; letter-spacing: 1px; transition: 0.2s; }
-        .ds-search-btn:hover { text-shadow: 0 0 10px rgba(255, 215, 0, 0.6); transform: scale(1.05); }
 
         @media (max-width: 849px) {
             .footer-mb { display: flex !important; }
@@ -599,7 +596,7 @@
             }
         }
 
-        /* ======= 新增拖拽幽灵层与原位占位符优化 ======= */
+        /* ======= 拖拽幽灵层与原位占位符优化 ======= */
         .batch-item.dragging-active { 
             opacity: 0.2; 
             background: rgba(254, 111, 94, 0.1); 
@@ -619,6 +616,46 @@
             margin: 0 !important;
             transition: none; 
         }
+
+        /* 音源便签样式 */
+        .source-badge { 
+            font-size: 10px; padding: 2px 4px; border-radius: 4px; margin-right: 6px; 
+            font-weight: 900; vertical-align: text-bottom; user-select: none; 
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .source-badge.qq { background: rgba(49, 194, 124, 0.15); color: #31c27c; border: 1px solid rgba(49, 194, 124, 0.3); }
+        .source-badge.wy { background: rgba(230, 0, 38, 0.15); color: #ff3a3a; border: 1px solid rgba(230, 0, 38, 0.3); }
+
+        /* 全新透明下拉搜索组合框样式 */
+        .search-combo-box { 
+            display: flex; align-items: center; flex: 1; background: transparent; 
+            border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); transition: all 0.3s; 
+            box-shadow: none; 
+        }
+        .search-combo-box:focus-within { border-color: var(--primary); background: transparent; }
+        .search-combo-box input { 
+            flex: 1; border: none !important; background: transparent !important; box-shadow: none !important; 
+            padding: 14px 10px !important; outline: none; color: #fff; font-size: 15px; width: 100%;
+        }
+
+        .custom-select-wrapper {
+            position: relative; display: flex; align-items: center; padding: 0 8px 0 14px; border-right: 1px solid rgba(255,255,255,0.1); height: 26px; cursor: pointer;
+        }
+        .custom-select-wrapper .current-value {
+            color: var(--primary); font-size: 14px; font-weight: bold; padding-right: 16px; user-select: none; white-space: nowrap;
+        }
+        .custom-select-wrapper svg {
+            position: absolute; right: 4px; pointer-events: none; color: var(--primary); width: 14px; height: 14px; transition: transform 0.2s;
+        }
+        .custom-select-wrapper.open svg { transform: rotate(180deg); }
+        
+        .custom-select-options {
+            position: absolute; top: calc(100% + 12px); left: 0; background: transparent; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); display: none; flex-direction: column; z-index: 1000; overflow: hidden; min-width: 80px;
+        }
+        .custom-select-wrapper.open .custom-select-options { display: flex; animation: fadeIn 0.2s ease; }
+        .custom-option { padding: 12px 15px; color: #fff; font-size: 14px; text-align: center; transition: 0.2s; font-weight: bold; }
+        .custom-option:hover { background: rgba(255,255,255,0.1); color: var(--primary); }
+
     </style>
 </head>
 <body>
@@ -642,9 +679,17 @@
                 <div class="ds-title">支持搜索：歌手、歌名、专辑</div>
                 <button class="ds-close" onclick="closeDesktopSearch()">×</button>
             </div>
-            <div class="ds-input-wrapper">
-                <input type="text" id="ds-search-input" placeholder="输入你想听的内容..." oninput="debounceDsSmartbox()" onkeydown="if(event.key==='Enter') executeDesktopSearch()">
-                <button class="ds-search-btn" onclick="executeDesktopSearch()">搜索</button>
+            <div class="search-combo-box" style="background: transparent; border-radius: 12px; margin-bottom: 5px;">
+                <div class="custom-select-wrapper" id="source-wrapper-pc" onclick="toggleSourceMenu(event, 'pc')" style="height: 20px; border-right: 1px solid rgba(255,255,255,0.2);">
+                    <span class="current-value" id="source-text-pc" style="color: #FFD700;">QQ</span>
+                    <svg viewBox="0 0 24 24" fill="currentColor" style="color: #FFD700;"><path d="M7 10l5 5 5-5z"/></svg>
+                    <div class="custom-select-options" id="source-options-pc">
+                        <div class="custom-option" onclick="selectSource('qq', 'QQ', 'pc', event)">QQ</div>
+                        <div class="custom-option" onclick="selectSource('netease', '网易', 'pc', event)">网易</div>
+                    </div>
+                </div>
+                <input type="text" id="ds-search-input" placeholder="输入你想听的内容..." oninput="debounceDsSmartbox()" onkeydown="if(event.key==='Enter') executeDesktopSearch()" style="padding: 12px 10px !important;">
+                <button class="ds-search-btn" onclick="executeDesktopSearch()" style="background: transparent; border: none; color: #FFD700; font-weight: bold; cursor: pointer; padding: 10px 16px; font-size: 15px;">搜索</button>
                 <div class="smart-box" id="ds-smart-box" style="top: 100%; right: 0; left: 0; margin-top: 8px;"></div>
             </div>
         </div>
@@ -794,7 +839,17 @@
         <div class="panel-content" id="panel-search">
             <div class="action-header mobile-only">
                 <div class="input-group">
-                    <input type="text" id="search-input" placeholder="输入你想听的歌曲、歌手、专辑..." oninput="debounceSmartbox()">
+                    <div class="search-combo-box">
+                        <div class="custom-select-wrapper" id="source-wrapper-mb" onclick="toggleSourceMenu(event, 'mb')">
+                            <span class="current-value" id="source-text-mb">QQ</span>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                            <div class="custom-select-options" id="source-options-mb">
+                                <div class="custom-option" onclick="selectSource('qq', 'QQ', 'mb', event)">QQ</div>
+                                <div class="custom-option" onclick="selectSource('netease', '网易', 'mb', event)">网易</div>
+                            </div>
+                        </div>
+                        <input type="text" id="search-input" placeholder="输入歌曲、歌手..." oninput="debounceSmartbox()">
+                    </div>
                     <button onclick="hasSearched = true; searchMusic()">搜索</button>
                     <div class="smart-box" id="smart-box"></div>
                 </div>
@@ -904,6 +959,12 @@
 
         let hasSearched = false;
         let lastActiveTab = 'player';
+        
+        // 全局存储当前搜索音源
+        let currentSearchSource = 'qq';
+        
+        // 全局存储当前榜单音源
+        let currentToplistSource = 'qq';
 
         window.addEventListener('DOMContentLoaded', () => {
             const popup = document.getElementById('greeting-popup');
@@ -920,7 +981,6 @@
             renderPlaylistHome(false); 
             renderToplistHome(); 
             
-            // 初始化桌面端全局弹窗拖拽
             if (window.innerWidth >= 850) {
                 makeDraggable('ds-modal-content', 'ds-header');
                 makeDraggable('create-pl-content', 'create-pl-content');
@@ -928,6 +988,27 @@
                 makeDraggable('batch-modal-content', 'batch-modal-header');
             }
         });
+
+        // 纯自定义音源下拉菜单交互
+        function toggleSourceMenu(e, type) {
+            e.stopPropagation();
+            document.getElementById(`source-wrapper-${type}`).classList.toggle('open');
+        }
+
+        function selectSource(val, text, type, e) {
+            e.stopPropagation();
+            currentSearchSource = val;
+            
+            const textMb = document.getElementById('source-text-mb');
+            const textPc = document.getElementById('source-text-pc');
+            if(textMb) textMb.innerText = text;
+            if(textPc) textPc.innerText = text;
+            
+            const wrapMb = document.getElementById('source-wrapper-mb');
+            const wrapPc = document.getElementById('source-wrapper-pc');
+            if(wrapMb) wrapMb.classList.remove('open');
+            if(wrapPc) wrapPc.classList.remove('open');
+        }
 
         // 统一弹窗拖拽实现
         function makeDraggable(modalId, headerId) {
@@ -940,7 +1021,7 @@
 
             const startDrag = (e) => {
                 const tag = e.target.tagName.toLowerCase();
-                if (tag === 'input' || tag === 'button' || e.target.closest('button') || e.target.classList.contains('bh-btn')) return;
+                if (tag === 'input' || tag === 'button' || e.target.closest('.custom-select-wrapper') || e.target.closest('button') || e.target.classList.contains('bh-btn')) return;
                 
                 isDragging = true;
                 const rect = modal.getBoundingClientRect();
@@ -1024,11 +1105,22 @@
         window.closeCreateModal = function() {
             document.getElementById('create-playlist-modal').classList.remove('show');
         };
+        
+        // 自动完成添加到歌单逻辑
         window.submitCreatePlaylist = function() {
             let name = document.getElementById('new-pl-name').value.trim();
             if (!name) return showToast('歌单名称不能为空');
             let pls = getLocalPlaylists();
             let newPl = { id: 'pl_' + Date.now(), name: name, songs: [] };
+            
+            if (songToAdd) {
+                newPl.songs.push(songToAdd);
+                showToast('已创建并加入自建歌单');
+                songToAdd = null; 
+            } else {
+                showToast('创建成功');
+            }
+            
             pls.push(newPl);
             saveLocalPlaylists(pls);
             document.getElementById('new-pl-name').value = '';
@@ -1075,13 +1167,23 @@
             document.getElementById('add-playlist-modal').classList.remove('show');
             songToAdd = null;
         }
+        
+        // 优化添加到歌单列表，没有歌单时可直接快捷新建
         function renderAddList() {
             let pls = getLocalPlaylists();
             let container = document.getElementById('add-pl-list-container');
+            
+            let createBtnHtml = `
+                <div style="display:flex; align-items:center; cursor:pointer; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2); transition:0.2s; margin-bottom: 10px;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'" onclick="closeAddModal(); openCreateModal();">
+                    <div style="width: 40px; height: 40px; border-radius: 8px; display:flex; justify-content:center; align-items:center; color: var(--primary); margin-right: 15px; font-size:24px; font-weight:300;">+</div>
+                    <div style="font-size: 15px; color: var(--primary); font-weight: bold;">快捷新建歌单</div>
+                </div>
+            `;
+            
             if (pls.length === 0) {
-                container.innerHTML = '<div style="font-size:13px; color:rgba(255,255,255,0.5); text-align:center; padding: 20px 0;">暂无自建歌单，请先创建</div>';
+                container.innerHTML = createBtnHtml + '<div style="font-size:13px; color:rgba(255,255,255,0.5); text-align:center; padding: 20px 0;">暂无自建歌单，点击上方新建</div>';
             } else {
-                container.innerHTML = pls.map(p => `
+                container.innerHTML = createBtnHtml + pls.map(p => `
                     <div class="add-pl-item" onclick="addSongToLocalPlaylist('${p.id}')">
                         <span>${p.name}</span>
                         <span>${p.songs.length} 首</span>
@@ -1089,6 +1191,7 @@
                 `).join('');
             }
         }
+        
         function addSongToLocalPlaylist(playlistId) {
             if (!songToAdd) return;
             let pls = getLocalPlaylists();
@@ -1458,8 +1561,16 @@
             if(ioMenu && !e.target.closest('#io-action-menu') && !e.target.closest('button[onclick="toggleIoMenu(event)"]')) {
                 ioMenu.classList.remove('show');
             }
+            
+            // 点击外部关闭自定义音源下拉框
+            const wrapMb = document.getElementById('source-wrapper-mb');
+            const wrapPc = document.getElementById('source-wrapper-pc');
+            if(wrapMb && !e.target.closest('#source-wrapper-mb')) wrapMb.classList.remove('open');
+            if(wrapPc && !e.target.closest('#source-wrapper-pc')) wrapPc.classList.remove('open');
+            
             closeQueueOnOutsideClick(e);
         });
+        
         document.addEventListener('touchstart', (e) => {
             if (!e.target.closest('#song-action-menu') && !e.target.closest('.queue-remove-btn')) {
                 closeSongMenu();
@@ -1587,6 +1698,7 @@
         let activePlayingListName = 'Yoo';
 
         let currentQualityId = 14; 
+        let currentQualityIdNetease = 320; 
 
         const audio = document.getElementById('audio-player');
         const playBtnPc = document.getElementById('play-pause-btn-pc');
@@ -1636,7 +1748,12 @@
             }
         };
 
-        // 优化榜单顺序：将热门榜单放在最前
+        // 切换榜单逻辑
+        window.toggleToplistSource = function() {
+            currentToplistSource = currentToplistSource === 'qq' ? 'netease' : 'qq';
+            renderToplistHome();
+        };
+
         const qqToplists = [
             { id: 62, name: '飙升榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000041HqHk2uB9YF.jpg' },
             { id: 26, name: '热歌榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M000000dzV0s1MvB2d.jpg' },
@@ -1658,72 +1775,138 @@
             { id: 73, name: '游戏音乐榜', cover: 'https://y.qq.com/music/photo_new/T003R300x300M0000010tH6u2gYk2U.jpg' }
         ];
 
+        const neteaseToplists = [
+            { id: 19723756, name: '飙升榜' },
+            { id: 3779629, name: '新歌榜' },
+            { id: 2884035, name: '原创榜' },
+            { id: 3778678, name: '热歌榜' },
+            { id: 991319590, name: '中文说唱榜' },
+            { id: 71384707, name: '古典榜' },
+            { id: 1978921795, name: '电音榜' },
+            { id: 5453912201, name: '黑胶VIP爱听榜' },
+            { id: 745956260, name: '网易云韩语榜' },
+            { id: 5059644681, name: '日语榜' },
+            { id: 2059642708, name: '国风榜' },
+            { id: 6688069460, name: '听歌识曲榜' },
+            { id: 6723173524, name: '网络热歌榜' },
+            { id: 8246775932, name: '实时热度榜' },
+            { id: 9651277674, name: 'AI歌曲榜' },
+            { id: 7785123708, name: '黑胶VIP新歌榜' },
+            { id: 7785066739, name: '黑胶VIP热歌榜' },
+            { id: 7785091694, name: '黑胶VIP爱搜榜' }
+        ];
+
         window.renderToplistHome = function() {
             const container = document.getElementById('toplist-results');
             const fixedHeader = document.getElementById('toplist-fixed-header');
             
             fixedHeader.innerHTML = ``;
 
-            container.innerHTML = '<div style="font-size:16px; font-weight:bold; color:var(--text-main); margin-bottom: 15px;">QQ音乐排行榜</div><div style="padding-top:0px;">' + qqToplists.map(list => `
-                <div class="playlist-card" style="align-items: center; justify-content: space-between;" onclick="loadToplistDetail(${list.id}, '${list.name}')">
+            const titleText = currentToplistSource === 'qq' ? 'QQ音乐排行榜 ▾' : '网易云音乐排行榜 ▾';
+            const listsToRender = currentToplistSource === 'qq' ? qqToplists : neteaseToplists;
+
+            container.innerHTML = `
+            <div style="font-size:16px; font-weight:bold; color:var(--text-main); margin-bottom: 15px; cursor:pointer; display:inline-block; user-select:none; transition:0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-main)'" onclick="toggleToplistSource()">${titleText}</div>
+            <div style="padding-top:0px;">` + listsToRender.map(list => `
+                <div class="playlist-card" style="align-items: center; justify-content: space-between;" onclick="loadToplistDetail(${list.id}, '${list.name}', '${currentToplistSource}')">
                     <div style="flex:1; overflow: hidden; padding-right: 15px; display: flex; flex-direction: column; justify-content: center;">
                         <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px; color: var(--text-main);">${list.name}</div>
-                        <div id="toplist-songs-${list.id}" style="display: flex; flex-direction: column; gap: 6px;">
+                        <div id="toplist-songs-${currentToplistSource}-${list.id}" style="display: flex; flex-direction: column; gap: 6px;">
                             <div style="font-size: 13px; color: var(--text-sub);">加载中...</div>
                         </div>
                     </div>
                     <div style="position: relative; width: 100px; height: 100px; flex-shrink: 0;">
-                        <img id="toplist-cover-${list.id}" src="${list.cover}" alt="${list.name}" style="width: 100px !important; height: 100px !important; object-fit: cover; border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.05); margin-right: 0 !important;" onerror="this.src='https://y.qq.com/mediastyle/global/img/album_300.png'">
-                        <div style="position: absolute; bottom: 6px; right: 6px; font-size: 10px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 10px; color: #fff; backdrop-filter: blur(4px); display: none;" id="toplist-count-badge-${list.id}"></div>
+                        <img id="toplist-cover-${currentToplistSource}-${list.id}" src="${list.cover || 'https://y.qq.com/mediastyle/global/img/album_300.png'}" alt="${list.name}" style="width: 100px !important; height: 100px !important; object-fit: cover; border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.05); margin-right: 0 !important;" onerror="this.src='https://y.qq.com/mediastyle/global/img/album_300.png'">
+                        <div style="position: absolute; bottom: 6px; right: 6px; font-size: 10px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 10px; color: #fff; backdrop-filter: blur(4px); display: none;" id="toplist-count-badge-${currentToplistSource}-${list.id}"></div>
                     </div>
                 </div>
             `).join('') + '</div>';
 
-            qqToplists.forEach(async (list) => {
-                try {
-                    const targetUrl = `https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg?g_tk=5381&uin=0&format=jsonp&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&tpl=3&page=detail&type=top&topid=${list.id}&_=${Date.now()}`;
-                    const json = await fetchQQMusicJsonp(targetUrl, 'ToplistCoverCallback_' + list.id);
-                    if (json && json.code === 0) {
-                        const count = json.cur_song_num || json.total_song_num || (json.songlist ? json.songlist.length : 0);
-                        const badgeEl = document.getElementById(`toplist-count-badge-${list.id}`);
-                        if(badgeEl && count) {
-                            badgeEl.innerText = count + '首';
-                            badgeEl.style.display = 'block';
-                        }
-                        
-                        if(json.songlist && json.songlist.length > 0) {
-                            const s = json.songlist[0].data || json.songlist[0];
-                            const albumMid = s.albummid || (s.album ? s.album.mid : '');
-                            let coverUrl = '';
-                            if (albumMid) {
-                                coverUrl = `https://y.qq.com/music/photo_new/T002R300x300M000${albumMid}.jpg`;
-                            } else if (s.singer && s.singer.length > 0 && s.singer[0].mid) {
-                                coverUrl = `https://y.qq.com/music/photo_new/T001R300x300M000${s.singer[0].mid}.jpg`;
+            if (currentToplistSource === 'qq') {
+                qqToplists.forEach(async (list) => {
+                    try {
+                        const targetUrl = `https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg?g_tk=5381&uin=0&format=jsonp&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&tpl=3&page=detail&type=top&topid=${list.id}&_=${Date.now()}`;
+                        const json = await fetchQQMusicJsonp(targetUrl, 'ToplistCoverCallback_' + list.id);
+                        if (json && json.code === 0) {
+                            const count = json.cur_song_num || json.total_song_num || (json.songlist ? json.songlist.length : 0);
+                            const badgeEl = document.getElementById(`toplist-count-badge-qq-${list.id}`);
+                            if(badgeEl && count) {
+                                badgeEl.innerText = count + '首';
+                                badgeEl.style.display = 'block';
                             }
-                            if (coverUrl) {
-                                const img = document.getElementById(`toplist-cover-${list.id}`);
-                                if(img) img.src = coverUrl;
-                            }
+                            
+                            if(json.songlist && json.songlist.length > 0) {
+                                const s = json.songlist[0].data || json.songlist[0];
+                                const albumMid = s.albummid || (s.album ? s.album.mid : '');
+                                let coverUrl = '';
+                                if (albumMid) {
+                                    coverUrl = `https://y.qq.com/music/photo_new/T002R300x300M000${albumMid}.jpg`;
+                                } else if (s.singer && s.singer.length > 0 && s.singer[0].mid) {
+                                    coverUrl = `https://y.qq.com/music/photo_new/T001R300x300M000${s.singer[0].mid}.jpg`;
+                                }
+                                if (coverUrl) {
+                                    const img = document.getElementById(`toplist-cover-qq-${list.id}`);
+                                    if(img) img.src = coverUrl;
+                                }
 
-                            const songsContainer = document.getElementById(`toplist-songs-${list.id}`);
+                                const songsContainer = document.getElementById(`toplist-songs-qq-${list.id}`);
+                                if (songsContainer) {
+                                    let songsHtml = '';
+                                    const topSongs = json.songlist.slice(0, 3);
+                                    topSongs.forEach((item, idx) => {
+                                        const songData = item.data || item;
+                                        const songName = songData.songname || songData.name || songData.title;
+                                        const singerName = songData.singer ? songData.singer.map(art => art.name).join(' / ') : '未知歌手';
+                                        songsHtml += `<div style="font-size: 13px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><span style="color: #fff; font-weight:500;">${idx + 1}. ${songName}</span> - ${singerName}</div>`;
+                                    });
+                                    songsContainer.innerHTML = songsHtml;
+                                }
+                            }
+                        }
+                    } catch(e) { } 
+                });
+            } else {
+                neteaseToplists.forEach(async (list) => {
+                    try {
+                        const res = await fetch(`https://api.qijieya.cn/meting/?server=netease&type=playlist&id=${list.id}`);
+                        const json = await res.json();
+                        
+                        if (Array.isArray(json) && json.length > 0) {
+                            const count = json.length;
+                            const badgeEl = document.getElementById(`toplist-count-badge-netease-${list.id}`);
+                            if(badgeEl && count) {
+                                badgeEl.innerText = count + '首';
+                                badgeEl.style.display = 'block';
+                            }
+                            
+                            const coverUrl = json[0].pic || 'https://y.qq.com/mediastyle/global/img/album_300.png';
+                            const img = document.getElementById(`toplist-cover-netease-${list.id}`);
+                            if(img) img.src = coverUrl;
+
+                            const songsContainer = document.getElementById(`toplist-songs-netease-${list.id}`);
                             if (songsContainer) {
                                 let songsHtml = '';
-                                const topSongs = json.songlist.slice(0, 3);
+                                const topSongs = json.slice(0, 3);
                                 topSongs.forEach((item, idx) => {
-                                    const songData = item.data || item;
-                                    const songName = songData.songname || songData.name || songData.title;
-                                    const singerName = songData.singer ? songData.singer.map(art => art.name).join(' / ') : '未知歌手';
+                                    const songName = item.name;
+                                    const singerName = item.artist;
                                     songsHtml += `<div style="font-size: 13px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><span style="color: #fff; font-weight:500;">${idx + 1}. ${songName}</span> - ${singerName}</div>`;
                                 });
                                 songsContainer.innerHTML = songsHtml;
                             }
+                        } else {
+                            const songsContainer = document.getElementById(`toplist-songs-netease-${list.id}`);
+                            if (songsContainer) songsContainer.innerHTML = `<div style="font-size: 13px; color: var(--text-sub);">暂无数据</div>`;
                         }
+                    } catch(e) {
+                        const songsContainer = document.getElementById(`toplist-songs-netease-${list.id}`);
+                        if (songsContainer) songsContainer.innerHTML = `<div style="font-size: 13px; color: var(--text-sub);">加载失败</div>`;
                     }
-                } catch(e) { } 
-            });
+                });
+            }
         }
 
-        window.loadToplistDetail = async function(id, title) {
+        window.loadToplistDetail = async function(id, title, source = 'qq') {
             const fixedHeader = document.getElementById('toplist-fixed-header');
             const container = document.getElementById('toplist-results');
             
@@ -1748,63 +1931,103 @@
                 </div>` : '';
                 
             fixedHeader.innerHTML = backBtn + listHeader;
-            container.innerHTML = '<div class="empty-state"><div class="spinner"></div>正在直连 QQ 音乐官方接口拉取数据...</div>';
-
-            try {
-                const targetUrl = `https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg?g_tk=5381&uin=0&format=jsonp&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&tpl=3&page=detail&type=top&topid=${id}&_=${Date.now()}`;
-                const json = await fetchQQMusicJsonp(targetUrl, 'MusicJsonCallback');
-                
-                if (json && json.code === 0 && json.songlist) {
-                    const songList = json.songlist.map(item => {
-                        const s = item.data || item;
-                        const albumMid = s.albummid || (s.album ? s.album.mid : '');
-                        const coverUrl = albumMid 
-                            ? `https://y.qq.com/music/photo_new/T002R300x300M000${albumMid}.jpg` 
-                            : 'https://y.qq.com/mediastyle/global/img/album_300.png';
-
-                        return {
-                            mid: s.songmid || s.mid,
-                            song: s.songname || s.name || s.title,
-                            singer: s.singer ? s.singer.map(art => art.name).join(' / ') : '未知歌手',
-                            album: s.albumname || (s.album ? s.album.name : ''),
-                            cover: coverUrl,
-                            vid: s.vid || ''
-                        };
-                    });
+            
+            if (source === 'netease') {
+                container.innerHTML = '<div class="empty-state"><div class="spinner"></div>正在获取网易云音乐接口拉取数据...</div>';
+                try {
+                    const res = await fetch(`https://api.qijieya.cn/meting/?server=netease&type=playlist&id=${id}`);
+                    const json = await res.json();
                     
-                    if (songList.length > 0) {
+                    if (Array.isArray(json) && json.length > 0) {
+                        const songList = json.map(item => {
+                            const midMatch = item.url.match(/id=(\d+)/);
+                            const mid = midMatch ? midMatch[1] : item.id;
+                            return {
+                                mid: mid,
+                                song: item.name,
+                                singer: item.artist,
+                                album: '网易云音乐',
+                                cover: item.pic,
+                                source: 'netease',
+                                vid: ''
+                            };
+                        });
+                        
                         const headCount = document.getElementById('toplist-head-count');
                         if (headCount) headCount.innerText = `(${songList.length}首)`;
                         container.innerHTML = renderSongsHTML(songList);
                     } else {
-                        container.innerHTML = '<div class="empty-state">榜单为空</div>';
+                        container.innerHTML = '<div class="empty-state">榜单为空或获取失败</div>';
                     }
-                } else {
-                    throw new Error("解析官方数据失败");
+                } catch(e) {
+                    container.innerHTML = `<div class="empty-state" style="color:#ff4d4f; padding: 0 20px;">获取网易云榜单失败</div>`;
                 }
-            } catch (e) {
-                container.innerHTML = `<div class="empty-state" style="color:#ff4d4f; padding: 0 20px;">获取榜单失败</div>`;
+            } else {
+                container.innerHTML = '<div class="empty-state"><div class="spinner"></div>正在直连 QQ 音乐官方接口拉取数据...</div>';
+                try {
+                    const targetUrl = `https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg?g_tk=5381&uin=0&format=jsonp&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&tpl=3&page=detail&type=top&topid=${id}&_=${Date.now()}`;
+                    const json = await fetchQQMusicJsonp(targetUrl, 'MusicJsonCallback');
+                    
+                    if (json && json.code === 0 && json.songlist) {
+                        const songList = json.songlist.map(item => {
+                            const s = item.data || item;
+                            const albumMid = s.albummid || (s.album ? s.album.mid : '');
+                            const coverUrl = albumMid 
+                                ? `https://y.qq.com/music/photo_new/T002R300x300M000${albumMid}.jpg` 
+                                : 'https://y.qq.com/mediastyle/global/img/album_300.png';
+
+                            return {
+                                mid: s.songmid || s.mid,
+                                song: s.songname || s.name || s.title,
+                                singer: s.singer ? s.singer.map(art => art.name).join(' / ') : '未知歌手',
+                                album: s.albumname || (s.album ? s.album.name : ''),
+                                cover: coverUrl,
+                                vid: s.vid || '',
+                                source: 'qq'
+                            };
+                        });
+                        
+                        if (songList.length > 0) {
+                            const headCount = document.getElementById('toplist-head-count');
+                            if (headCount) headCount.innerText = `(${songList.length}首)`;
+                            container.innerHTML = renderSongsHTML(songList);
+                        } else {
+                            container.innerHTML = '<div class="empty-state">榜单为空</div>';
+                        }
+                    } else {
+                        throw new Error("解析官方数据失败");
+                    }
+                } catch (e) {
+                    container.innerHTML = `<div class="empty-state" style="color:#ff4d4f; padding: 0 20px;">获取榜单失败</div>`;
+                }
             }
         }
 
         audio.addEventListener('error', async (e) => {
             if (audio.src && audio.error && audio.error.code === 4) { 
                 if(currentIndex !== -1 && playQueue.length > 0) {
-                    const mid = playQueue[currentIndex].mid;
+                    const song = playQueue[currentIndex];
+                    const source = song.source || 'qq';
+                    const mid = song.mid;
                     const currentTime = audio.currentTime;
                     try {
-                        const res = await fetch(`${API_BASE}?mid=${mid}&quality=7`);
-                        const json = await res.json();
-                        if(json.code === 200 && json.data && json.data.url) {
-                            currentSongUrl = json.data.url;
-                            audio.src = currentSongUrl;
-                            audio.currentTime = currentTime;
-                            if(isPlaying) audio.play();
-                            
-                            currentQualityId = 7;
-                            
-                            const qBadge = document.getElementById('p-quality');
-                            if(qBadge) qBadge.innerText = json.data.quality || '标准音质';
+                        if (source === 'netease') {
+                            const res = await fetch(`https://api.qijieya.cn/meting/?server=netease&type=url&id=${mid}&br=128`);
+                            const json = await res.json();
+                        } else {
+                            const res = await fetch(`${API_BASE}?mid=${mid}&quality=7`);
+                            const json = await res.json();
+                            if(json.code === 200 && json.data && json.data.url) {
+                                currentSongUrl = json.data.url;
+                                audio.src = currentSongUrl;
+                                audio.currentTime = currentTime;
+                                if(isPlaying) audio.play();
+                                
+                                currentQualityId = 7;
+                                
+                                const qBadge = document.getElementById('p-quality');
+                                if(qBadge) qBadge.innerText = json.data.quality || '标准音质';
+                            }
                         }
                     } catch(err) {}
                 }
@@ -1988,6 +2211,11 @@
                 const safeSinger = song.singer.replace(/'/g, "\\'");
                 const safeAlbum = song.album ? song.album.replace(/'/g, "\\'") : '';
                 
+                const source = song.source || 'qq';
+                const sourceTag = source === 'netease' 
+                    ? `<span class="source-badge wy">WY</span>` 
+                    : `<span class="source-badge qq">QQ</span>`;
+
                 let dotsBtn = `
                 <button class="queue-remove-btn" onclick="openSongMenu(event, 'list', ${index}, '${localPlaylistId || ''}')" title="更多操作" style="font-size:20px; font-weight:bold; width:30px; text-align:center;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg>
@@ -1997,7 +2225,7 @@
                 <li class="song-item" onclick="playSongFromList(${index})">
                     <img src="${cover}" class="song-item-cover" alt="cover" loading="lazy">
                     <div class="song-item-info">
-                        <div class="song-item-title">${song.song} ${mvTag}</div>
+                        <div class="song-item-title">${sourceTag}${song.song} ${mvTag}</div>
                         <div class="song-item-singer mobile-only">${song.singer} ${song.album ? `· ${song.album}` : ''}</div>
                     </div>
                     <div class="desktop-singer desktop-singer-wrapper">
@@ -2248,7 +2476,7 @@
                     
                     if (json.code === 200 && json.data && json.data.list) {
                         if (total === null && json.data.info && json.data.info.songnum) { total = json.data.info.songnum; }
-                        const fetchedList = json.data.list;
+                        const fetchedList = json.data.list.map(s => ({ ...s, source: 'qq' }));
                         if (fetchedList.length > 0) {
                             allSongs = allSongs.concat(fetchedList);
                             offset += fetchedList.length;
@@ -2295,7 +2523,7 @@
                     
                     if (json.code === 200 && json.data && json.data.list) {
                         if (total === null && json.data.info && json.data.info.songnum) { total = json.data.info.songnum; }
-                        const fetchedList = json.data.list;
+                        const fetchedList = json.data.list.map(s => ({ ...s, source: 'qq' }));
                         if (fetchedList.length > 0) {
                             allSongs = allSongs.concat(fetchedList);
                             offset += fetchedList.length;
@@ -2331,25 +2559,49 @@
             container.innerHTML = '<div class="empty-state"><div class="spinner"></div>云端全网深度检索中...</div>';
             
             try {
-                const res = await fetch(`${API_BASE}/search/song?word=${encodeURIComponent(word)}&num=60`);
-                const json = await res.json();
-                if (json.code === 200 && json.data) {
-                    
-                    const listHeader = window.innerWidth >= 850 && fixedHeader ? `
-                        <div class="back-bar desktop-only" style="margin-bottom: 10px;">
-                            <span style="font-weight: 600; font-size: 14px;">${currentBrowsingListName}</span>
-                        </div>
-                        <div class="desktop-list-header">
-                            <div class="col-song">歌曲</div>
-                            <div class="col-singer">歌手</div>
-                            <div class="col-album">专辑</div>
-                            <div class="col-action">操作</div>
-                        </div>` : '';
-                    
-                    if(fixedHeader) fixedHeader.innerHTML = listHeader;
-                    container.innerHTML = renderSongsHTML(json.data);
-                } else {
-                    container.innerHTML = '<div class="empty-state">未找到相关歌曲</div>';
+                const listHeader = window.innerWidth >= 850 && fixedHeader ? `
+                    <div class="back-bar desktop-only" style="margin-bottom: 10px;">
+                        <span style="font-weight: 600; font-size: 14px;">${currentBrowsingListName}</span>
+                    </div>
+                    <div class="desktop-list-header">
+                        <div class="col-song">歌曲</div>
+                        <div class="col-singer">歌手</div>
+                        <div class="col-album">专辑</div>
+                        <div class="col-action">操作</div>
+                    </div>` : '';
+
+                if (currentSearchSource === 'qq') {
+                    const res = await fetch(`${API_BASE}/search/song?word=${encodeURIComponent(word)}&num=60`);
+                    const json = await res.json();
+                    if (json.code === 200 && json.data) {
+                        const listWithSource = json.data.map(item => ({...item, source: 'qq'}));
+                        if(fixedHeader) fixedHeader.innerHTML = listHeader;
+                        container.innerHTML = renderSongsHTML(listWithSource);
+                    } else {
+                        container.innerHTML = '<div class="empty-state">未找到相关歌曲</div>';
+                    }
+                } else if (currentSearchSource === 'netease') {
+                    const res = await fetch(`https://api.qijieya.cn/meting/?server=netease&type=search&id=${encodeURIComponent(word)}&limit=60`);
+                    const json = await res.json();
+                    if (Array.isArray(json) && json.length > 0) {
+                        const mappedList = json.map(item => {
+                            const midMatch = item.url.match(/id=(\d+)/);
+                            const mid = midMatch ? midMatch[1] : item.id;
+                            return {
+                                mid: mid,
+                                song: item.name,
+                                singer: item.artist,
+                                album: '网易云音乐', 
+                                cover: item.pic,
+                                source: 'netease',
+                                vid: '' 
+                            };
+                        });
+                        if(fixedHeader) fixedHeader.innerHTML = listHeader;
+                        container.innerHTML = renderSongsHTML(mappedList);
+                    } else {
+                        container.innerHTML = '<div class="empty-state">未找到相关歌曲</div>';
+                    }
                 }
             } catch (e) { container.innerHTML = '<div class="empty-state">搜索失败，请检查网络连接</div>'; }
         }
@@ -2361,40 +2613,72 @@
             const qualitySpan = document.getElementById('p-quality');
             if(!qualitySpan) return;
 
-            const cycle = [7, 8, 10, 14];
-            let idx = cycle.indexOf(currentQualityId);
-            if(idx === -1) idx = 3; 
-            currentQualityId = cycle[(idx + 1) % cycle.length];
-            
-            const mid = playQueue[currentIndex].mid;
-            const currentTime = audio.currentTime;
-            const wasPlaying = isPlaying;
-            const originalText = qualitySpan.innerText;
-            
-            qualitySpan.innerText = '切换中...';
-            qualitySpan.style.opacity = '0.7';
-            qualitySpan.style.pointerEvents = 'none';
+            const song = playQueue[currentIndex];
+            const source = song.source || 'qq';
 
-            try {
-                const res = await fetch(`${API_BASE}?mid=${mid}&quality=${currentQualityId}`);
-                const json = await res.json();
-                
-                if (json.code === 200 && json.data && json.data.url) {
-                    currentSongUrl = json.data.url;
+            if (source === 'netease') {
+                const cycle = [128, 192, 320, 2000];
+                let idx = cycle.indexOf(currentQualityIdNetease);
+                if(idx === -1) idx = 2; 
+                currentQualityIdNetease = cycle[(idx + 1) % cycle.length];
+                const brMap = {128: '标准', 192: '较高', 320: '极高', 2000: '无损'};
+
+                const originalText = qualitySpan.innerText;
+                qualitySpan.innerText = '切换中...';
+                qualitySpan.style.opacity = '0.7';
+                qualitySpan.style.pointerEvents = 'none';
+
+                try {
+                    const currentTime = audio.currentTime;
+                    const wasPlaying = isPlaying;
+                    currentSongUrl = `https://api.qijieya.cn/meting/?server=netease&type=url&id=${song.mid}&br=${currentQualityIdNetease}`;
                     audio.src = currentSongUrl;
-                    audio.currentTime = currentTime; 
-                    if (wasPlaying) audio.play();
-                    qualitySpan.innerText = json.data.quality || '未知音质';
-                } else {
-                    showToast('抱歉，该音质可能因版权或VIP限制不可用，已为您跳过');
+                    audio.currentTime = currentTime;
+                    if(wasPlaying) audio.play();
+                    qualitySpan.innerText = brMap[currentQualityIdNetease];
+                } catch(err) {
+                    showToast('网络异常，请重试');
                     qualitySpan.innerText = originalText;
+                } finally {
+                    qualitySpan.style.opacity = '1';
+                    qualitySpan.style.pointerEvents = 'auto';
                 }
-            } catch (err) {
-                showToast('网络异常，请重试');
-                qualitySpan.innerText = originalText;
-            } finally {
-                qualitySpan.style.opacity = '1';
-                qualitySpan.style.pointerEvents = 'auto';
+            } else {
+                const cycle = [7, 8, 10, 14];
+                let idx = cycle.indexOf(currentQualityId);
+                if(idx === -1) idx = 3; 
+                currentQualityId = cycle[(idx + 1) % cycle.length];
+                
+                const mid = playQueue[currentIndex].mid;
+                const currentTime = audio.currentTime;
+                const wasPlaying = isPlaying;
+                const originalText = qualitySpan.innerText;
+                
+                qualitySpan.innerText = '切换中...';
+                qualitySpan.style.opacity = '0.7';
+                qualitySpan.style.pointerEvents = 'none';
+
+                try {
+                    const res = await fetch(`${API_BASE}?mid=${mid}&quality=${currentQualityId}`);
+                    const json = await res.json();
+                    
+                    if (json.code === 200 && json.data && json.data.url) {
+                        currentSongUrl = json.data.url;
+                        audio.src = currentSongUrl;
+                        audio.currentTime = currentTime; 
+                        if (wasPlaying) audio.play();
+                        qualitySpan.innerText = json.data.quality || '未知音质';
+                    } else {
+                        showToast('抱歉，该音质可能因版权或VIP限制不可用，已为您跳过');
+                        qualitySpan.innerText = originalText;
+                    }
+                } catch (err) {
+                    showToast('网络异常，请重试');
+                    qualitySpan.innerText = originalText;
+                } finally {
+                    qualitySpan.style.opacity = '1';
+                    qualitySpan.style.pointerEvents = 'auto';
+                }
             }
         }
 
@@ -2402,22 +2686,14 @@
             if(index !== -1) currentIndex = index;
             isUserScrolling = false; 
             try {
-                let res = await fetch(`${API_BASE}?mid=${mid}&quality=${currentQualityId}`);
-                let json = await res.json();
-                
-                if (json.code === 200 && json.data && json.data.quality && json.data.quality.includes('杜比')) {
-                    res = await fetch(`${API_BASE}?mid=${mid}&quality=10`);
-                    json = await res.json();
-                }
+                const song = playQueue[currentIndex];
+                const source = song.source || 'qq'; 
 
-                if ((!json || json.code !== 200 || !json.data || !json.data.url) && currentQualityId !== 7) {
-                    res = await fetch(`${API_BASE}?mid=${mid}&quality=7`);
-                    json = await res.json();
-                }
+                if (source === 'netease') {
+                    const br = currentQualityIdNetease;
+                    const audioUrl = `https://api.qijieya.cn/meting/?server=netease&type=url&id=${mid}&br=${br}`;
 
-                if (json.code === 200 && json.data && json.data.url) {
-                    const song = json.data;
-                    currentSongUrl = song.url;
+                    currentSongUrl = audioUrl;
                     currentSongName = `${song.singer} - ${song.song}`;
                     
                     document.getElementById('p-title').innerText = song.song;
@@ -2434,7 +2710,8 @@
                     
                     const qualitySpan = document.getElementById('p-quality');
                     qualitySpan.style.display = 'inline-block';
-                    qualitySpan.innerText = song.quality || '标准音质';
+                    const brMap = {128: '标准', 192: '较高', 320: '极高', 2000: '无损'};
+                    qualitySpan.innerText = brMap[br] || '极高';
                     qualitySpan.title = "点击切换音质"; 
                     qualitySpan.onclick = switchQuality; 
                     
@@ -2447,20 +2724,75 @@
                     const fCoverPc = document.getElementById('f-cover-pc');
                     if(fCoverPc) fCoverPc.src = song.cover;
                     
-                    audio.src = song.url;
+                    audio.src = currentSongUrl;
                     audio.play();
                     isPlaying = true;
                     updatePlayState();
-                    fetchLyrics(mid);
+                    fetchLyrics(mid, 'netease'); 
                     switchTab('player');
 
                     renderQueue();
                 } else {
-                    const errorSongName = playQueue[currentIndex]?.song || '未知歌曲';
-                    showToast(`抱歉，《${errorSongName}》因版权限制无法获取音源，已自动为您跳过`);
-                    setTimeout(() => {
-                        nextSong();
-                    }, 1500);
+                    let res = await fetch(`${API_BASE}?mid=${mid}&quality=${currentQualityId}`);
+                    let json = await res.json();
+                    
+                    if (json.code === 200 && json.data && json.data.quality && json.data.quality.includes('杜比')) {
+                        res = await fetch(`${API_BASE}?mid=${mid}&quality=10`);
+                        json = await res.json();
+                    }
+
+                    if ((!json || json.code !== 200 || !json.data || !json.data.url) && currentQualityId !== 7) {
+                        res = await fetch(`${API_BASE}?mid=${mid}&quality=7`);
+                        json = await res.json();
+                    }
+
+                    if (json.code === 200 && json.data && json.data.url) {
+                        const fetchedSong = json.data;
+                        currentSongUrl = fetchedSong.url;
+                        currentSongName = `${fetchedSong.singer} - ${fetchedSong.song}`;
+                        
+                        document.getElementById('p-title').innerText = fetchedSong.song;
+                        
+                        const fNameMb = document.getElementById('f-name-mb');
+                        const fSingerMb = document.getElementById('f-singer-mb');
+                        if(fNameMb) fNameMb.innerText = fetchedSong.song;
+                        if(fSingerMb) fSingerMb.innerText = fetchedSong.singer;
+
+                        const fNamePc = document.getElementById('f-name-pc');
+                        const fSingerPc = document.getElementById('f-singer-pc');
+                        if(fNamePc) fNamePc.innerText = fetchedSong.song;
+                        if(fSingerPc) fSingerPc.innerText = fetchedSong.singer;
+                        
+                        const qualitySpan = document.getElementById('p-quality');
+                        qualitySpan.style.display = 'inline-block';
+                        qualitySpan.innerText = fetchedSong.quality || '标准音质';
+                        qualitySpan.title = "点击切换音质"; 
+                        qualitySpan.onclick = switchQuality; 
+                        
+                        document.getElementById('p-singer').innerHTML = `${fetchedSong.singer} &nbsp;`;
+                        document.getElementById('p-singer').appendChild(qualitySpan);
+                        
+                        coverImg.src = fetchedSong.cover;
+                        const fCoverMb = document.getElementById('f-cover-mb');
+                        if(fCoverMb) fCoverMb.src = fetchedSong.cover;
+                        const fCoverPc = document.getElementById('f-cover-pc');
+                        if(fCoverPc) fCoverPc.src = fetchedSong.cover;
+                        
+                        audio.src = fetchedSong.url;
+                        audio.play();
+                        isPlaying = true;
+                        updatePlayState();
+                        fetchLyrics(mid, 'qq');
+                        switchTab('player');
+
+                        renderQueue();
+                    } else {
+                        const errorSongName = playQueue[currentIndex]?.song || '未知歌曲';
+                        showToast(`抱歉，《${errorSongName}》因版权限制无法获取音源，已自动为您跳过`);
+                        setTimeout(() => {
+                            nextSong();
+                        }, 1500);
+                    }
                 }
             } catch (e) { 
                 showToast('请求超时，请重试'); 
@@ -2664,35 +2996,52 @@
             });
         }
 
-        async function fetchLyrics(mid) {
+        async function fetchLyrics(mid, source = 'qq') {
             try {
-                const res = await fetch(`${API_BASE}/lyric?mid=${mid}`);
-                const json = await res.json();
-                if (json.code === 200 && json.data && json.data.lrc) {
-                    const lrcLines = parseLrc(json.data.lrc);
-                    let transLines = json.data.trans ? parseLrc(json.data.trans) : [];
-                    const mergedLyrics = lrcLines.map(lrc => {
-                        const trans = transLines.find(t => Math.abs(t.time - lrc.time) < 1);
-                        return { time: lrc.time, main: lrc.text, trans: trans ? trans.text : '' };
-                    });
-                    lyricsArray = mergedLyrics;
-                    currentLyricIndex = -1; 
-                    lyricContainer.classList.remove('no-scroll'); 
-                    lyricContainer.innerHTML = lyricsArray.map((l, i) => `
-                        <div class="lyric-line-group" id="lrc-${i}" onclick="audio.currentTime=${l.time}; audio.play(); isPlaying=true; updatePlayState();">
-                            <div class="lyric-line-main">${l.main}</div>
-                            ${l.trans ? `<div class="lyric-line-trans">${l.trans}</div>` : ''}
-                        </div>
-                    `).join('');
+                if (source === 'netease') {
+                    const res = await fetch(`https://api.qijieya.cn/meting/?server=netease&type=lrc&id=${mid}`);
+                    const text = await res.text();
+                    if (text && text.includes('[')) {
+                        const lrcLines = parseLrc(text);
+                        lyricsArray = lrcLines.map(lrc => ({ time: lrc.time, main: lrc.text, trans: '' }));
+                        currentLyricIndex = -1; 
+                        lyricContainer.classList.remove('no-scroll'); 
+                        lyricContainer.innerHTML = lyricsArray.map((l, i) => `
+                            <div class="lyric-line-group" id="lrc-${i}" onclick="audio.currentTime=${l.time}; audio.play(); isPlaying=true; updatePlayState();">
+                                <div class="lyric-line-main">${l.main}</div>
+                                ${l.trans ? `<div class="lyric-line-trans">${l.trans}</div>` : ''}
+                            </div>
+                        `).join('');
+                    } else {
+                        throw new Error("No lyrics");
+                    }
                 } else {
-                    lyricsArray = []; currentLyricIndex = -1; 
-                    lyricContainer.classList.add('no-scroll'); 
-                    lyricContainer.innerHTML = '<div class="lyric-line-group active"><div class="lyric-line-main">此歌曲暂无歌词</div></div>';
+                    const res = await fetch(`${API_BASE}/lyric?mid=${mid}`);
+                    const json = await res.json();
+                    if (json.code === 200 && json.data && json.data.lrc) {
+                        const lrcLines = parseLrc(json.data.lrc);
+                        let transLines = json.data.trans ? parseLrc(json.data.trans) : [];
+                        const mergedLyrics = lrcLines.map(lrc => {
+                            const trans = transLines.find(t => Math.abs(t.time - lrc.time) < 1);
+                            return { time: lrc.time, main: lrc.text, trans: trans ? trans.text : '' };
+                        });
+                        lyricsArray = mergedLyrics;
+                        currentLyricIndex = -1; 
+                        lyricContainer.classList.remove('no-scroll'); 
+                        lyricContainer.innerHTML = lyricsArray.map((l, i) => `
+                            <div class="lyric-line-group" id="lrc-${i}" onclick="audio.currentTime=${l.time}; audio.play(); isPlaying=true; updatePlayState();">
+                                <div class="lyric-line-main">${l.main}</div>
+                                ${l.trans ? `<div class="lyric-line-trans">${l.trans}</div>` : ''}
+                            </div>
+                        `).join('');
+                    } else {
+                        throw new Error("No lyrics");
+                    }
                 }
             } catch (e) {
                 lyricsArray = []; currentLyricIndex = -1; 
                 lyricContainer.classList.add('no-scroll'); 
-                lyricContainer.innerHTML = '<div class="lyric-line-group active"><div class="lyric-line-main">歌词加载失败</div></div>';
+                lyricContainer.innerHTML = '<div class="lyric-line-group active"><div class="lyric-line-main">此歌曲暂无歌词</div></div>';
             }
         }
 
@@ -2844,15 +3193,19 @@
                 if(playQueue.length === 0) {
                     mContainer.innerHTML = '<div class="empty-state" style="margin-top:30px; font-size:13px;">队列为空</div>';
                 } else {
-                    mContainer.innerHTML = playQueue.map((song, i) => `
+                    mContainer.innerHTML = playQueue.map((song, i) => {
+                        const source = song.source || 'qq';
+                        const sourceTag = source === 'netease' ? `<span class="source-badge wy">WY</span>` : `<span class="source-badge qq">QQ</span>`;
+                        return `
                         <li class="queue-item ${i === currentIndex ? 'active' : ''}" onclick="playSong('${song.mid}', ${i})">
-                            <div class="q-info"><span class="q-title">${song.song}</span><span class="q-singer">${song.singer}</span></div>
+                            <div class="q-info"><span class="q-title">${sourceTag}${song.song}</span><span class="q-singer">${song.singer}</span></div>
                             ${i === currentIndex ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="var(--primary)" style="margin-right:8px;"><path d="M8 5v14l11-7z"/></svg>' : ''}
                             <button class="queue-remove-btn" onclick="openSongMenu(event, 'queue', ${i})" title="更多操作" style="font-size:20px; font-weight:bold; width:30px; text-align:center;">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg>
                             </button>
                         </li>
-                    `).join('');
+                        `;
+                    }).join('');
                     setTimeout(() => {
                         const activeItem = mContainer.querySelector('.queue-item.active');
                         if(activeItem) activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2875,10 +3228,14 @@
                         const safeAlbum = song.album ? song.album.replace(/'/g, "\\'") : '';
                         const mvTag = song.vid ? `<span class="mv-badge" onclick="event.stopPropagation(); playMV('${song.vid}', '${safeSongName}')">▶ MV</span>` : '';
                         
+                        // --- 新增音源标签 ---
+                        const source = song.source || 'qq';
+                        const sourceTag = source === 'netease' ? `<span class="source-badge wy">WY</span>` : `<span class="source-badge qq">QQ</span>`;
+                        
                         return `
                         <li class="song-item" onclick="playSong('${song.mid}', ${i})">
                             <div class="song-item-info">
-                                <div class="song-item-title" style="${titleColor}">${titlePrefix}${song.song} ${mvTag}</div>
+                                <div class="song-item-title" style="${titleColor}">${titlePrefix}${sourceTag}${song.song} ${mvTag}</div>
                             </div>
                             <div class="desktop-singer desktop-singer-wrapper" style="${colorStyle}">
                                 <svg class="singer-search-icon" onclick="searchSinger(event, '${safeSinger}')" viewBox="0 0 24 24" width="14" height="14">
