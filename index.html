@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QQmusic - Yoo</title>
+    <title>WebMusic - Yoo</title>
     <style>
         :root {
             --primary: #FE6F5E; 
@@ -28,9 +28,10 @@
 
         #bg-image {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('https://z.wiki/u/exONQv2tn') !important;
+            background-image: url('https://imgoss.qijieya.cn/imgoss/61/69c2608cf146a.webp') !important;
             background-size: cover; background-position: center;
             opacity: 1; z-index: -3; 
+            transition: background-image 0.5s ease;
         }
         
         #particle-canvas {
@@ -46,17 +47,37 @@
         .desktop-top-logo { display: none; }
         
         .header {
-            display: flex; justify-content: center; align-items: center; gap: 6vw; padding: 12px 0 8px; height: 60px;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 2vw; /* 改为固定的 12px，让文字紧凑聚拢 */
+            padding: 12px 15px 8px; 
+            height: 60px;
             background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
-            position: fixed; top: 0; width: 100%; z-index: 20;
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            z-index: 20;
+            box-sizing: border-box; 
         }
-        .nav-item { font-size: 15px; color: var(--text-sub); cursor: pointer; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); font-weight: 500; letter-spacing: 0.5px; position: relative; padding: 4px 6px; }
+        .nav-item { 
+    font-size: 15px; 
+    color: var(--text-sub); 
+    cursor: pointer; 
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
+    font-weight: 500; 
+    letter-spacing: 0.5px; 
+    position: relative; 
+    padding: 4px 6px;
+    white-space: nowrap; /* 强制文本不换行 */
+    flex-shrink: 0;      /* 防止元素被过度挤压 */
+}
         .nav-item:hover { color: #fff; }
         .nav-item.active { color: #FE6F5E; font-weight: 700; font-size: 17px; text-shadow: 0 2px 10px rgba(254,111,94,0.3); }
         .nav-item.active::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 14px; height: 3px; background: #FE6F5E; border-radius: 2px; box-shadow: 0 1px 6px rgba(254,111,94,0.6); transition: all 0.3s ease; }
 
         .main-player {
-            position: fixed; top: 70px; bottom: 115px; width: 100%;
+            position: fixed; top: 55px; bottom: 115px; width: 100%;
             display: flex; flex-direction: column; align-items: center; padding: 0 20px 1vh; z-index: 5;
             transition: opacity 0.4s ease, pointer-events 0.4s ease;
         }
@@ -139,7 +160,7 @@
         .fixed-side-tools .ctrl-btn:hover svg { color: var(--primary); transform: scale(1.1); }
 
         .action-panel {
-            position: fixed; top: 70px; bottom: 115px; width: 100%;
+            position: fixed; top: 55px; bottom: 115px; width: 100%;
             background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
             z-index: 10; transform: translateY(100%); opacity: 0; pointer-events: none;
             transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s;
@@ -284,9 +305,6 @@
         .ap-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             z-index: 10000; display: none; align-items: center; justify-content: center;
-        }
-        #create-playlist-modal, #rename-playlist-modal {
-            z-index: 10005; /* 提高新建和重命名弹窗层级，避免被添加到歌单界面覆盖 */
         }
         .ap-modal.show { display: flex; animation: fadeIn 0.2s; }
 
@@ -470,7 +488,7 @@
             }
 
             .action-panel {
-                left: 3vw; width: 51vw; top: 105px; bottom: 80px; padding: 0;
+                left: 3vw; width: 51vw; top: 90px; bottom: 80px; padding: 0;
                 transform: translateY(0) !important; opacity: 1 !important; pointer-events: auto !important;
                 background: transparent !important; 
                 border: none !important; 
@@ -480,7 +498,7 @@
             .panel-content { max-width: 100%; }
 
             .main-player {
-                left: auto; right: 3vw; width: 41vw; top: 105px; bottom: 80px; padding-top: 0; 
+                left: auto; right: 3vw; width: 41vw; top: 90px; bottom: 80px; padding-top: 0; 
                 background: transparent !important; 
                 border: none !important; 
                 border-radius: 0; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
@@ -504,11 +522,17 @@
                 color: #FFFFFF; font-size: 11px; font-weight: bold; margin-bottom: 2px; 
                 align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);
             }
+            .desktop-list-header.no-album-grid {
+                grid-template-columns: 2.2fr 1.2fr 0.6fr;
+            }
             .col-album { text-align: left; }
             .col-action { text-align: center; }
             
             .song-item { display: grid; grid-template-columns: 2.2fr 1.2fr 1fr 0.6fr; align-items: center; padding: 6px 10px; border-radius: 6px; margin-bottom: 0px; background: transparent; border-bottom: none;}
+            .song-item.no-album-grid { grid-template-columns: 2.2fr 1.2fr 0.6fr; }
             .song-item:hover { background: rgba(255,255,255,0.06); }
+
+            .no-album-grid .col-album, .no-album-grid .desktop-album { display: none !important; }
             
             .song-action-col { justify-content: center !important; }
             .song-action-col .queue-remove-btn { margin: 0 auto !important; }
@@ -659,6 +683,33 @@
         .custom-option { padding: 12px 15px; color: #fff; font-size: 14px; text-align: center; transition: 0.2s; font-weight: bold; }
         .custom-option:hover { background: rgba(255,255,255,0.1); color: var(--primary); }
 
+        /* 修改后 */
+        .settings-panel {
+            position: fixed; top: 0; left: -320px; width: 320px; height: 100vh;
+            /* 将背景改为完全透明，保留模糊效果（毛玻璃质感会非常好） */
+            background: transparent; 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-right: 1px solid var(--glass-border); z-index: 10001;
+            transition: left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex; flex-direction: column; padding: 25px 20px; 
+            /* 稍微减弱阴影，让透明面板更轻盈 */
+            box-shadow: 10px 0 30px rgba(0,0,0,0.3);
+        }
+        .settings-panel.open { left: 0; }
+        .settings-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10000;
+            display: none; opacity: 0; transition: opacity 0.3s;
+        }
+        .settings-overlay.show { display: block; opacity: 1; }
+        .bg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; overflow-y: auto; padding-bottom: 20px; }
+        .bg-item { width: 100%; height: 90px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; object-fit: cover; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .bg-item:hover, .bg-item.active { border-color: var(--primary); transform: scale(1.02); }
+        .settings-btn {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); color: #fff;
+            padding: 10px 0; border-radius: 8px; cursor: pointer; font-size: 13px; transition: 0.2s; text-align: center;
+        }
+        .settings-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); font-weight: bold; }
+        .settings-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -671,7 +722,7 @@
     </div>
 
     <div class="desktop-top-logo">
-        QQmusic Player <span style="margin-left: 8px;">「<span id="hitokoto-text">加载中...</span>」</span>
+        Yoo-music Player <span style="margin-left: 8px;">「<span id="hitokoto-text">加载中...</span>」</span>
     </div>
 
     <audio id="audio-player" preload="auto"></audio>
@@ -703,6 +754,11 @@
         <div class="nav-item" onclick="switchTab('playlist')" id="nav-playlist">我的歌单</div>
         <div class="nav-item" onclick="switchTab('toplist')" id="nav-toplist">音乐排行</div>
         <div class="nav-item" onclick="switchTab('search')" id="nav-search">歌曲搜索</div>
+        <div class="nav-item" onclick="toggleSettingsPanel()" style="padding: 4px; display: flex; align-items: center;" title="设置">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+            </svg>
+        </div>
     </div>
 
     <div class="main-player" id="main-player">
@@ -712,7 +768,7 @@
             </div>
         </div>
         <div class="song-info">
-            <div class="song-title" id="p-title">QQmusic Player</div>
+            <div class="song-title" id="p-title">Yoo-music Player</div>
             <div class="song-singer" id="p-singer">等待播放... <span class="quality-badge" style="display:none;" id="p-quality"></span></div>
         </div>
         
@@ -948,6 +1004,35 @@
         <video class="mv-player" id="mv-video" controls></video>
     </div>
 
+    <div class="settings-overlay" id="settings-overlay" onclick="toggleSettingsPanel()"></div>
+    <div class="settings-panel" id="settings-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <span style="font-size: 16px; font-weight: bold; color: #fff;">背景设置</span>
+            <button onclick="toggleSettingsPanel()" style="background:none; border:none; color:var(--text-sub); font-size:24px; cursor:pointer; line-height:1; padding:0;">&times;</button>
+        </div>
+        
+        <div style="display:grid; grid-template-columns: 1fr; gap:10px; margin-bottom: 20px;">
+            <button class="settings-btn" onclick="document.getElementById('local-bg-input').click()">上传本地壁纸</button>
+            <input type="file" id="local-bg-input" accept="image/*" style="display:none;" onchange="setLocalBg(event)">
+        </div>
+
+        <div style="margin-bottom: 20px; display:flex; flex-direction:column; gap:8px;">
+            <span style="font-size:13px; color:var(--text-sub);">自定义链接</span>
+            <div style="display:flex; gap:8px;">
+                <input type="text" id="url-bg-input" placeholder="输入图片链接..." style="flex:1; padding:8px 12px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:#fff; font-size:13px; outline:none;">
+                <button class="settings-btn" style="padding: 0 15px;" onclick="setUrlBg()">应用</button>
+            </div>
+        </div>
+
+        <span style="font-size:13px; color:var(--text-sub); margin-bottom:10px; display:block;">推荐壁纸</span>
+        <div class="bg-grid">
+            <img class="bg-item" src="https://imgoss.qijieya.cn/imgoss/61/69c260679f7fc.webp" onclick="setPresetBg(this.src)">
+            <img class="bg-item" src="https://imgoss.qijieya.cn/imgoss/61/69c2607a8ed65.webp" onclick="setPresetBg(this.src)">
+            <img class="bg-item" src="https://imgoss.qijieya.cn/imgoss/61/69c26081bc479.webp" onclick="setPresetBg(this.src)">
+            <img class="bg-item" src="https://imgoss.qijieya.cn/imgoss/61/69c2608cf146a.webp" onclick="setPresetBg(this.src)">
+        </div>
+    </div>
+
     <script>
         window.qqPlaylistCache = {}; 
         const CACHE_TTL = 5 * 60 * 1000; 
@@ -990,7 +1075,57 @@
                 makeDraggable('rename-pl-content', 'rename-pl-content');
                 makeDraggable('batch-modal-content', 'batch-modal-header');
             }
+
+            const savedBg = localStorage.getItem('yoo_custom_bg');
+            if (savedBg) {
+                document.getElementById('bg-image').style.setProperty('background-image', `url('${savedBg}')`, 'important');
+            }
         });
+
+        // 背景相关方法
+        function toggleSettingsPanel() {
+            const panel = document.getElementById('settings-panel');
+            const overlay = document.getElementById('settings-overlay');
+            if (panel.classList.contains('open')) {
+                panel.classList.remove('open');
+                overlay.classList.remove('show');
+                setTimeout(() => overlay.style.display = 'none', 300);
+            } else {
+                overlay.style.display = 'block';
+                void overlay.offsetWidth;
+                panel.classList.add('open');
+                overlay.classList.add('show');
+            }
+        }
+
+        function applyBg(url) {
+            document.getElementById('bg-image').style.setProperty('background-image', `url('${url}')`, 'important');
+            localStorage.setItem('yoo_custom_bg', url);
+        }
+
+        function setPresetBg(url) {
+            applyBg(url);
+            showToast('壁纸已应用');
+        }
+
+        function setUrlBg() {
+            const url = document.getElementById('url-bg-input').value.trim();
+            if (!url) return showToast('请输入有效的图片链接');
+            applyBg(url);
+            showToast('自定义链接壁纸已应用');
+        }
+
+        function setLocalBg(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                applyBg(e.target.result);
+                showToast('本地壁纸已应用');
+            };
+            reader.readAsDataURL(file);
+            event.target.value = '';
+        }
 
         // 纯自定义音源下拉菜单交互
         function toggleSourceMenu(e, type) {
@@ -1123,10 +1258,10 @@
             document.getElementById('new-pl-name').value = '';
             closeCreateModal();
             
-            // 停留在添加到歌单界面并刷新列表
             if (document.getElementById('add-playlist-modal').classList.contains('show')) {
-                renderAddList(); 
+                renderAddList();
             }
+            
             if (document.getElementById('qq-playlists-container')) renderPlaylistHome(false); 
         };
 
@@ -1586,7 +1721,7 @@
             document.getElementById('search-input').value = singerName;
             closeDesktopSearch();
             hasSearched = true;
-            switchTab('search');
+            switchTab('search', true);
             searchMusic();
         };
 
@@ -1788,7 +1923,6 @@
             { id: 5453912201, name: '黑胶VIP爱听榜' },
             { id: 745956260, name: '网易云韩语榜' },
             { id: 5059644681, name: '日语榜' },
-            { id: 2059642708, name: '国风榜' },
             { id: 6688069460, name: '听歌识曲榜' },
             { id: 6723173524, name: '网络热歌榜' },
             { id: 8246775932, name: '实时热度榜' },
@@ -1913,6 +2047,7 @@
             const container = document.getElementById('toplist-results');
             
             currentBrowsingListName = title;
+            const hideAlbum = source === 'netease';
             
             const backBtn = `
                 <div class="back-bar">
@@ -1925,7 +2060,7 @@
                 </div>`;
                 
             const listHeader = window.innerWidth >= 850 ? `
-                <div class="desktop-list-header">
+                <div class="desktop-list-header ${hideAlbum ? 'no-album-grid' : ''}">
                     <div class="col-song">歌曲</div>
                     <div class="col-singer">歌手</div>
                     <div class="col-album">专辑</div>
@@ -1948,7 +2083,7 @@
                                 mid: mid,
                                 song: item.name,
                                 singer: item.artist,
-                                album: '网易云音乐',
+                                album: '',
                                 cover: item.pic,
                                 source: 'netease',
                                 vid: ''
@@ -1957,7 +2092,7 @@
                         
                         const headCount = document.getElementById('toplist-head-count');
                         if (headCount) headCount.innerText = `(${songList.length}首)`;
-                        container.innerHTML = renderSongsHTML(songList);
+                        container.innerHTML = renderSongsHTML(songList, null, hideAlbum);
                     } else {
                         container.innerHTML = '<div class="empty-state">榜单为空或获取失败</div>';
                     }
@@ -1992,7 +2127,7 @@
                         if (songList.length > 0) {
                             const headCount = document.getElementById('toplist-head-count');
                             if (headCount) headCount.innerText = `(${songList.length}首)`;
-                            container.innerHTML = renderSongsHTML(songList);
+                            container.innerHTML = renderSongsHTML(songList, null, hideAlbum);
                         } else {
                             container.innerHTML = '<div class="empty-state">榜单为空</div>';
                         }
@@ -2075,8 +2210,8 @@
             }
         }
 
-        function switchTab(tabId) {
-            if (window.innerWidth >= 850 && tabId === 'search') {
+        function switchTab(tabId, bypassOverlay = false) {
+            if (window.innerWidth >= 850 && tabId === 'search' && !bypassOverlay) {
                 document.getElementById('desktop-search-overlay').style.display = 'block'; 
                 setTimeout(() => document.getElementById('ds-search-input').focus(), 100);
                 return; 
@@ -2113,7 +2248,7 @@
             document.getElementById('search-input').value = word; 
             closeDesktopSearch();
             hasSearched = true;
-            switchTab('search');
+            switchTab('search', true);
             searchMusic();
         }
 
@@ -2159,7 +2294,7 @@
             document.getElementById('ds-search-input').value = keyword;
             smartBox.style.display = 'none';
             hasSearched = true;
-            switchTab('search');
+            switchTab('search', true);
             searchMusic();
         }
 
@@ -2203,9 +2338,10 @@
             executeDesktopSearch();
         }
 
-        function renderSongsHTML(list, localPlaylistId = null) {
+        function renderSongsHTML(list, localPlaylistId = null, hideAlbum = false) {
             window.lastRenderedList = list; 
             if (!list || list.length === 0) return '<div class="empty-state">未能找到相关歌曲</div>';
+            const gridClass = hideAlbum ? 'no-album-grid' : '';
             return `<ul class="song-list">` + list.map((song, index) => {
                 const cover = song.cover || 'https://y.qq.com/mediastyle/global/img/album_300.png';
                 const safeSongName = song.song.replace(/'/g, "\\'");
@@ -2224,7 +2360,7 @@
                 </button>`;
 
                 return `
-                <li class="song-item" onclick="playSongFromList(${index})">
+                <li class="song-item ${gridClass}" onclick="playSongFromList(${index})">
                     <img src="${cover}" class="song-item-cover" alt="cover" loading="lazy">
                     <div class="song-item-info">
                         <div class="song-item-title">${sourceTag}${song.song} ${mvTag}</div>
@@ -2384,6 +2520,7 @@
             if(!pl) return;
 
             currentBrowsingListName = pl.name;
+            const hideAlbum = false;
             
             const backBtn = `
                 <div class="back-bar">
@@ -2407,7 +2544,7 @@
                 </div>` : '';
                 
             fixedHeader.innerHTML = backBtn + listHeader;
-            container.innerHTML = renderSongsHTML(pl.songs, pl.id);
+            container.innerHTML = renderSongsHTML(pl.songs, pl.id, hideAlbum);
         }
 
         async function loadPlaylistDetail(id, title) {
@@ -2450,7 +2587,7 @@
             if (cached) {
                 const countSpan = document.getElementById('detail-head-count');
                 if (countSpan) countSpan.innerText = `(${cached.data.length}首)`;
-                container.innerHTML = renderSongsHTML(cached.data);
+                container.innerHTML = renderSongsHTML(cached.data, null, false);
                 if (Date.now() - cached.timestamp > CACHE_TTL) {
                     fetchPlaylistBackground(id, uin);
                 }
@@ -2496,7 +2633,7 @@
                     window.qqPlaylistCache[id] = { data: allSongs, timestamp: Date.now() };
                     const countSpan = document.getElementById('detail-head-count');
                     if (countSpan) countSpan.innerText = `(${allSongs.length}首)`;
-                    container.innerHTML = renderSongsHTML(allSongs);
+                    container.innerHTML = renderSongsHTML(allSongs, null, false);
                 } else {
                     container.innerHTML = `<div class="empty-state">未能获取到歌曲，可能歌单已被设密</div>`;
                 }
@@ -2556,6 +2693,7 @@
             const container = document.getElementById('search-results');
             
             currentBrowsingListName = word;
+            const hideAlbum = currentSearchSource === 'netease';
             
             if(fixedHeader) fixedHeader.innerHTML = '';
             container.innerHTML = '<div class="empty-state"><div class="spinner"></div>云端全网深度检索中...</div>';
@@ -2565,7 +2703,7 @@
                     <div class="back-bar desktop-only" style="margin-bottom: 10px;">
                         <span style="font-weight: 600; font-size: 14px;">${currentBrowsingListName}</span>
                     </div>
-                    <div class="desktop-list-header">
+                    <div class="desktop-list-header ${hideAlbum ? 'no-album-grid' : ''}">
                         <div class="col-song">歌曲</div>
                         <div class="col-singer">歌手</div>
                         <div class="col-album">专辑</div>
@@ -2578,7 +2716,7 @@
                     if (json.code === 200 && json.data) {
                         const listWithSource = json.data.map(item => ({...item, source: 'qq'}));
                         if(fixedHeader) fixedHeader.innerHTML = listHeader;
-                        container.innerHTML = renderSongsHTML(listWithSource);
+                        container.innerHTML = renderSongsHTML(listWithSource, null, false);
                     } else {
                         container.innerHTML = '<div class="empty-state">未找到相关歌曲</div>';
                     }
@@ -2593,14 +2731,14 @@
                                 mid: mid,
                                 song: item.name,
                                 singer: item.artist,
-                                album: '网易云音乐', 
+                                album: '', 
                                 cover: item.pic,
                                 source: 'netease',
                                 vid: '' 
                             };
                         });
                         if(fixedHeader) fixedHeader.innerHTML = listHeader;
-                        container.innerHTML = renderSongsHTML(mappedList);
+                        container.innerHTML = renderSongsHTML(mappedList, null, hideAlbum);
                     } else {
                         container.innerHTML = '<div class="empty-state">未找到相关歌曲</div>';
                     }
@@ -2856,7 +2994,7 @@
 
         function nextSong() {
             if(playQueue.length === 0) return;
-            if (currentMode === 1) { audio.currentTime = 0; audio.play(); return; }
+if (currentMode === 1) { audio.currentTime = 0; audio.play(); return; }
             if (currentMode === 2) currentIndex = Math.floor(Math.random() * playQueue.length);
             else currentIndex = (currentIndex + 1) % playQueue.length;
             playSong(playQueue[currentIndex].mid, currentIndex);
