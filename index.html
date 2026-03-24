@@ -50,7 +50,7 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            gap: 2vw; /* 改为固定的 12px，让文字紧凑聚拢 */
+            gap: 2vw; 
             padding: 12px 15px 8px; 
             height: 60px;
             background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
@@ -61,17 +61,17 @@
             box-sizing: border-box; 
         }
         .nav-item { 
-    font-size: 15px; 
-    color: var(--text-sub); 
-    cursor: pointer; 
-    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
-    font-weight: 500; 
-    letter-spacing: 0.5px; 
-    position: relative; 
-    padding: 4px 6px;
-    white-space: nowrap; /* 强制文本不换行 */
-    flex-shrink: 0;      /* 防止元素被过度挤压 */
-}
+            font-size: 15px; 
+            color: var(--text-sub); 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
+            font-weight: 500; 
+            letter-spacing: 0.5px; 
+            position: relative; 
+            padding: 4px 6px;
+            white-space: nowrap; 
+            flex-shrink: 0;      
+        }
         .nav-item:hover { color: #fff; }
         .nav-item.active { color: #FE6F5E; font-weight: 700; font-size: 17px; text-shadow: 0 2px 10px rgba(254,111,94,0.3); }
         .nav-item.active::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 14px; height: 3px; background: #FE6F5E; border-radius: 2px; box-shadow: 0 1px 6px rgba(254,111,94,0.6); transition: all 0.3s ease; }
@@ -173,7 +173,6 @@
         .action-header { padding: 20px 20px 10px; border-bottom: 1px solid var(--glass-border); position: relative; }
         .input-group { display: flex; gap: 12px; position: relative; }
         
-        /* 搜索框透明化 */
         .input-group input {
             flex: 1; padding: 14px 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); outline: none;
             background: transparent; color: #fff; font-size: 15px; transition: all 0.3s; box-shadow: none;
@@ -230,12 +229,21 @@
         .song-item:hover { background: rgba(255,255,255,0.08); border-color: var(--glass-border); transform: translateY(-1px); }
         .song-item:active { transform: scale(0.98); }
         .song-item-cover { width: 48px; height: 48px; border-radius: 8px; margin-right: 15px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .song-item-info { flex: 1; overflow: hidden; }
+        .song-item-info { flex: 1; overflow: hidden; transition: padding-left 0.2s; }
         .song-item-title { font-size: 16px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; display: flex; align-items: center; }
         .song-item-singer { font-size: 13px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
         
         .mv-badge { border: 1px solid #1DD08A; color: #1DD08A; font-size: 10px; padding: 1px 4px; border-radius: 3px; margin-left: 8px; cursor: pointer; }
         .mv-badge:hover { background: #1DD08A; color: #000; }
+
+        /* 歌曲批量操作复选框 */
+        .song-batch-cb { display: none; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--text-sub); margin-right: 15px; align-items: center; justify-content: center; transition: 0.2s; flex-shrink:0; cursor:pointer;}
+        .song-list.batch-mode-active .song-batch-cb { display: flex; }
+        .song-list.batch-mode-active .song-item-cover { display: none; }
+        .song-batch-cb.checked { background: var(--primary); border-color: var(--primary); }
+        .song-batch-cb.checked::after { content: ''; width: 5px; height: 10px; border: solid #000; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -2px; }
+
+        .drag-placeholder { opacity: 0.4 !important; background: rgba(254, 111, 94, 0.1) !important; border: 1px dashed var(--primary) !important; border-radius: 8px; box-sizing: border-box; }
 
         .playlist-card {
             display: flex; align-items: center; background: rgba(255,255,255,0.03); 
@@ -369,9 +377,6 @@
             transition: background 0.2s ease, opacity 0.2s ease; 
             background: transparent;
         }
-        .batch-item.dragging { 
-            opacity: 0.4; background: rgba(255,255,255,0.05); border-radius: 8px; border-bottom-color: transparent;
-        }
 
         .batch-cb-wrapper { width: 40px; display: flex; align-items: center; justify-content: flex-start; cursor: pointer; }
         .batch-cb { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--text-sub); display: flex; align-items: center; justify-content: center; transition: 0.2s; }
@@ -409,7 +414,6 @@
 
         .mb-controls-row { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 45px; }
         
-        /* 双行显示的CSS */
         .mb-song-info { display: flex; align-items: center; flex: 1; overflow: hidden; min-width: 0; padding-right: 10px; }
         .mb-song-info img { width: 36px; height: 36px; border-radius: 6px; margin-right: 10px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
         .mb-text-wrapper { display: flex; flex-direction: column; overflow: hidden; flex: 1; justify-content: center; }
@@ -447,6 +451,22 @@
             pointer-events: none !important;
         }
 
+        /* 批量操作悬浮栏优化：透明玻璃感 + 横向排布 */
+        #song-batch-bar {
+            position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.15) !important; 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.05) !important; 
+            padding: 8px 16px !important; border-radius: 30px; 
+            display: none; gap: 10px; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            align-items: center; justify-content: center;
+            white-space: nowrap !important; 
+            width: max-content !important; max-width: 90vw;
+        }
+        #song-batch-bar span, #song-batch-bar button {
+            white-space: nowrap !important;
+        }
+
         @media (min-width: 850px) {
             body.lyric-fs-active .main-player {
                 width: 60vw !important;
@@ -469,7 +489,7 @@
             .header {
                 justify-content: flex-start; gap: 8px; padding: 0; margin: 0;
                 background: transparent; border: none;
-                position: absolute; left: 40px; top: 65px; width: 51vw; z-index: 20;
+                position: absolute; left: 40px; top: 45px; width: 51vw; z-index: 20;
                 transition: opacity 0.4s;
             }
             
@@ -488,7 +508,7 @@
             }
 
             .action-panel {
-                left: 3vw; width: 51vw; top: 90px; bottom: 80px; padding: 0;
+                left: 3vw; width: 51vw; top: 100px; bottom: 80px; padding: 0;
                 transform: translateY(0) !important; opacity: 1 !important; pointer-events: auto !important;
                 background: transparent !important; 
                 border: none !important; 
@@ -498,7 +518,7 @@
             .panel-content { max-width: 100%; }
 
             .main-player {
-                left: auto; right: 3vw; width: 41vw; top: 90px; bottom: 80px; padding-top: 0; 
+                left: auto; right: 3vw; width: 41vw; top: 100px; bottom: 80px; padding-top: 0; 
                 background: transparent !important; 
                 border: none !important; 
                 border-radius: 0; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
@@ -516,7 +536,6 @@
             .da-play-all { background: rgba(255,255,255,0.06); border: none; padding: 4px 10px; border-radius: 4px; color: rgba(255,255,255,0.8); font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: 0.2s; }
             .da-play-all:hover { background: #FE6F5E; color: #fff; }
 
-            /* 列表头部，增加 操作 列 */
             .desktop-list-header { 
                 display: grid; grid-template-columns: 2.2fr 1.2fr 1fr 0.6fr; padding: 6px 10px; 
                 color: #FFFFFF; font-size: 11px; font-weight: bold; margin-bottom: 2px; 
@@ -530,7 +549,15 @@
             
             .song-item { display: grid; grid-template-columns: 2.2fr 1.2fr 1fr 0.6fr; align-items: center; padding: 6px 10px; border-radius: 6px; margin-bottom: 0px; background: transparent; border-bottom: none;}
             .song-item.no-album-grid { grid-template-columns: 2.2fr 1.2fr 0.6fr; }
+
             .song-item:hover { background: rgba(255,255,255,0.06); }
+
+            .desktop-active-song .song-item-title { color: var(--primary) !important; font-weight: bold; }
+            .desktop-active-song { background: rgba(255,255,255,0.04) !important; }
+
+            .song-list.batch-mode-active .song-item { position: relative; }
+            .song-list.batch-mode-active .song-batch-cb { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); display: flex; z-index: 2; margin: 0; }
+            .song-list.batch-mode-active .song-item-info { padding-left: 28px; }
 
             .no-album-grid .col-album, .no-album-grid .desktop-album { display: none !important; }
             
@@ -603,13 +630,11 @@
             .lyric-wrapper::before { left: 0; }
             .lyric-wrapper::after { right: 0; }
             
-            /* 调整上移 */
             .action-body { padding-top: 5px !important; }
             .scrollable-section { padding: 0 15px 20px 15px !important; }
             .action-header { padding: 10px 15px 5px !important; border-bottom: none !important; }
             .fixed-header-section { padding: 5px 15px 0 15px !important; }
 
-            /* 移动端全局沉浸透明化 */
             .action-panel {
                 background: transparent !important;
                 backdrop-filter: none !important;
@@ -623,28 +648,6 @@
             }
         }
 
-        /* ======= 拖拽幽灵层与原位占位符优化 ======= */
-        .batch-item.dragging-active { 
-            opacity: 0.2; 
-            background: rgba(254, 111, 94, 0.1); 
-            border: 1px dashed var(--primary);
-            border-radius: 8px;
-        }
-        .batch-drag-ghost {
-            position: fixed;
-            z-index: 110000;
-            pointer-events: none; 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            background: rgba(35, 35, 35, 0.95);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--primary);
-            border-radius: 8px;
-            margin: 0 !important;
-            transition: none; 
-        }
-
-        /* 音源便签样式 */
         .source-badge { 
             font-size: 10px; padding: 2px 4px; border-radius: 4px; margin-right: 6px; 
             font-weight: 900; vertical-align: text-bottom; user-select: none; 
@@ -653,7 +656,6 @@
         .source-badge.qq { background: rgba(49, 194, 124, 0.15); color: #31c27c; border: 1px solid rgba(49, 194, 124, 0.3); }
         .source-badge.wy { background: rgba(230, 0, 38, 0.15); color: #ff3a3a; border: 1px solid rgba(230, 0, 38, 0.3); }
 
-        /* 全新透明下拉搜索组合框样式 */
         .search-combo-box { 
             display: flex; align-items: center; flex: 1; background: transparent; 
             border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); transition: all 0.3s; 
@@ -683,16 +685,13 @@
         .custom-option { padding: 12px 15px; color: #fff; font-size: 14px; text-align: center; transition: 0.2s; font-weight: bold; }
         .custom-option:hover { background: rgba(255,255,255,0.1); color: var(--primary); }
 
-        /* 修改后 */
         .settings-panel {
             position: fixed; top: 0; left: -320px; width: 320px; height: 100vh;
-            /* 将背景改为完全透明，保留模糊效果（毛玻璃质感会非常好） */
             background: transparent; 
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border-right: 1px solid var(--glass-border); z-index: 10001;
             transition: left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
             display: flex; flex-direction: column; padding: 25px 20px; 
-            /* 稍微减弱阴影，让透明面板更轻盈 */
             box-shadow: 10px 0 30px rgba(0,0,0,0.3);
         }
         .settings-panel.open { left: 0; }
@@ -825,7 +824,8 @@
     </div>
 
     <div id="song-action-menu" class="song-action-menu">
-        <div class="sam-item" onclick="samAdd()">添加到歌单</div>
+        <div class="sam-item" id="sam-add-queue-btn" onclick="samAddToQueue()">加入播放列表</div>
+        <div class="sam-item" onclick="samAdd()">添加到自建歌单</div>
         <div class="sam-item" id="sam-set-cover-btn" onclick="samSetCover()">设为封面</div>
         <div class="sam-item danger" id="sam-delete-btn" onclick="samDelete()">删除</div>
     </div>
@@ -848,8 +848,14 @@
         </div>
     </div>
 
+    <div id="song-batch-bar">
+        <span id="batch-sel-count" style="font-size:14px; color:#fff; font-weight:bold; margin-right:5px;">已选 0 首</span>
+        <button onclick="batchAddToQueue()" style="background:var(--primary); color:#000; border:none; padding:6px 15px; border-radius:15px; font-weight:bold; cursor:pointer; font-size:13px; transition:0.2s;">加入队列</button>
+        <button onclick="batchAddToPlaylist()" style="background:rgba(255,255,255,0.1); color:#fff; border:none; padding:6px 15px; border-radius:15px; cursor:pointer; font-size:13px; transition:0.2s;">加入歌单</button>
+        <button onclick="toggleSongBatchMode()" style="background:none; color:var(--text-sub); border:none; cursor:pointer; font-size:13px; transition:0.2s;">取消</button>
+    </div>
+
     <div class="action-panel" id="action-panel">
-        
         <div class="panel-content active" id="panel-player">
             <div class="action-body">
                 <div class="fixed-header-section desktop-only">
@@ -875,7 +881,7 @@
         <div class="panel-content" id="panel-playlist">
             <div class="action-header mobile-only">
                 <div class="input-group">
-                    <input type="number" id="uin-input" placeholder="输入您的 QQ 账号..." value="3377682726">
+                    <input type="number" id="uin-input" placeholder="输入您的 QQ 账号..." value="">
                     <button onclick="renderPlaylistHome(true)">提取</button>
                 </div>
             </div>
@@ -1035,10 +1041,11 @@
 
     <script>
         window.qqPlaylistCache = {}; 
+        window.toplistCache = {}; 
         const CACHE_TTL = 5 * 60 * 1000; 
 
         window.lastRenderedList = [];
-        let songToAdd = null;
+        window.songsToAdd = []; 
         let selectedBatchIds = [];
         
         let qqPlaylistsFetched = false;
@@ -1048,11 +1055,11 @@
         let hasSearched = false;
         let lastActiveTab = 'player';
         
-        // 全局存储当前搜索音源
         let currentSearchSource = 'qq';
-        
-        // 全局存储当前榜单音源
         let currentToplistSource = 'qq';
+
+        let isSongBatchMode = false;
+        let selectedSongIndices = [];
 
         window.addEventListener('DOMContentLoaded', () => {
             const popup = document.getElementById('greeting-popup');
@@ -1082,7 +1089,6 @@
             }
         });
 
-        // 背景相关方法
         function toggleSettingsPanel() {
             const panel = document.getElementById('settings-panel');
             const overlay = document.getElementById('settings-overlay');
@@ -1127,7 +1133,6 @@
             event.target.value = '';
         }
 
-        // 纯自定义音源下拉菜单交互
         function toggleSourceMenu(e, type) {
             e.stopPropagation();
             document.getElementById(`source-wrapper-${type}`).classList.toggle('open');
@@ -1148,7 +1153,6 @@
             if(wrapPc) wrapPc.classList.remove('open');
         }
 
-        // 统一弹窗拖拽实现
         function makeDraggable(modalId, headerId) {
             const modal = document.getElementById(modalId);
             const header = document.getElementById(headerId);
@@ -1244,7 +1248,6 @@
             document.getElementById('create-playlist-modal').classList.remove('show');
         };
         
-        // 自动完成添加到歌单逻辑
         window.submitCreatePlaylist = function() {
             let name = document.getElementById('new-pl-name').value.trim();
             if (!name) return showToast('歌单名称不能为空');
@@ -1293,19 +1296,18 @@
         function openApModal(source, index, event) {
             if(event && event.stopPropagation) event.stopPropagation();
             if (source === 'list') {
-                songToAdd = window.lastRenderedList[index];
+                window.songsToAdd = [window.lastRenderedList[index]];
             } else if (source === 'queue') {
-                songToAdd = playQueue[index];
+                window.songsToAdd = [playQueue[index]];
             }
             document.getElementById('add-playlist-modal').classList.add('show');
             renderAddList();
         }
         window.closeAddModal = function() {
             document.getElementById('add-playlist-modal').classList.remove('show');
-            songToAdd = null;
+            window.songsToAdd = [];
         }
         
-        // 优化添加到歌单列表，没有歌单时可直接快捷新建
         function renderAddList() {
             let pls = getLocalPlaylists();
             let container = document.getElementById('add-pl-list-container');
@@ -1330,20 +1332,23 @@
         }
         
         function addSongToLocalPlaylist(playlistId) {
-            if (!songToAdd) return;
+            if (!window.songsToAdd || window.songsToAdd.length === 0) return;
             let pls = getLocalPlaylists();
             let pl = pls.find(p => p.id === playlistId);
             if (pl) {
-                if (pl.songs.some(s => s.mid === songToAdd.mid)) {
-                    showToast('歌曲已存在于该歌单中');
-                } else {
-                    pl.songs.push(songToAdd);
-                    saveLocalPlaylists(pls);
-                    showToast('已成功加入自建歌单');
-                    if (document.getElementById('qq-playlists-container')) renderPlaylistHome(false); 
-                }
+                let added = 0;
+                window.songsToAdd.forEach(song => {
+                    if (!pl.songs.some(s => s.mid === song.mid)) {
+                        pl.songs.push(song);
+                        added++;
+                    }
+                });
+                saveLocalPlaylists(pls);
+                showToast(`成功将 ${added} 首歌曲加入自建歌单`);
+                if (document.getElementById('qq-playlists-container')) renderPlaylistHome(false); 
             }
             closeAddModal();
+            if(isSongBatchMode) toggleSongBatchMode();
         }
 
         function removeSongFromLocal(playlistId, index, event) {
@@ -1367,15 +1372,17 @@
         window.exportLocalPlaylists = function() {
             document.getElementById('io-action-menu').classList.remove('show');
             const pls = getLocalPlaylists();
-            if (pls.length === 0) {
+            const bg = localStorage.getItem('yoo_custom_bg') || '';
+            if (pls.length === 0 && !bg) {
                 showToast('暂无数据可导出');
                 return;
             }
-            const blob = new Blob([JSON.stringify(pls, null, 2)], { type: 'application/json' });
+            const exportData = { playlists: pls, settings: { bg: bg } };
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'yoo_playlists_backup.json';
+            a.download = 'yoo_backup.json';
             a.click();
             URL.revokeObjectURL(url);
             showToast('导出成功');
@@ -1391,6 +1398,13 @@
                     const data = JSON.parse(e.target.result);
                     if (Array.isArray(data)) {
                         saveLocalPlaylists(data);
+                        renderPlaylistHome(false);
+                        showToast('导入成功');
+                    } else if (data.playlists) {
+                        saveLocalPlaylists(data.playlists);
+                        if (data.settings && data.settings.bg) {
+                            applyBg(data.settings.bg);
+                        }
                         renderPlaylistHome(false);
                         showToast('导入成功');
                     } else {
@@ -1511,101 +1525,113 @@
             initBatchDrag();
         }
 
-        let draggedElement = null;
-        function initBatchDrag() {
+        window.initBatchDrag = function() {
             const list = document.getElementById('batch-list-container');
-            let items = list.querySelectorAll('.batch-item');
-            
+            if(!list) return;
+            const items = list.querySelectorAll('.batch-item');
+            let draggedItem = null;
             let ghost = null;
-            let startY = 0;
+            let placeholder = null;
             let offsetY = 0;
 
             items.forEach(item => {
                 const handle = item.querySelector('.batch-handle');
+                if(!handle) return;
                 
-                handle.addEventListener('touchstart', (e) => {
-                    draggedElement = item;
-                    const touch = e.touches[0];
+                const startDrag = (e) => {
+                    draggedItem = item;
                     const rect = item.getBoundingClientRect();
+                    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+                    offsetY = clientY - rect.top;
                     
-                    startY = touch.clientY;
-                    offsetY = startY - rect.top; 
-
+                    placeholder = document.createElement('div');
+                    placeholder.className = 'batch-item drag-placeholder';
+                    placeholder.style.height = rect.height + 'px';
+                    list.insertBefore(placeholder, item);
+                    
                     ghost = item.cloneNode(true);
-                    ghost.classList.add('batch-drag-ghost');
-                    const ghostCb = ghost.querySelector('.batch-cb-wrapper');
-                    if(ghostCb) ghostCb.style.display = 'none';
-                    
+                    ghost.style.position = 'fixed';
+                    ghost.style.zIndex = '110000';
+                    ghost.style.pointerEvents = 'none';
                     ghost.style.width = rect.width + 'px';
-                    ghost.style.height = rect.height + 'px';
                     ghost.style.left = rect.left + 'px';
                     ghost.style.top = rect.top + 'px';
+                    ghost.style.margin = '0';
+                    ghost.style.background = 'var(--glass-bg)';
+                    ghost.style.border = '1px solid var(--primary)';
+                    ghost.style.backdropFilter = 'blur(10px)';
                     document.body.appendChild(ghost);
 
-                    item.classList.add('dragging-active');
-                }, {passive: true});
-                
-                handle.addEventListener('touchmove', (e) => {
-                    if (!draggedElement || !ghost) return;
-                    e.preventDefault(); 
-                    const touch = e.touches[0];
-                    
-                    ghost.style.top = (touch.clientY - offsetY) + 'px';
-                    
-                    const target = document.elementFromPoint(touch.clientX, touch.clientY);
-                    const targetItem = target ? target.closest('.batch-item:not(.dragging-active)') : null;
-                    
-                    if (targetItem && targetItem !== draggedElement) {
-                        const rect = targetItem.getBoundingClientRect();
-                        const next = (touch.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
-                        const insertBeforeNode = next ? targetItem.nextSibling : targetItem;
-                        if (insertBeforeNode !== draggedElement && insertBeforeNode !== draggedElement.nextSibling) {
-                            list.insertBefore(draggedElement, insertBeforeNode);
-                        }
-                    }
-                }, {passive: false});
-                
-                handle.addEventListener('touchend', (e) => {
-                    if (!draggedElement) return;
-                    draggedElement.classList.remove('dragging-active');
-                    if (ghost) {
-                        ghost.remove();
-                        ghost = null;
-                    }
-                    draggedElement = null;
-                    saveBatchOrder();
-                });
+                    item.style.display = 'none';
 
-                handle.addEventListener('mousedown', (e) => {
-                    draggedElement = item;
-                    item.classList.add('dragging');
-                    item.setAttribute('draggable', 'true');
-                });
-                item.addEventListener('dragend', () => {
-                    item.classList.remove('dragging');
-                    item.removeAttribute('draggable');
-                    draggedElement = null;
-                    saveBatchOrder();
-                });
-                item.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    if(!draggedElement || draggedElement === item) return;
-                    const rect = item.getBoundingClientRect();
-                    const next = (e.clientY - rect.top)/(rect.bottom - rect.top) > 0.5;
-                    list.insertBefore(draggedElement, next ? item.nextSibling : item);
-                });
+                    document.addEventListener('mousemove', onMove, {passive: false});
+                    document.addEventListener('mouseup', onEnd);
+                    document.addEventListener('touchmove', onMove, {passive: false});
+                    document.addEventListener('touchend', onEnd);
+                };
+
+                handle.addEventListener('mousedown', (e) => { e.preventDefault(); startDrag(e); });
+                handle.addEventListener('touchstart', (e) => { startDrag(e); }, {passive: true});
             });
-        }
-        
-        function saveBatchOrder() {
-            const items = document.querySelectorAll('.batch-item');
-            const newOrderIds = Array.from(items).map(item => item.dataset.id);
-            let pls = getLocalPlaylists();
-            pls.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
-            saveLocalPlaylists(pls);
-            if (document.getElementById('qq-playlists-container')) {
-                renderPlaylistHome(false);
+
+            function onMove(e) {
+                if (!draggedItem || !ghost) return;
+                if(e.cancelable) e.preventDefault();
+                
+                const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+                ghost.style.top = (clientY - offsetY) + 'px';
+                
+                const currentItems = Array.from(list.querySelectorAll('.batch-item:not([style*="display: none"])'));
+                const targetItem = currentItems.find(item => {
+                    const rect = item.getBoundingClientRect();
+                    return clientY > rect.top && clientY < rect.bottom;
+                });
+                
+                if (targetItem) {
+                    const rect = targetItem.getBoundingClientRect();
+                    const next = (clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+                    const insertBeforeNode = next ? targetItem.nextSibling : targetItem;
+                    if (insertBeforeNode !== placeholder && insertBeforeNode !== placeholder.nextSibling) {
+                        list.insertBefore(placeholder, insertBeforeNode);
+                    }
+                }
             }
+
+            function onEnd(e) {
+                if (!draggedItem) return;
+                list.insertBefore(draggedItem, placeholder);
+                draggedItem.style.display = '';
+                if (ghost) ghost.remove();
+                if (placeholder) placeholder.remove();
+                
+                draggedItem = null;
+                ghost = null;
+                placeholder = null;
+                
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onEnd);
+                document.removeEventListener('touchmove', onMove);
+                document.removeEventListener('touchend', onEnd);
+                
+                saveBatchOrder();
+            }
+        }
+
+        function saveBatchOrder() {
+            const list = document.getElementById('batch-list-container');
+            if(!list) return;
+            const items = list.querySelectorAll('.batch-item');
+            const newOrderIds = Array.from(items).map(item => item.getAttribute('data-id'));
+            let pls = getLocalPlaylists();
+            
+            const newPls = [];
+            newOrderIds.forEach(id => {
+                const found = pls.find(p => p.id === id);
+                if(found) newPls.push(found);
+            });
+            
+            saveLocalPlaylists(newPls);
+            renderPlaylistHome(false);
         }
 
         let currentMenuContext = null; 
@@ -1632,7 +1658,13 @@
 
             const delBtn = document.getElementById('sam-delete-btn');
             const coverBtn = document.getElementById('sam-set-cover-btn');
+            const addQueueBtn = document.getElementById('sam-add-queue-btn');
             
+            // 修复桌面端队列不需要“加入播放列表”的逻辑
+            if (addQueueBtn) {
+                addQueueBtn.style.display = (type === 'queue') ? 'none' : 'block';
+            }
+
             if (type === 'queue' || localId) {
                 delBtn.style.display = 'block';
             } else {
@@ -1650,6 +1682,24 @@
             if(!currentMenuContext) return;
             const { type, index } = currentMenuContext;
             openApModal(type, index, { stopPropagation: ()=>{} }); 
+            closeSongMenu();
+        };
+
+        window.samAddToQueue = function() {
+            if(!currentMenuContext) return;
+            const { type, index } = currentMenuContext;
+            const song = type === 'queue' ? playQueue[index] : window.lastRenderedList[index];
+            if (!playQueue.find(s => s.mid === song.mid)) {
+                if (currentIndex !== -1 && playQueue.length > 0) {
+                    playQueue.splice(currentIndex + 1, 0, song);
+                } else {
+                    playQueue.unshift(song);
+                }
+                showToast('已加入播放队列');
+                renderQueue();
+            } else {
+                showToast('歌曲已在播放队列中');
+            }
             closeSongMenu();
         };
 
@@ -1692,6 +1742,67 @@
             }
         };
 
+        window.toggleSongBatchMode = function() {
+            isSongBatchMode = !isSongBatchMode;
+            selectedSongIndices = [];
+            
+            const lists = document.querySelectorAll('.song-list');
+            lists.forEach(list => {
+                if(isSongBatchMode) list.classList.add('batch-mode-active');
+                else list.classList.remove('batch-mode-active');
+            });
+            
+            document.querySelectorAll('.song-batch-cb').forEach(cb => cb.classList.remove('checked'));
+            document.getElementById('batch-sel-count').innerText = `已选 0 首`;
+            document.getElementById('song-batch-bar').style.display = isSongBatchMode ? 'flex' : 'none';
+        };
+
+        window.toggleSongCb = function(event, index) {
+            event.stopPropagation();
+            const idx = selectedSongIndices.indexOf(index);
+            const cb = document.getElementById(`song-cb-${index}`);
+            if (idx > -1) {
+                selectedSongIndices.splice(idx, 1);
+                if(cb) cb.classList.remove('checked');
+            } else {
+                selectedSongIndices.push(index);
+                if(cb) cb.classList.add('checked');
+            }
+            document.getElementById('batch-sel-count').innerText = `已选 ${selectedSongIndices.length} 首`;
+        };
+
+        window.handleSongClick = function(event, index) {
+            if (isSongBatchMode) {
+                toggleSongCb(event, index);
+            } else {
+                playSongFromList(index);
+            }
+        };
+
+        window.batchAddToQueue = function() {
+            if(selectedSongIndices.length === 0) return showToast('未选择任何歌曲');
+            let added = 0;
+            let insertPos = (currentIndex !== -1 && playQueue.length > 0) ? currentIndex + 1 : 0;
+            selectedSongIndices.forEach(idx => {
+                const song = window.lastRenderedList[idx];
+                if (!playQueue.find(s => s.mid === song.mid)) {
+                    playQueue.splice(insertPos, 0, song);
+                    insertPos++;
+                    added++;
+                }
+            });
+            showToast(`已将 ${added} 首歌曲加入队列`);
+            renderQueue();
+            toggleSongBatchMode();
+        };
+
+        window.batchAddToPlaylist = function() {
+            if(selectedSongIndices.length === 0) return showToast('未选择任何歌曲');
+            window.songsToAdd = selectedSongIndices.map(idx => window.lastRenderedList[idx]);
+            document.getElementById('add-playlist-modal').classList.add('show');
+            renderAddList();
+        };
+
         document.addEventListener('click', (e) => {
             closeSongMenu();
             const ioMenu = document.getElementById('io-action-menu');
@@ -1699,7 +1810,6 @@
                 ioMenu.classList.remove('show');
             }
             
-            // 点击外部关闭自定义音源下拉框
             const wrapMb = document.getElementById('source-wrapper-mb');
             const wrapPc = document.getElementById('source-wrapper-pc');
             if(wrapMb && !e.target.closest('#source-wrapper-mb')) wrapMb.classList.remove('open');
@@ -1885,7 +1995,6 @@
             }
         };
 
-        // 切换榜单逻辑
         window.toggleToplistSource = function() {
             currentToplistSource = currentToplistSource === 'qq' ? 'netease' : 'qq';
             renderToplistHome();
@@ -1932,6 +2041,18 @@
             { id: 7785091694, name: '黑胶VIP爱搜榜' }
         ];
 
+window.refreshToplistHome = function(event) {
+            if (event) event.stopPropagation();
+            // 清除当前源的所有榜单缓存数据
+            Object.keys(window.toplistCache).forEach(key => {
+                if (key.startsWith(currentToplistSource + '_')) {
+                    delete window.toplistCache[key];
+                }
+            });
+            showToast('榜单信息已刷新');
+            renderToplistHome(); // 重新拉取首页的封面和前三首歌曲预览
+        };
+
         window.renderToplistHome = function() {
             const container = document.getElementById('toplist-results');
             const fixedHeader = document.getElementById('toplist-fixed-header');
@@ -1942,7 +2063,10 @@
             const listsToRender = currentToplistSource === 'qq' ? qqToplists : neteaseToplists;
 
             container.innerHTML = `
-            <div style="font-size:16px; font-weight:bold; color:var(--text-main); margin-bottom: 15px; cursor:pointer; display:inline-block; user-select:none; transition:0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-main)'" onclick="toggleToplistSource()">${titleText}</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="font-size:16px; font-weight:bold; color:var(--text-main); cursor:pointer; display:inline-block; user-select:none; transition:0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-main)'" onclick="toggleToplistSource()">${titleText}</div>
+                <button onclick="refreshToplistHome(event)" style="background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:14px; cursor:pointer; font-size:12px; font-weight:600; padding:6px 14px; transition:0.2s;" onmouseover="this.style.background='var(--primary)'; this.style.color='#000'" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#fff'">刷新榜单</button>
+            </div>
             <div style="padding-top:0px;">` + listsToRender.map(list => `
                 <div class="playlist-card" style="align-items: center; justify-content: space-between;" onclick="loadToplistDetail(${list.id}, '${list.name}', '${currentToplistSource}')">
                     <div style="flex:1; overflow: hidden; padding-right: 15px; display: flex; flex-direction: column; justify-content: center;">
@@ -2048,7 +2172,9 @@
             
             currentBrowsingListName = title;
             const hideAlbum = source === 'netease';
+            const cacheKey = source + '_' + id;
             
+            // 已将内部的“刷新榜单”按钮移除，只保留“批量操作”按钮
             const backBtn = `
                 <div class="back-bar">
                     <button class="back-btn" onclick="renderToplistHome()">
@@ -2057,6 +2183,7 @@
                     <span style="font-weight: 600; font-size: 14px; display:flex; align-items:center; gap:6px;">
                         ${title} <span id="toplist-head-count" style="font-size:12px; color:var(--text-sub); font-weight:normal;"></span>
                     </span>
+                    <button class="back-btn" onclick="toggleSongBatchMode()" style="margin-left:auto; background:rgba(255,255,255,0.1); font-size:12px; padding:6px 12px; margin-right:0;">批量操作</button>
                 </div>`;
                 
             const listHeader = window.innerWidth >= 850 ? `
@@ -2068,6 +2195,16 @@
                 </div>` : '';
                 
             fixedHeader.innerHTML = backBtn + listHeader;
+
+            // 检查排行榜缓存
+            if (window.toplistCache[cacheKey]) {
+                const songList = window.toplistCache[cacheKey].data;
+                const headCount = document.getElementById('toplist-head-count');
+                if (headCount) headCount.innerText = `(${songList.length}首)`;
+                container.innerHTML = renderSongsHTML(songList, null, hideAlbum);
+                if(isSongBatchMode) { toggleSongBatchMode(); }
+                return;
+            }
             
             if (source === 'netease') {
                 container.innerHTML = '<div class="empty-state"><div class="spinner"></div>正在获取网易云音乐接口拉取数据...</div>';
@@ -2090,9 +2227,13 @@
                             };
                         });
                         
+                        // 写入缓存
+                        window.toplistCache[cacheKey] = { data: songList, timestamp: Date.now() };
+
                         const headCount = document.getElementById('toplist-head-count');
                         if (headCount) headCount.innerText = `(${songList.length}首)`;
                         container.innerHTML = renderSongsHTML(songList, null, hideAlbum);
+                        if(isSongBatchMode) { toggleSongBatchMode(); }
                     } else {
                         container.innerHTML = '<div class="empty-state">榜单为空或获取失败</div>';
                     }
@@ -2124,10 +2265,14 @@
                             };
                         });
                         
+                        // 写入缓存
+                        window.toplistCache[cacheKey] = { data: songList, timestamp: Date.now() };
+
                         if (songList.length > 0) {
                             const headCount = document.getElementById('toplist-head-count');
                             if (headCount) headCount.innerText = `(${songList.length}首)`;
                             container.innerHTML = renderSongsHTML(songList, null, hideAlbum);
+                            if(isSongBatchMode) { toggleSongBatchMode(); }
                         } else {
                             container.innerHTML = '<div class="empty-state">榜单为空</div>';
                         }
@@ -2240,6 +2385,7 @@
                     actionPanel.classList.add('show');
                 }
             }
+            if(isSongBatchMode) { toggleSongBatchMode(); }
         }
 
         function executeDesktopSearch() {
@@ -2342,7 +2488,7 @@
             window.lastRenderedList = list; 
             if (!list || list.length === 0) return '<div class="empty-state">未能找到相关歌曲</div>';
             const gridClass = hideAlbum ? 'no-album-grid' : '';
-            return `<ul class="song-list">` + list.map((song, index) => {
+            return `<ul class="song-list ${isSongBatchMode ? 'batch-mode-active' : ''}">` + list.map((song, index) => {
                 const cover = song.cover || 'https://y.qq.com/mediastyle/global/img/album_300.png';
                 const safeSongName = song.song.replace(/'/g, "\\'");
                 const mvTag = song.vid ? `<span class="mv-badge" onclick="event.stopPropagation(); playMV('${song.vid}', '${safeSongName}')">▶ MV</span>` : '';
@@ -2359,8 +2505,11 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg>
                 </button>`;
 
+                const checkedClass = selectedSongIndices.includes(index) ? 'checked' : '';
+
                 return `
-                <li class="song-item ${gridClass}" onclick="playSongFromList(${index})">
+                <li class="song-item ${gridClass}" onclick="handleSongClick(event, ${index})">
+                    <div class="song-batch-cb ${checkedClass}" id="song-cb-${index}"></div>
                     <img src="${cover}" class="song-item-cover" alt="cover" loading="lazy">
                     <div class="song-item-info">
                         <div class="song-item-title">${sourceTag}${song.song} ${mvTag}</div>
@@ -2390,11 +2539,11 @@
             const uinInput = document.getElementById('uin-input');
             const uinInputPc = document.getElementById('uin-input-pc');
             
-            let uin = '3377682726';
+            let uin = '';
             if (window.innerWidth >= 850) {
-                uin = (uinInputPc && uinInputPc.value) ? uinInputPc.value : (uinInput && uinInput.value ? uinInput.value : '3377682726');
+                uin = (uinInputPc && uinInputPc.value) ? uinInputPc.value : (uinInput && uinInput.value ? uinInput.value : '');
             } else {
-                uin = (uinInput && uinInput.value) ? uinInput.value : (uinInputPc && uinInputPc.value ? uinInputPc.value : '3377682726');
+                uin = (uinInput && uinInput.value) ? uinInput.value : (uinInputPc && uinInputPc.value ? uinInputPc.value : '');
             }
             if (uinInput) uinInput.value = uin;
 
@@ -2471,6 +2620,10 @@
                      <div id="qq-playlists-container">`;
 
             if (fetchQQ) {
+                if (!uin) {
+                    showToast('请输入您的 QQ 账号');
+                    return;
+                }
                 html += `<div class="empty-state"><div class="spinner"></div>正在连接云端服务器...</div></div>`;
                 container.innerHTML = html;
                 try {
@@ -2533,6 +2686,7 @@
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.8; transition:0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                         </span>
                     </span>
+                    <button class="back-btn" onclick="toggleSongBatchMode()" style="margin-left:auto; background:rgba(255,255,255,0.1); font-size:12px; padding:6px 12px; margin-right:0;">批量操作</button>
                 </div>`;
                 
             const listHeader = window.innerWidth >= 850 ? `
@@ -2545,17 +2699,18 @@
                 
             fixedHeader.innerHTML = backBtn + listHeader;
             container.innerHTML = renderSongsHTML(pl.songs, pl.id, hideAlbum);
+            if(isSongBatchMode) { toggleSongBatchMode(); }
         }
 
         async function loadPlaylistDetail(id, title) {
             const uinInput = document.getElementById('uin-input');
             const uinInputPc = document.getElementById('uin-input-pc');
             
-            let uin = '3377682726';
+            let uin = '';
             if (window.innerWidth >= 850) {
-                uin = (uinInputPc && uinInputPc.value) ? uinInputPc.value : (uinInput && uinInput.value ? uinInput.value : '3377682726');
+                uin = (uinInputPc && uinInputPc.value) ? uinInputPc.value : (uinInput && uinInput.value ? uinInput.value : '');
             } else {
-                uin = (uinInput && uinInput.value) ? uinInput.value : (uinInputPc && uinInputPc.value ? uinInputPc.value : '3377682726');
+                uin = (uinInput && uinInput.value) ? uinInput.value : (uinInputPc && uinInputPc.value ? uinInputPc.value : '');
             }
             
             const fixedHeader = document.getElementById('playlist-fixed-header');
@@ -2571,6 +2726,7 @@
                     <span style="font-weight: 600; font-size: 14px; display:flex; align-items:center; gap:6px;">
                         ${currentBrowsingListName} <span id="detail-head-count" style="font-size:12px; color:var(--text-sub); font-weight:normal;"></span>
                     </span>
+                    <button class="back-btn" onclick="toggleSongBatchMode()" style="margin-left:auto; background:rgba(255,255,255,0.1); font-size:12px; padding:6px 12px; margin-right:0;">批量操作</button>
                 </div>`;
                 
             const listHeader = window.innerWidth >= 850 ? `
@@ -2588,6 +2744,7 @@
                 const countSpan = document.getElementById('detail-head-count');
                 if (countSpan) countSpan.innerText = `(${cached.data.length}首)`;
                 container.innerHTML = renderSongsHTML(cached.data, null, false);
+                if(isSongBatchMode) { toggleSongBatchMode(); }
                 if (Date.now() - cached.timestamp > CACHE_TTL) {
                     fetchPlaylistBackground(id, uin);
                 }
@@ -2634,6 +2791,7 @@
                     const countSpan = document.getElementById('detail-head-count');
                     if (countSpan) countSpan.innerText = `(${allSongs.length}首)`;
                     container.innerHTML = renderSongsHTML(allSongs, null, false);
+                    if(isSongBatchMode) { toggleSongBatchMode(); }
                 } else {
                     container.innerHTML = `<div class="empty-state">未能获取到歌曲，可能歌单已被设密</div>`;
                 }
@@ -2702,6 +2860,7 @@
                 const listHeader = window.innerWidth >= 850 && fixedHeader ? `
                     <div class="back-bar desktop-only" style="margin-bottom: 10px;">
                         <span style="font-weight: 600; font-size: 14px;">${currentBrowsingListName}</span>
+                        <button class="back-btn" onclick="toggleSongBatchMode()" style="margin-left:auto; background:rgba(255,255,255,0.1); font-size:12px; padding:6px 12px; margin-right:0;">批量操作</button>
                     </div>
                     <div class="desktop-list-header ${hideAlbum ? 'no-album-grid' : ''}">
                         <div class="col-song">歌曲</div>
@@ -2717,6 +2876,7 @@
                         const listWithSource = json.data.map(item => ({...item, source: 'qq'}));
                         if(fixedHeader) fixedHeader.innerHTML = listHeader;
                         container.innerHTML = renderSongsHTML(listWithSource, null, false);
+                        if(isSongBatchMode) { toggleSongBatchMode(); }
                     } else {
                         container.innerHTML = '<div class="empty-state">未找到相关歌曲</div>';
                     }
@@ -2739,6 +2899,7 @@
                         });
                         if(fixedHeader) fixedHeader.innerHTML = listHeader;
                         container.innerHTML = renderSongsHTML(mappedList, null, hideAlbum);
+                        if(isSongBatchMode) { toggleSongBatchMode(); }
                     } else {
                         container.innerHTML = '<div class="empty-state">未找到相关歌曲</div>';
                     }
@@ -2994,7 +3155,7 @@
 
         function nextSong() {
             if(playQueue.length === 0) return;
-if (currentMode === 1) { audio.currentTime = 0; audio.play(); return; }
+            if (currentMode === 1) { audio.currentTime = 0; audio.play(); return; }
             if (currentMode === 2) currentIndex = Math.floor(Math.random() * playQueue.length);
             else currentIndex = (currentIndex + 1) % playQueue.length;
             playSong(playQueue[currentIndex].mid, currentIndex);
@@ -3161,15 +3322,14 @@ if (currentMode === 1) { audio.currentTime = 0; audio.play(); return; }
                     if (json.code === 200 && json.data && json.data.lrc) {
                         const lrcLines = parseLrc(json.data.lrc);
                         let transLines = json.data.trans ? parseLrc(json.data.trans) : [];
-                        const mergedLyrics = lrcLines.map(lrc => {
-                            const trans = transLines.find(t => Math.abs(t.time - lrc.time) < 1);
-                            return { time: lrc.time, main: lrc.text, trans: trans ? trans.text : '' };
+lyricsArray = lrcLines.map(lrc => {
+                            const t = transLines.find(t => Math.abs(t.time - lrc.time) < 0.5);
+                            return { time: lrc.time, main: lrc.text, trans: t ? t.text : '' };
                         });
-                        lyricsArray = mergedLyrics;
                         currentLyricIndex = -1; 
                         lyricContainer.classList.remove('no-scroll'); 
                         lyricContainer.innerHTML = lyricsArray.map((l, i) => `
-                            <div class="lyric-line-group" id="lrc-${i}" onclick="audio.currentTime=${l.time}; audio.play(); isPlaying=true; updatePlayState();">
+                            <div class="lyric-line-group" id="lrc-${i}" onclick="seekToLyric(${l.time})">
                                 <div class="lyric-line-main">${l.main}</div>
                                 ${l.trans ? `<div class="lyric-line-trans">${l.trans}</div>` : ''}
                             </div>
@@ -3179,266 +3339,272 @@ if (currentMode === 1) { audio.currentTime = 0; audio.play(); return; }
                     }
                 }
             } catch (e) {
-                lyricsArray = []; currentLyricIndex = -1; 
-                lyricContainer.classList.add('no-scroll'); 
-                lyricContainer.innerHTML = '<div class="lyric-line-group active"><div class="lyric-line-main">此歌曲暂无歌词</div></div>';
+                lyricsArray = [];
+                lyricContainer.classList.add('no-scroll');
+                lyricContainer.innerHTML = '<div class="lyric-line-group active"><div class="lyric-line-main">暂无歌词 / 纯音乐</div></div>';
             }
         }
 
-        function parseLrc(lrcStr) {
+        function parseLrc(lrc) {
+            const lines = lrc.split('\n');
             const result = [];
-            lrcStr.split('\n').forEach(line => {
-                const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/);
+            const timeReg = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/;
+            for (let line of lines) {
+                const match = timeReg.exec(line);
                 if (match) {
-                    const time = parseInt(match[1]) * 60 + parseInt(match[2]) + parseFloat("0." + match[3]);
-                    const text = match[4].replace(/\/\//g, '').trim(); 
-                    if(text) result.push({ time, text });
+                    const m = parseInt(match[1]);
+                    const s = parseInt(match[2]);
+                    const ms = parseInt(match[3].length === 2 ? match[3] + '0' : match[3]);
+                    const time = m * 60 + s + ms / 1000;
+                    const text = line.replace(timeReg, '').trim();
+                    if (text) result.push({ time, text });
                 }
-            });
+            }
             return result;
         }
 
-        function handleLyricInteraction() {
-            if (!lyricsArray || lyricsArray.length === 0) return;
-            isUserScrolling = true;
-            lyricSeekLine.classList.add('show');
-            resetLyricScrollTimeout();
+        function seekToLyric(time) {
+            if(!audio.duration) return;
+            audio.currentTime = time;
+            if(!isPlaying) togglePlay();
         }
 
-        function resetLyricScrollTimeout() {
+        function syncLyric(time) {
+            if (lyricsArray.length === 0 || isUserScrolling) return;
+            let index = lyricsArray.findIndex(l => l.time > time) - 1;
+            if (index === -2) index = lyricsArray.length - 1; 
+            if (index === -1) index = 0;
+
+            if (index !== currentLyricIndex && index >= 0) {
+                const oldLine = document.getElementById(`lrc-${currentLyricIndex}`);
+                if (oldLine) oldLine.classList.remove('active');
+                
+                const newLine = document.getElementById(`lrc-${index}`);
+                if (newLine) {
+                    newLine.classList.add('active');
+                    currentLyricIndex = index;
+                    
+                    const boxCenter = lyricContainer.clientHeight / 2;
+                    const lineOffset = newLine.offsetTop + newLine.clientHeight / 2;
+                    lyricContainer.scrollTo({ top: lineOffset - boxCenter, behavior: 'smooth' });
+                }
+            }
+        }
+
+        lyricContainer.addEventListener('scroll', () => {
+            if (lyricsArray.length === 0) return;
+            isUserScrolling = true;
+            lyricSeekLine.style.opacity = '1';
+            
+            const boxCenter = lyricContainer.scrollTop + lyricContainer.clientHeight / 2;
+            let targetIndex = 0;
+            let minDiff = Infinity;
+            
+            const lines = document.querySelectorAll('.lyric-line-group');
+            lines.forEach((line, index) => {
+                const lineCenter = line.offsetTop + line.clientHeight / 2;
+                const diff = Math.abs(lineCenter - boxCenter);
+                if(diff < minDiff) {
+                    minDiff = diff;
+                    targetIndex = index;
+                }
+            });
+            
+            if (lyricsArray[targetIndex]) {
+                seekTargetTime = lyricsArray[targetIndex].time;
+                lyricSeekTime.innerText = formatTime(seekTargetTime);
+            }
+
             clearTimeout(lyricScrollTimeout);
             lyricScrollTimeout = setTimeout(() => {
                 isUserScrolling = false;
-                lyricSeekLine.classList.remove('show');
-                syncLyric(audio.currentTime, true); 
-            }, 2500);
-        }
-
-        lyricContainer.addEventListener('touchstart', handleLyricInteraction, {passive: true});
-        lyricContainer.addEventListener('mousedown', handleLyricInteraction, {passive: true});
-        lyricContainer.addEventListener('wheel', handleLyricInteraction, {passive: true});
-        lyricContainer.addEventListener('touchmove', handleLyricInteraction, {passive: true});
-
-        lyricContainer.addEventListener('scroll', () => {
-            if (!isUserScrolling || lyricsArray.length === 0) return;
-            resetLyricScrollTimeout();
-
-            const containerRect = lyricContainer.getBoundingClientRect();
-            const containerCenter = containerRect.top + containerRect.height / 2;
-            let closestIndex = 0; let minDiff = Infinity;
-            
-            const lines = lyricContainer.querySelectorAll('.lyric-line-group');
-            lines.forEach((line, index) => {
-                const rect = line.getBoundingClientRect();
-                const lineCenter = rect.top + rect.height / 2;
-                const diff = Math.abs(lineCenter - containerCenter);
-                if (diff < minDiff) { minDiff = diff; closestIndex = index; }
-            });
-
-            if (lyricsArray[closestIndex]) {
-                seekTargetTime = lyricsArray[closestIndex].time;
-                lyricSeekTime.innerText = formatTime(seekTargetTime);
-                lines.forEach(el => el.style.opacity = ''); 
-                if(lines[closestIndex]) lines[closestIndex].style.opacity = '1';
-            }
+                lyricSeekLine.style.opacity = '0';
+                syncLyric(audio.currentTime); 
+            }, 3000);
         });
 
-        window.jumpToSeekTime = function() {
-            if (seekTargetTime >= 0) {
-                audio.currentTime = seekTargetTime;
-                if (!isPlaying) togglePlay();
-                isUserScrolling = false;
-                lyricSeekLine.classList.remove('show');
-                syncLyric(audio.currentTime, true); 
-            }
-        };
-
-        function syncLyric(currentTime, forceScroll = false) {
-            if (lyricsArray.length === 0) return;
-            let activeIndex = 0;
-            for (let i = 0; i < lyricsArray.length; i++) {
-                if (currentTime + 0.3 >= lyricsArray[i].time) { activeIndex = i; } else { break; }
-            }
-            if (currentLyricIndex !== activeIndex || forceScroll) {
-                currentLyricIndex = activeIndex;
-                document.querySelectorAll('.lyric-line-group').forEach((el, index) => {
-                    if (index === activeIndex) { el.classList.add('active'); } else { el.classList.remove('active'); }
-                    if(!isUserScrolling) el.style.opacity = ''; 
-                });
-                const activeEl = document.getElementById(`lrc-${activeIndex}`);
-                if (activeEl && !isUserScrolling) { activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-            }
-        }
-
-        async function playMV(vid, title) {
-            if(isPlaying) togglePlay(); 
-            const modal = document.getElementById('mv-modal');
-            const video = document.getElementById('mv-video');
-            document.getElementById('mv-title').innerText = title + ' - 官方 MV';
-            modal.classList.add('show');
-            try {
-                const res = await fetch(`${API_BASE}/mv?vid=${vid}&type=mp4`); 
-                const json = await res.json();
-                if(json.code === 200 && json.data && json.data.urls && json.data.urls.length > 0) {
-                    const bestUrl = json.data.urls[json.data.urls.length - 1].url;
-                    video.src = bestUrl;
-                    video.play();
-                } else {
-                    showToast('获取 MV 源失败，请稍后再试。');
-                    closeMV();
-                }
-            } catch(e) { showToast('网络请求错误，无法播放 MV。'); closeMV(); }
-        }
-
-        function closeMV() {
-            const modal = document.getElementById('mv-modal');
-            const video = document.getElementById('mv-video');
-            video.pause(); video.src = "";
-            modal.classList.remove('show');
+        function jumpToSeekTime() {
+            if(!audio.duration) return;
+            audio.currentTime = seekTargetTime;
+            if(!isPlaying) togglePlay();
+            isUserScrolling = false;
+            lyricSeekLine.style.opacity = '0';
         }
 
         function downloadCurrentSong() {
-            if (!currentSongUrl) {
-                showToast('🎵 请先播放一首歌曲后再点击下载哦！'); return;
+            if (!currentSongUrl) return showToast('暂无可下载的音源');
+            showToast('开始下载：' + currentSongName);
+            
+            // 桌面端在新标签页打开，移动端直接下载触发
+            if (window.innerWidth >= 850) {
+                window.open(currentSongUrl, '_blank');
+            } else {
+                const a = document.createElement('a');
+                a.href = currentSongUrl;
+                a.download = currentSongName + '.mp3';
+                a.target = '_blank';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
             }
-            let ext = '.mp3';
-            try {
-                const urlObj = new URL(currentSongUrl);
-                const pathMatches = urlObj.pathname.match(/\.([a-zA-Z0-9]+)$/);
-                if (pathMatches) ext = '.' + pathMatches[1];
-            } catch (e) {}
-            const filename = `${currentSongName}${ext}`;
-            const a = document.createElement('a');
-            a.href = currentSongUrl; a.download = filename; a.target = '_blank';
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
         }
 
         function toggleQueue() {
-            if (window.innerWidth >= 850) {
-                switchTab('player'); 
-            } else {
-                const modal = document.getElementById('queue-modal');
-                modal.classList.toggle('show');
-                if(modal.classList.contains('show')) { renderQueue(); }
+            const modal = document.getElementById('queue-modal');
+            modal.classList.toggle('show');
+            if(modal.classList.contains('show')) {
+                renderQueue();
             }
         }
 
+        // 移除播放列表拖动排序后的纯渲染方法
         function renderQueue() {
-            const mContainer = document.getElementById('queue-list-container');
-            const dContainer = document.getElementById('queue-list-desktop');
-            document.getElementById('queue-count').innerText = playQueue.length;
+            const listDesktop = document.getElementById('queue-list-desktop');
+            const listMobile = document.getElementById('queue-list-container');
+            const countSpan = document.getElementById('queue-count');
             
-            // 移动端渲染
-            if(mContainer) {
-                if(playQueue.length === 0) {
-                    mContainer.innerHTML = '<div class="empty-state" style="margin-top:30px; font-size:13px;">队列为空</div>';
-                } else {
-                    mContainer.innerHTML = playQueue.map((song, i) => {
-                        const source = song.source || 'qq';
-                        const sourceTag = source === 'netease' ? `<span class="source-badge wy">WY</span>` : `<span class="source-badge qq">QQ</span>`;
-                        return `
-                        <li class="queue-item ${i === currentIndex ? 'active' : ''}" onclick="playSong('${song.mid}', ${i})">
-                            <div class="q-info"><span class="q-title">${sourceTag}${song.song}</span><span class="q-singer">${song.singer}</span></div>
-                            ${i === currentIndex ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="var(--primary)" style="margin-right:8px;"><path d="M8 5v14l11-7z"/></svg>' : ''}
-                            <button class="queue-remove-btn" onclick="openSongMenu(event, 'queue', ${i})" title="更多操作" style="font-size:20px; font-weight:bold; width:30px; text-align:center;">
+            if (countSpan) countSpan.innerText = playQueue.length;
+            
+            if (playQueue.length === 0) {
+                if(listDesktop) listDesktop.innerHTML = '<div class="empty-state" style="margin-top:10vh;">当前播放队列为空</div>';
+                if(listMobile) listMobile.innerHTML = '<div class="empty-state" style="margin-top:30px; font-size:13px;">队列为空</div>';
+                return;
+            }
+            
+            const mbHtml = playQueue.map((song, index) => {
+                const isActive = index === currentIndex ? 'active' : '';
+                return `
+                <li class="queue-item ${isActive}" onclick="playSong('${song.mid}', ${index})">
+                    <div class="q-info">
+                        <div class="q-title">${song.song}</div>
+                        <div class="q-singer">${song.singer}</div>
+                    </div>
+                    <button class="queue-remove-btn" onclick="removeFromQueue(${index}, event)" title="移除">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </li>`;
+            }).join('');
+            
+            if(listMobile) listMobile.innerHTML = mbHtml;
+            
+            if (listDesktop) {
+                const deskHtml = playQueue.map((song, index) => {
+                    const isActive = index === currentIndex ? 'desktop-active-song' : '';
+                    const safeSinger = song.singer.replace(/'/g, "\\'");
+                    const safeAlbum = song.album ? song.album.replace(/'/g, "\\'") : '';
+                    const mvTag = song.vid ? `<span class="mv-badge" onclick="event.stopPropagation(); playMV('${song.vid}', '${song.song.replace(/'/g, "\\'")}')">▶ MV</span>` : '';
+                    const sourceTag = song.source === 'netease' 
+                        ? `<span class="source-badge wy">WY</span>` 
+                        : `<span class="source-badge qq">QQ</span>`;
+
+                    return `
+                    <li class="song-item ${isActive}" onclick="playSong('${song.mid}', ${index})">
+                        <div class="song-item-info">
+                            <div class="song-item-title">${sourceTag}${song.song} ${mvTag}</div>
+                        </div>
+                        <div class="desktop-singer">
+                            <span class="desktop-singer-text">${song.singer}</span>
+                        </div>
+                        <div class="desktop-album">
+                            <span class="desktop-album-text">${song.album || '未知'}</span>
+                        </div>
+                        <div class="song-action-col">
+                            <button class="queue-remove-btn" onclick="openSongMenu(event, 'queue', ${index})" title="更多操作" style="font-size:20px; font-weight:bold; width:30px; text-align:center;">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg>
                             </button>
-                        </li>
-                        `;
-                    }).join('');
-                    setTimeout(() => {
-                        const activeItem = mContainer.querySelector('.queue-item.active');
-                        if(activeItem) activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
-                }
+                        </div>
+                    </li>`;
+                }).join('');
+                listDesktop.innerHTML = deskHtml;
             }
-
-            // PC端渲染
-            if(dContainer) {
-                if(playQueue.length === 0) {
-                    dContainer.innerHTML = '<div class="empty-state" style="margin-top:10vh;">当前播放队列为空</div>';
-                } else {
-                    dContainer.innerHTML = playQueue.map((song, i) => {
-                        const isActive = i === currentIndex;
-                        const colorStyle = isActive ? 'color: var(--primary); font-weight: bold;' : '';
-                        const titleColor = isActive ? 'color: var(--primary);' : '';
-                        const titlePrefix = isActive ? '<span style="color:var(--primary);margin-right:8px;">▶</span>' : '';
-                        const safeSinger = song.singer.replace(/'/g, "\\'");
-                        const safeSongName = song.song.replace(/'/g, "\\'");
-                        const safeAlbum = song.album ? song.album.replace(/'/g, "\\'") : '';
-                        const mvTag = song.vid ? `<span class="mv-badge" onclick="event.stopPropagation(); playMV('${song.vid}', '${safeSongName}')">▶ MV</span>` : '';
-                        
-                        // --- 新增音源标签 ---
-                        const source = song.source || 'qq';
-                        const sourceTag = source === 'netease' ? `<span class="source-badge wy">WY</span>` : `<span class="source-badge qq">QQ</span>`;
-                        
-                        return `
-                        <li class="song-item" onclick="playSong('${song.mid}', ${i})">
-                            <div class="song-item-info">
-                                <div class="song-item-title" style="${titleColor}">${titlePrefix}${sourceTag}${song.song} ${mvTag}</div>
-                            </div>
-                            <div class="desktop-singer desktop-singer-wrapper" style="${colorStyle}">
-                                <svg class="singer-search-icon" onclick="searchSinger(event, '${safeSinger}')" viewBox="0 0 24 24" width="14" height="14">
-                                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                                </svg>
-                                <span class="desktop-singer-text">${song.singer}</span>
-                            </div>
-                            <div class="desktop-album" title="${song.album || '未知'}">
-                                <svg class="singer-search-icon" onclick="searchSinger(event, '${safeAlbum}')" viewBox="0 0 24 24" width="14" height="14">
-                                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                                </svg>
-                                <span class="desktop-album-text">${song.album || '未知'}</span>
-                            </div>
-                            <div class="song-action-col">
-                                <button class="queue-remove-btn" onclick="openSongMenu(event, 'queue', ${i})" title="更多操作" style="font-size:20px; font-weight:bold; width:30px; text-align:center;">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg>
-                                </button>
-                            </div>
-                        </li>`;
-                    }).join('');
-                }
-            }
+            
+            const daTitle = document.getElementById('player-da-title');
+            if (daTitle) daTitle.innerText = activePlayingListName;
         }
 
         function removeFromQueue(index, event) {
-            if(event && event.stopPropagation) event.stopPropagation(); 
+            if(event) event.stopPropagation();
             playQueue.splice(index, 1);
             if (index < currentIndex) {
                 currentIndex--;
             } else if (index === currentIndex) {
                 if (playQueue.length > 0) {
-                    if (currentIndex >= playQueue.length) { currentIndex = 0; }
+                    if (currentIndex >= playQueue.length) currentIndex = 0;
                     playSong(playQueue[currentIndex].mid, currentIndex);
                 } else {
-                    audio.pause(); audio.src = ''; isPlaying = false; updatePlayState(); currentIndex = -1;
-                    document.getElementById('p-title').innerText = "QQmusic Player";
-                    
+                    currentIndex = -1;
+                    audio.src = '';
+                    document.getElementById('p-title').innerText = 'Yoo-music Player';
+                    document.getElementById('p-singer').innerText = '等待播放...';
+                    const qBadge = document.getElementById('p-quality');
+                    if(qBadge) qBadge.style.display = 'none';
+                    coverImg.src = 'https://y.qq.com/mediastyle/global/img/album_300.png';
                     const fNameMb = document.getElementById('f-name-mb');
+                    if(fNameMb) fNameMb.innerText = '等待播放...';
                     const fSingerMb = document.getElementById('f-singer-mb');
-                    if(fNameMb) fNameMb.innerText = "等待播放...";
-                    if(fSingerMb) fSingerMb.innerText = "";
-
+                    if(fSingerMb) fSingerMb.innerText = '';
                     const fNamePc = document.getElementById('f-name-pc');
+                    if(fNamePc) fNamePc.innerText = '等待播放...';
                     const fSingerPc = document.getElementById('f-singer-pc');
-                    if(fNamePc) fNamePc.innerText = "等待播放...";
-                    if(fSingerPc) fSingerPc.innerText = "";
-                    
-                    document.getElementById('p-singer').innerHTML = '等待播放... <span class="quality-badge" style="display:none;" id="p-quality"></span>';
-                    const defaultCover = 'https://y.qq.com/mediastyle/global/img/album_300.png';
-                    coverImg.src = defaultCover; 
+                    if(fSingerPc) fSingerPc.innerText = '';
                     const fCoverMb = document.getElementById('f-cover-mb');
-                    if(fCoverMb) fCoverMb.src = defaultCover; 
+                    if(fCoverMb) fCoverMb.src = 'https://y.qq.com/mediastyle/global/img/album_300.png';
                     const fCoverPc = document.getElementById('f-cover-pc');
-                    if(fCoverPc) fCoverPc.src = defaultCover;
-                    lyricsArray = []; lyricContainer.innerHTML = '<div class="lyric-line-group active"><div class="lyric-line-main">歌词将在此震撼显示</div></div>';
+                    if(fCoverPc) fCoverPc.src = 'https://y.qq.com/mediastyle/global/img/album_300.png';
                     
-                    const daTitle = document.getElementById('player-da-title');
-                    if(daTitle) daTitle.innerText = "当前播放队列";
+                    lyricsArray = [];
+                    lyricContainer.innerHTML = '<div class="lyric-line-group active"><div class="lyric-line-main">歌词将在此震撼显示</div></div>';
+                    
+                    isPlaying = false;
+                    updatePlayState();
                 }
             }
-            renderQueue(); 
+            renderQueue();
         }
 
+        async function playMV(vid, title) {
+            if (!vid) return showToast('该歌曲暂无 MV');
+            const mvModal = document.getElementById('mv-modal');
+            const mvVideo = document.getElementById('mv-video');
+            const mvTitle = document.getElementById('mv-title');
+            
+            showToast('正在为您加载超清 MV...');
+            
+            try {
+                const res = await fetch(`${API_BASE}/mv/url?vid=${vid}`);
+                const json = await res.json();
+                
+                if (json.code === 200 && json.data && json.data.url) {
+                    const wasPlaying = isPlaying;
+                    if (isPlaying) togglePlay(); 
+                    
+                    mvTitle.innerText = title;
+                    mvVideo.src = json.data.url;
+                    mvModal.classList.add('show');
+                    mvVideo.play();
+                    
+                    window.mvWasPlaying = wasPlaying; 
+                } else {
+                    showToast('抱歉，获取 MV 失败');
+                }
+            } catch (e) {
+                showToast('网络异常，请重试');
+            }
+        }
+
+        function closeMV() {
+            const mvModal = document.getElementById('mv-modal');
+            const mvVideo = document.getElementById('mv-video');
+            mvVideo.pause();
+            mvVideo.src = '';
+            mvModal.classList.remove('show');
+            
+            if (window.mvWasPlaying && !isPlaying) {
+                togglePlay();
+            }
+        }
+
+        // 初始化默认歌曲
         async function initDefaultSong() {
             try {
                 const res2 = await fetch(`${API_BASE}/search/song?word=${encodeURIComponent('空悲切')}&num=1`);
@@ -3448,10 +3614,10 @@ if (currentMode === 1) { audio.currentTime = 0; audio.play(); return; }
                 
                 let queue = [];
                 if (json2.code === 200 && json2.data && json2.data.length > 0) {
-                    queue.push(json2.data[0]);
+                    queue.push({...json2.data[0], source: 'qq'});
                 }
                 if (json1.code === 200 && json1.data && json1.data.length > 0) {
-                    queue.push(json1.data[0]);
+                    queue.push({...json1.data[0], source: 'qq'});
                 }
                 
                 if (queue.length > 0) {
@@ -3463,7 +3629,10 @@ if (currentMode === 1) { audio.currentTime = 0; audio.play(); return; }
                 }
             } catch(e) {}
         }
+        
+        // 执行初始化
         initDefaultSong();
+
     </script>
 </body>
-</html>
+</html>                        
