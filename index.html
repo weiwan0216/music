@@ -230,8 +230,6 @@
         /* 歌曲批量操作复选框 */
         .song-batch-cb { display: none; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--text-sub); margin-right: 15px; align-items: center; justify-content: center; transition: 0.2s; flex-shrink:0; cursor:pointer;}
         .song-list.batch-mode-active .song-batch-cb { display: flex; margin-right: 25px; }
-        .song-list.batch-mode-active .song-item-cover { display: none; }
-        .song-list.batch-mode-active .song-seq-col { display: none !important; }
         .song-batch-cb.checked { background: var(--primary); border-color: var(--primary); }
         .song-batch-cb.checked::after { content: ''; width: 5px; height: 10px; border: solid #000; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -2px; }
 
@@ -265,8 +263,10 @@
 
         .queue-modal {
             position: fixed; bottom: 125px; right: 20px; width: 320px; max-height: 50vh;
-            background: rgba(25, 25, 25, 0.9); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            /* 修改点：移动端背景改为透明，保留模糊 */
+            background: rgba(0, 0, 0, 0.01); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             z-index: 25; display: flex; flex-direction: column;
             transform: translateY(150%); opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
@@ -303,7 +303,10 @@
 
         /* Modals for Create, Rename and Add to Playlist */
         .ap-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            position: fixed; inset: 0; 
+            /* 修改点：遮罩层背景更透明 */
+            background: rgba(0,0,0,0.2); 
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
             z-index: 10000; display: none; align-items: center; justify-content: center;
         }
         .ap-modal.show { display: flex; animation: fadeIn 0.2s; }
@@ -312,7 +315,9 @@
         #rename-playlist-modal { z-index: 10005 !important; }
 
         .create-pl-content { 
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+            /* 修改点：创建歌单弹窗背景透明+模糊 (与队列一致) */
+            background: rgba(0, 0, 0, 0.01); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
             border-radius: 16px; padding: 20px; display: flex; gap: 12px; align-items: center; width: 90vw; max-width: 360px; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); 
             position: absolute; top: 15vh; cursor: move;
@@ -344,22 +349,44 @@
         .add-pl-item span:last-child { font-size: 13px; color: rgba(255,255,255,0.4); }
 
         /* Song Action Menu & Import/Export Menu */
-        .song-action-menu { position:fixed; background:rgba(30, 30, 30, 0.6); backdrop-filter:blur(25px); -webkit-backdrop-filter:blur(25px); border:1px solid rgba(255,255,255,0.1); border-radius:8px; z-index:10000; display:none; flex-direction:column; padding:4px 0; box-shadow:0 8px 20px rgba(0,0,0,0.6); }
+        .song-action-menu { 
+            position:fixed; 
+            /* 修改点：更多操作菜单背景透明+模糊 (与队列一致) */
+            background: rgba(0, 0, 0, 0.01); 
+            backdrop-filter:blur(15px); -webkit-backdrop-filter:blur(15px); 
+            border:1px solid rgba(255,255,255,0.05); 
+            border-radius:8px; z-index:10000; display:none; flex-direction:column; padding:4px 0; box-shadow:0 8px 20px rgba(0,0,0,0.2); 
+        }
         .song-action-menu.show { display:flex; animation: fadeIn 0.2s ease; }
         .sam-item { padding:10px 20px; font-size:14px; cursor:pointer; color:#fff; transition:background 0.2s; white-space:nowrap; }
-        .sam-item:hover { background:rgba(255,255,255,0.1); color:var(--primary); }
+        .sam-item:hover { background:rgba(255,255,255,0.05); color:var(--primary); }
         .sam-item.danger:hover { color:#ff4d4f; }
         
-        .pl-menu { position:absolute; right:35px; top:35px; background:rgba(30, 30, 30, 0.6); backdrop-filter:blur(25px); -webkit-backdrop-filter:blur(25px); border:1px solid rgba(255,255,255,0.1); border-radius:8px; z-index:100; display:none; flex-direction:column; padding:4px 0; box-shadow:0 8px 20px rgba(0,0,0,0.6); }
+        .pl-menu { 
+            position:absolute; right:35px; top:35px; 
+            /* 修改点：导入导出菜单背景透明+模糊 (与队列一致) */
+            background: rgba(0, 0, 0, 0.01); 
+            backdrop-filter:blur(15px); -webkit-backdrop-filter:blur(15px); 
+            border:1px solid rgba(255,255,255,0.05); 
+            border-radius:8px; z-index:100; display:none; flex-direction:column; padding:4px 0; box-shadow:0 8px 20px rgba(0,0,0,0.2); 
+        }
         .pl-menu.show { display:flex; animation: fadeIn 0.15s ease; }
 
         /* Batch Operation Modal */
-        .batch-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 11000; display: none; align-items: center; justify-content: center; }
+        .batch-modal { 
+            position: fixed; inset: 0; 
+            /* 修改点：批量操作遮罩层背景更透明 */
+            background: rgba(0,0,0,0.2); 
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); 
+            z-index: 11000; display: none; align-items: center; justify-content: center; 
+        }
         .batch-modal.show { display: flex; animation: fadeIn 0.2s; }
         .batch-content { 
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+            /* 修改点：批量操作弹窗内容背景透明+模糊 (与队列一致) */
+            background: rgba(0, 0, 0, 0.01); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
             border-radius: 16px; width: 90vw; max-width: 420px; height: 75vh; max-height: 600px; display: flex; flex-direction: column; overflow: hidden; 
-            border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 40px rgba(0,0,0,0.2); 
         }
         .batch-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: transparent; cursor: move; }
         .bh-btn { color: var(--text-sub); font-size: 14px; cursor: pointer; padding: 5px; transition: 0.2s; }
@@ -472,7 +499,14 @@
         @keyframes wave-bounce { 0% { transform: scaleY(0.3); } 100% { transform: scaleY(1); } }
         body.is-paused .wave-bar { animation-play-state: paused; }
         
-        .song-seq { font-size: 14px; color: var(--text-sub); font-family: -apple-system, monospace; font-weight: 500; }
+        .song-seq { 
+            font-size: 14px; 
+            color: var(--text-sub); 
+            font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", "Droid Sans Mono", "Source Code Pro", monospace;
+            font-weight: 500; 
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
         .song-seq-col { display: flex; align-items: center; justify-content: center; width: 30px; margin-right: 15px; flex-shrink: 0; }
 
         @media (min-width: 850px) {
@@ -573,6 +607,11 @@
 
             .action-panel { background: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; border: none !important; box-shadow: none !important; }
             body.mobile-panel-open .main-player { opacity: 0 !important; pointer-events: none !important; }
+            
+            /* 移动端移除歌单和榜单详情页的序号列 */
+            .song-seq-col { display: none !important; }
+            /* 如果处于批量模式，可能需要调整边距，但通常隐藏即可 */
+            .song-list.batch-mode-active .song-batch-cb { margin-right: 15px; }
         }
 
         .source-badge { font-size: 10px; padding: 2px 4px; border-radius: 4px; margin-right: 6px; font-weight: 900; vertical-align: text-bottom; user-select: none; display: inline-flex; align-items: center; justify-content: center; }
@@ -962,6 +1001,16 @@
                     popup.style.transform = 'translate(-50%, -50%) scale(0.8)';
                 }, 4000);
             }
+            
+            // 【新增功能】页面加载时尝试从 localStorage 恢复 QQ 号
+            const savedUin = localStorage.getItem('yoo_last_uin');
+            if (savedUin) {
+                const uinInput = document.getElementById('uin-input');
+                const uinInputPc = document.getElementById('uin-input-pc');
+                if (uinInput) uinInput.value = savedUin;
+                if (uinInputPc) uinInputPc.value = savedUin;
+            }
+
             renderPlaylistHome(false); 
             renderToplistHome(); 
             
